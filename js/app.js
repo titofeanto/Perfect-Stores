@@ -31,6 +31,22 @@ const el = (id) => document.getElementById(id);
 // Satu sub-field {karton, lusin, pcs} -> total pcs. 1 lusin selalu = 12 pcs.
 // (fieldTotal, fieldIsEmpty, normalizeField, statusOf sekarang diimpor dari entry-utils.js)
 
+// Referensi bantu SBA menentukan Order: perkiraan penjualan minggu lalu,
+// dihitung langsung (live) dari Stock minggu lalu + Masuk minggu lalu - Stock minggu ini
+// (yang sedang diketik, belum perlu submit dulu). Ini cuma tampilan bantu, bukan Jual resmi.
+function orderRefHtml(sku, item) {
+  const prevRaw = previousWeekItems[sku.barcode];
+  const prevStock = prevRaw ? normalizeField(prevRaw.stock) : null;
+  if (!prevStock || fieldIsEmpty(prevStock)) return '';
+  if (fieldIsEmpty(item.stock)) {
+    return '<p class="order-ref-note">Isi Stock dulu untuk lihat referensi penjualan minggu lalu</p>';
+  }
+  const prevMasuk = normalizeField(prevRaw.masuk);
+  const qty = fieldTotal(prevStock, sku.isi) + fieldTotal(prevMasuk, sku.isi) - fieldTotal(item.stock, sku.isi);
+  const masukNote = fieldIsEmpty(prevMasuk) ? ' &middot; Barang Masuk minggu lalu belum diisi Supervisor (dianggap 0)' : '';
+  return `<p class="order-ref-note order-ref-value">Referensi: perkiraan penjualan minggu lalu &asymp; <strong>${qty} pcs</strong>${masukNote}</p>`;
+}
+
 function badgeHtml(sku, item) {
   const s = statusOf(item);
   let html = `<span class="badge ${FLAG_CLASS[sku.flag] || 'flag-cotc'}">${FLAG_LABELS[sku.flag] || sku.flag}</span>`;
@@ -221,11 +237,22 @@ function entryDocId(store, week) {
   return `${store.id}__${week.periodKey}`;
 }
 
+let previousWeekItems = {};
+
 async function loadEntryForCurrentPeriod() {
   currentEntryDocId = entryDocId(currentStore, currentWeek);
   const ref = doc(db, 'entries', currentEntryDocId);
-  const snap = await getDoc(ref);
-  const saved = snap.exists() ? (snap.data().items || {}) : {};
+  const prevPeriodKey = isoDate(addDays(currentWeek.start, -7));
+  const prevRef = doc(db, 'entries', `${currentStore.id}__${prevPeriodKey}`);
+  let snap, prevSnap;
+  try {
+    [snap, prevSnap] = await Promise.all([getDoc(ref), getDoc(prevRef)]);
+  } catch (err) {
+    console.error('Gagal memuat data minggu ini/minggu lalu:', err);
+    snap = null; prevSnap = null;
+  }
+  const saved = snap && snap.exists() ? (snap.data().items || {}) : {};
+  previousWeekItems = prevSnap && prevSnap.exists() ? (prevSnap.data().items || {}) : {};
   currentEntry = {};
   for (const sku of currentSkuList) {
     const savedItem = saved[sku.barcode] || {};
@@ -404,6 +431,7 @@ function renderSkuList() {
             const total = fieldTotal(fo, sku.isi);
             const kartonAttrs = sku.isi ? '' : 'disabled title="Isi per karton tidak diketahui untuk SKU ini"';
             return `
+              ${f === 'order' ? `<div class="order-ref" data-order-ref-for="${sku.barcode}">${orderRefHtml(sku, item)}</div>` : ''}
               <div class="field-row">
                 <div class="field-row-head">
                   <label class="field-label">${FIELD_LABELS[f]}</label>
@@ -443,6 +471,10 @@ function renderSkuList() {
       container.querySelector('.sku-badges').innerHTML = badgeHtml(sku, currentEntry[barcode]);
       const totalEl = container.querySelector(`[data-total-for="${field}"]`);
       if (totalEl) totalEl.textContent = `= ${fieldTotal(currentEntry[barcode][field], sku.isi)} pcs`;
+      if (field === 'stock') {
+        const refEl = container.querySelector(`[data-order-ref-for="${barcode}"]`);
+        if (refEl) refEl.innerHTML = orderRefHtml(sku, currentEntry[barcode]);
+      }
     });
   });
 }

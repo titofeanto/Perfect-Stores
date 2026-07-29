@@ -243,6 +243,14 @@ button:active { transform: scale(0.98); }
 .sku-jual-computed {
   color: var(--success);
 }
+.order-ref-note {
+  font-size: 11px;
+  color: var(--text-muted);
+  margin: 6px 0 4px;
+}
+.order-ref-value {
+  color: var(--accent);
+}
 
 .field-subheader {
   display: grid;
