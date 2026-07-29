@@ -328,6 +328,17 @@ button:active { transform: scale(0.98); }
   margin-top: 6px;
 }
 
+.template-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 12px;
+  color: var(--accent);
+  text-decoration: none;
+  margin-top: 8px;
+}
+.template-link:hover { text-decoration: underline; }
+
 .toast {
   position: fixed;
   left: 50%;

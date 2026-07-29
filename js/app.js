@@ -347,7 +347,13 @@ function renderFlagFilterChips() {
     return `<span class="chip ${flagFilter === f ? 'active' : ''}" data-flag="${f}">${label}</span>`;
   }).join('');
   el('flagFilterRow').querySelectorAll('.chip').forEach(chip => {
-    chip.addEventListener('click', () => { flagFilter = chip.dataset.flag; renderSkuList(); });
+    chip.addEventListener('click', () => {
+      flagFilter = chip.dataset.flag;
+      el('flagFilterRow').querySelectorAll('.chip').forEach(c => {
+        c.classList.toggle('active', c.dataset.flag === flagFilter);
+      });
+      renderSkuList();
+    });
   });
 }
 
