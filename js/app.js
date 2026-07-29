@@ -2,6 +2,7 @@ import { db, doc, getDoc, setDoc, serverTimestamp, authReady } from './firebase-
 import { loadStores, loadSkuList, groupStoresByArea } from './store-data.js';
 import { getWeeksForMonth, findWeekContaining, fmtShort, MONTHS_ID } from './weeks.js';
 import { loadDistributorStock, parseDistributorWorkbook, saveDistributorStock } from './stock-upload.js';
+import { supportsNativeBarcodeDetector, startNativeScan, stopNativeScan, startFallbackScan, stopFallbackScan } from './barcode-scan.js';
 
 const FIELDS = ['stock', 'order', 'masuk', 'jual'];
 const FIELD_LABELS = { stock: 'Stock', order: 'Order', masuk: 'Masuk', jual: 'Jual' };
@@ -144,6 +145,9 @@ function attachStaticHandlers() {
   el('stockAreaSel').addEventListener('change', refreshStockTab);
   el('stockFileInput').addEventListener('change', onStockFileSelected);
   el('stockSaveBtn').addEventListener('click', onStockSave);
+
+  el('scanBtn').addEventListener('click', openScanModal);
+  el('scanCloseBtn').addEventListener('click', closeScanModal);
 }
 
 async function onAreaChange() {
@@ -158,8 +162,25 @@ async function onStoreChange() {
   el('scopeInfo').textContent = `Scope channel: ${currentStore.scopeChannel} (${currentStore.subChannel})`;
   currentSkuList = await loadSkuList(currentStore.scopeSlug);
   populateWeekSelect();
-  await loadEntryForCurrentPeriod();
+  await Promise.all([
+    loadEntryForCurrentPeriod(),
+    ensureDistributorStockLoaded(currentStore.area)
+  ]);
   renderAll();
+}
+
+// Data stock distributor dimuat sekali per area lalu di-cache di memori.
+// Dulu ini cuma dimuat kalau tab "Stock distributor" dibuka -- akibatnya
+// SBA yang langsung ke tab Input tidak pernah melihat info stock distributor
+// walau datanya sudah ada di database. Sekarang dimuat otomatis begitu toko dipilih.
+async function ensureDistributorStockLoaded(area) {
+  if (distributorCache[area] !== undefined) return;
+  try {
+    distributorCache[area] = await loadDistributorStock(area);
+  } catch (err) {
+    console.error('Gagal memuat stock distributor:', err);
+    distributorCache[area] = null;
+  }
 }
 
 async function onPeriodChange() {
@@ -215,17 +236,22 @@ async function saveField(barcode) {
     itemToSave[f] = { karton: fo.karton, lusin: fo.lusin, pcs: fo.pcs, total: fieldTotal(fo, sku.isi) };
   }
   const ref = doc(db, 'entries', currentEntryDocId);
-  await setDoc(ref, {
-    storeId: currentStore.id,
-    storeName: currentStore.name,
-    area: currentStore.area,
-    scopeSlug: currentStore.scopeSlug,
-    periodKey: currentWeek.periodKey,
-    weekStart: currentWeek.start.toISOString(),
-    weekEnd: currentWeek.end.toISOString(),
-    items: { [barcode]: itemToSave },
-    updatedAt: serverTimestamp()
-  }, { merge: true });
+  try {
+    await setDoc(ref, {
+      storeId: currentStore.id,
+      storeName: currentStore.name,
+      area: currentStore.area,
+      scopeSlug: currentStore.scopeSlug,
+      periodKey: currentWeek.periodKey,
+      weekStart: currentWeek.start.toISOString(),
+      weekEnd: currentWeek.end.toISOString(),
+      items: { [barcode]: itemToSave },
+      updatedAt: serverTimestamp()
+    }, { merge: true });
+  } catch (err) {
+    console.error('Gagal menyimpan field:', err);
+    showToast('Gagal menyimpan perubahan. Cek koneksi internet.', 'danger');
+  }
 }
 
 async function submitAllZeroFilled() {
@@ -325,7 +351,7 @@ function renderSkuList() {
   const distStock = distributorCache[currentStore.area];
   const filtered = currentSkuList.filter(sku => {
     if (flagFilter !== 'all' && sku.flag !== flagFilter) return false;
-    if (q && !sku.name.toLowerCase().includes(q)) return false;
+    if (q && !sku.name.toLowerCase().includes(q) && !sku.barcode.includes(q)) return false;
     return true;
   });
 
@@ -340,7 +366,7 @@ function renderSkuList() {
       ? `<p class="sku-isi">1 karton = ${sku.isi} pcs &middot; 1 lusin = 12 pcs</p>`
       : `<p class="sku-isi sku-isi-missing">Isi per karton tidak diketahui untuk SKU ini &mdash; gunakan Lusin/Pcs</p>`;
     return `
-      <div class="sku-item">
+      <div class="sku-item" data-barcode="${sku.barcode}">
         <p class="sku-name">${sku.name}</p>
         <p class="sku-code">${sku.barcode}${sku.pcode ? ' &middot; PC ' + sku.pcode : ''}</p>
         <div class="sku-badges">${badgeHtml(sku, item)}</div>
@@ -442,14 +468,95 @@ function onSubmitClick() {
 }
 
 async function onConfirmSubmit() {
-  await submitAllZeroFilled();
-  hideModal();
-  renderAll();
-  renderRecap();
+  const btn = el('modalConfirm');
+  const originalLabel = btn.textContent;
+  btn.disabled = true;
+  btn.textContent = 'Mengirim...';
+  try {
+    await submitAllZeroFilled();
+    hideModal();
+    renderAll();
+    renderRecap();
+    showToast(`Berhasil dikirim untuk ${currentWeek.label}, ${currentStore.name}`, 'success');
+  } catch (err) {
+    console.error('Gagal mengirim:', err);
+    showToast('Gagal mengirim. Cek koneksi internet lalu coba lagi.', 'danger');
+  } finally {
+    btn.disabled = false;
+    btn.textContent = originalLabel;
+  }
+}
+
+let usingNativeScan = false;
+
+async function openScanModal() {
+  if (!currentSkuList.length) {
+    showToast('Pilih toko dulu sebelum scan.', 'danger');
+    return;
+  }
+  el('scanModal').classList.add('show');
+  el('scanStatus').textContent = 'Meminta izin kamera...';
+  el('scanVideo').style.display = 'none';
+  el('scanFallbackContainer').innerHTML = '';
+
+  usingNativeScan = supportsNativeBarcodeDetector();
+
+  if (usingNativeScan) {
+    el('scanVideo').style.display = 'block';
+    await startNativeScan(el('scanVideo'), onBarcodeDetected, onScanError);
+    el('scanStatus').textContent = 'Arahkan kamera ke barcode produk.';
+  } else {
+    el('scanStatus').textContent = 'Menyiapkan scanner (perangkat ini pakai mode kompatibilitas)...';
+    await startFallbackScan('scanFallbackContainer', onBarcodeDetected, onScanError);
+    el('scanStatus').textContent = 'Arahkan kamera ke barcode produk.';
+  }
+}
+
+function closeScanModal() {
+  el('scanModal').classList.remove('show');
+  if (usingNativeScan) stopNativeScan(el('scanVideo'));
+  else stopFallbackScan();
+}
+
+function onScanError(err) {
+  console.error('Scan error:', err);
+  el('scanStatus').textContent = 'Tidak bisa mengakses kamera. Pastikan izin kamera diaktifkan untuk situs ini.';
+}
+
+function onBarcodeDetected(rawValue) {
+  closeScanModal();
+  const barcode = String(rawValue).trim();
+  const sku = currentSkuList.find(s => s.barcode === barcode);
+  if (!sku) {
+    showToast(`Barcode ${barcode} tidak ada di SKU wajib toko ini.`, 'danger');
+    return;
+  }
+  switchTab('input');
+  flagFilter = 'all';
+  searchText = barcode;
+  el('searchBox').value = barcode;
+  renderFlagFilterChips();
+  renderSkuList();
+  const card = document.querySelector(`.sku-item[data-barcode="${barcode}"]`);
+  if (card) {
+    card.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    card.classList.add('flash-highlight');
+    setTimeout(() => card.classList.remove('flash-highlight'), 1600);
+  }
+  showToast(`Ditemukan: ${sku.name}`, 'success');
 }
 
 function showModal() { el('modalBackdrop').classList.add('show'); }
 function hideModal() { el('modalBackdrop').classList.remove('show'); }
+
+let toastTimer;
+function showToast(message, type) {
+  const t = el('toast');
+  t.textContent = message;
+  t.className = 'toast show' + (type ? ' ' + type : '');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => { t.classList.remove('show'); }, 3200);
+}
 
 // ---------- Stock distributor tab ----------
 
@@ -496,11 +603,19 @@ async function onStockSave() {
   const area = el('stockAreaSel').value;
   el('stockSaveBtn').disabled = true;
   el('stockSaveBtn').textContent = 'Menyimpan...';
-  await saveDistributorStock(area, pendingStockParse.items, pendingStockParse.fileName);
-  distributorCache[area] = { items: pendingStockParse.items, sourceFileName: pendingStockParse.fileName, uploadedAt: { toDate: () => new Date() } };
-  el('stockSaveBtn').textContent = 'Simpan ke database';
-  await refreshStockTab();
-  renderSkuList();
+  try {
+    await saveDistributorStock(area, pendingStockParse.items, pendingStockParse.fileName);
+    distributorCache[area] = { items: pendingStockParse.items, sourceFileName: pendingStockParse.fileName, uploadedAt: { toDate: () => new Date() } };
+    showToast(`Stock distributor ${area} berhasil disimpan (${Object.keys(pendingStockParse.items).length} produk)`, 'success');
+    await refreshStockTab();
+    renderSkuList();
+  } catch (err) {
+    console.error('Gagal menyimpan stock distributor:', err);
+    showToast('Gagal menyimpan. Cek koneksi internet lalu coba lagi.', 'danger');
+  } finally {
+    el('stockSaveBtn').textContent = 'Simpan ke database';
+    el('stockSaveBtn').disabled = false;
+  }
 }
 
 init();
