@@ -58,6 +58,12 @@ def build_stores(group_path):
     wb = openpyxl.load_workbook(group_path, data_only=True)
     ws = wb['LIST CUSTOMER']
     stores = []
+    # Kode pelanggan bisa berupa satu blok angka ("941203...689") ATAU beberapa
+    # blok angka dipisah tanda hubung ("941203...865740-2" untuk cabang/sub-lokasi).
+    # Regex ini menelan SEMUA blok angka berturutan (dipisah "-") sebagai id,
+    # baru setelah itu nama toko dimulai -- supaya "kode-2", "kode-3" dst tidak
+    # ketiban dianggap toko yang sama dengan "kode" polos.
+    id_pattern = re.compile(r'^((?:\d+-)*\d+)-(.+)$')
     for r in range(2, ws.max_row + 1):
         area = ws.cell(row=r, column=1).value
         scope = ws.cell(row=r, column=2).value
@@ -65,7 +71,7 @@ def build_stores(group_path):
         name = ws.cell(row=r, column=4).value
         if not area:
             continue
-        m = re.match(r'^(\d+)-(.+)$', str(name).strip())
+        m = id_pattern.match(str(name).strip())
         store_id, store_name = (m.group(1), m.group(2).strip()) if m else (str(name), str(name))
         stores.append({
             'id': store_id,

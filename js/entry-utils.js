@@ -3,6 +3,12 @@
 
 export const FIELDS = ['stock', 'order', 'masuk', 'jual'];
 
+// SBA hanya mengisi Stock & Order. Masuk (barang masuk) diisi lewat upload data
+// pembelian toko oleh Supervisor, dan Jual dihitung otomatis dari rumus
+// (Stock minggu lalu + Masuk minggu ini - Stock minggu ini). Kelengkapan isian
+// SBA jadi hanya berdasarkan 2 field ini, bukan 4.
+export const EDITABLE_FIELDS = ['stock', 'order'];
+
 // Satu sub-field {karton, lusin, pcs} -> total pcs. 1 lusin selalu = 12 pcs.
 // Karton dikonversi pakai sku.isi (pcs per karton); kalau isi tidak diketahui, karton diabaikan.
 export function fieldTotal(f, isi) {
@@ -29,8 +35,8 @@ export function normalizeField(raw) {
 }
 
 export function statusOf(item) {
-  const filled = FIELDS.filter(f => !fieldIsEmpty(item[f])).length;
-  if (filled === FIELDS.length) return 'lengkap';
+  const filled = EDITABLE_FIELDS.filter(f => !fieldIsEmpty(item[f])).length;
+  if (filled === EDITABLE_FIELDS.length) return 'lengkap';
   if (filled === 0) return 'kosong';
   return 'partial';
 }

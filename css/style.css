@@ -109,10 +109,17 @@ button:active { transform: scale(0.98); }
   gap: 6px;
   margin-bottom: 10px;
 }
+.tabs.tabs-4 {
+  grid-template-columns: 1fr 1fr 1fr 1fr;
+}
 .tabs button {
   position: relative;
   font-size: 12px;
   padding: 8px 4px;
+}
+.tabs.tabs-4 button {
+  font-size: 10.5px;
+  padding: 8px 2px;
 }
 .tabs button.active {
   border-color: var(--accent);
@@ -232,6 +239,9 @@ button:active { transform: scale(0.98); }
 }
 .sku-isi-missing {
   color: var(--warning);
+}
+.sku-jual-computed {
+  color: var(--success);
 }
 
 .field-subheader {

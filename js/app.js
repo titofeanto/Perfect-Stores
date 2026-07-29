@@ -1,9 +1,10 @@
 import { db, doc, getDoc, setDoc, serverTimestamp, authReady } from './firebase-init.js';
 import { loadStores, loadSkuList, groupStoresByArea } from './store-data.js';
-import { getWeeksForMonth, findWeekContaining, fmtShort, MONTHS_ID } from './weeks.js';
+import { getWeeksForMonth, findWeekContaining, fmtShort, MONTHS_ID, addDays, isoDate } from './weeks.js';
 import { loadDistributorStock, parseDistributorWorkbook, saveDistributorStock } from './stock-upload.js';
 import { supportsNativeBarcodeDetector, startNativeScan, stopNativeScan, startFallbackScan, stopFallbackScan } from './barcode-scan.js';
-import { FIELDS, fieldTotal, fieldIsEmpty, normalizeField, statusOf } from './entry-utils.js';
+import { parsePurchaseWorkbook } from './purchase-upload.js';
+import { FIELDS, EDITABLE_FIELDS, fieldTotal, fieldIsEmpty, normalizeField, statusOf } from './entry-utils.js';
 
 const FIELD_LABELS = { stock: 'Stock', order: 'Order', masuk: 'Masuk', jual: 'Jual' };
 const FLAG_LABELS = { 'COTC': 'COTC', 'MARKET MAKING': 'Market making', 'NPD': 'NPD' };
@@ -143,6 +144,7 @@ function attachStaticHandlers() {
   el('tabInput').addEventListener('click', () => switchTab('input'));
   el('tabRecap').addEventListener('click', () => switchTab('recap'));
   el('tabStock').addEventListener('click', () => switchTab('stock'));
+  el('tabMasuk').addEventListener('click', () => switchTab('masuk'));
 
   el('modalReview').addEventListener('click', () => { hideModal(); switchTab('input'); });
   el('modalConfirm').addEventListener('click', onConfirmSubmit);
@@ -150,6 +152,8 @@ function attachStaticHandlers() {
   el('stockAreaSel').addEventListener('change', refreshStockTab);
   el('stockFileInput').addEventListener('change', onStockFileSelected);
   el('stockSaveBtn').addEventListener('click', onStockSave);
+  el('masukFileInput').addEventListener('change', onMasukFileSelected);
+  el('masukSaveBtn').addEventListener('click', onMasukSave);
 
   el('scanBtn').addEventListener('click', openScanModal);
   el('scanCloseBtn').addEventListener('click', closeScanModal);
@@ -199,13 +203,16 @@ function switchTab(tab) {
   el('tabInput').classList.toggle('active', tab === 'input');
   el('tabRecap').classList.toggle('active', tab === 'recap');
   el('tabStock').classList.toggle('active', tab === 'stock');
+  el('tabMasuk').classList.toggle('active', tab === 'masuk');
   el('viewInput').classList.toggle('hidden', tab !== 'input');
   el('viewRecap').classList.toggle('hidden', tab !== 'recap');
   el('viewStock').classList.toggle('hidden', tab !== 'stock');
+  el('viewMasuk').classList.toggle('hidden', tab !== 'masuk');
   el('searchBox').style.display = tab === 'input' ? 'block' : 'none';
   el('flagFilterRow').style.display = tab === 'input' ? 'flex' : 'none';
   if (tab === 'recap') renderRecap();
   if (tab === 'stock') refreshStockTab();
+  if (tab === 'masuk') refreshMasukTab();
 }
 
 // ---------- Firestore load/save for entries ----------
@@ -236,7 +243,10 @@ function scheduleSaveField(barcode) {
 async function saveField(barcode) {
   const sku = currentSkuList.find(s => s.barcode === barcode);
   const itemToSave = {};
-  for (const f of FIELDS) {
+  // Cuma Stock & Order yang ditulis dari sini -- Masuk & Jual sengaja TIDAK disentuh
+  // supaya tidak menimpa data yang nanti diisi lewat upload pembelian toko oleh Supervisor
+  // atau hasil hitung otomatis.
+  for (const f of EDITABLE_FIELDS) {
     const fo = currentEntry[barcode][f];
     itemToSave[f] = { karton: fo.karton, lusin: fo.lusin, pcs: fo.pcs, total: fieldTotal(fo, sku.isi) };
   }
@@ -264,7 +274,9 @@ async function submitAllZeroFilled() {
   for (const sku of currentSkuList) {
     const item = currentEntry[sku.barcode];
     const filled = {};
-    for (const f of FIELDS) {
+    // Cuma Stock & Order yang di-zero-fill dan dikirim -- Masuk & Jual dibiarkan
+    // apa adanya (diisi dari sumber lain: upload Supervisor / hitung otomatis).
+    for (const f of EDITABLE_FIELDS) {
       const fo = item[f];
       const normalized = {
         karton: fo.karton === '' ? 0 : fo.karton,
@@ -272,9 +284,9 @@ async function submitAllZeroFilled() {
         pcs: fo.pcs === '' ? 0 : fo.pcs
       };
       normalized.total = fieldTotal(normalized, sku.isi);
+      item[f] = normalized;
       filled[f] = normalized;
     }
-    currentEntry[sku.barcode] = filled;
     itemsToSave[sku.barcode] = filled;
   }
   const ref = doc(db, 'entries', currentEntryDocId);
@@ -387,7 +399,7 @@ function renderSkuList() {
           <span>Karton</span><span>Lusin</span><span>Pcs</span>
         </div>
         <div class="field-list" style="margin-top:2px;">
-          ${FIELDS.map(f => {
+          ${EDITABLE_FIELDS.map(f => {
             const fo = item[f];
             const total = fieldTotal(fo, sku.isi);
             const kartonAttrs = sku.isi ? '' : 'disabled title="Isi per karton tidak diketahui untuk SKU ini"';
@@ -406,6 +418,13 @@ function renderSkuList() {
             `;
           }).join('')}
         </div>
+        ${(() => {
+          if (!fieldIsEmpty(item.jual)) {
+            const jualQty = fieldTotal(item.jual, sku.isi);
+            return `<p class="sku-isi sku-jual-computed">Penjualan (dihitung otomatis): <strong>${jualQty} pcs</strong></p>`;
+          }
+          return '<p class="sku-isi" style="margin-top:6px;">Barang Masuk diisi Supervisor &middot; Penjualan dihitung otomatis setelah minggu depan diisi</p>';
+        })()}
       </div>
     `;
   }).join('') || '<p class="upload-status">Tidak ada produk yang cocok.</p>';
@@ -468,7 +487,7 @@ function onSubmitClick() {
   const missing = total - lengkap;
   const emptyFields = currentSkuList.reduce((n, sku) => {
     const item = currentEntry[sku.barcode];
-    return n + FIELDS.filter(f => fieldIsEmpty(item[f])).length;
+    return n + EDITABLE_FIELDS.filter(f => fieldIsEmpty(item[f])).length;
   }, 0);
   if (missing > 0) {
     el('modalBody').textContent = `${missing} dari ${total} SKU wajib untuk ${currentWeek.label} belum lengkap, dengan total ${emptyFields} kolom kosong. Kolom kosong akan otomatis tercatat 0 jika Anda kirim sekarang.`;
@@ -489,6 +508,12 @@ async function onConfirmSubmit() {
     renderAll();
     renderRecap();
     showToast(`Berhasil dikirim untuk ${currentWeek.label}, ${currentStore.name}`, 'success');
+    // Setelah stock minggu ini tersimpan, coba hitung ulang Jual minggu SEBELUMNYA
+    // (kalau minggu sebelumnya sudah ada datanya).
+    const prevWeekStart = addDays(currentWeek.start, -7);
+    computeAndSaveJualForStorePeriod(currentStore.id, prevWeekStart, currentSkuList).catch(err => {
+      console.error('Gagal hitung ulang Jual minggu sebelumnya:', err);
+    });
   } catch (err) {
     console.error('Gagal mengirim:', err);
     showToast('Gagal mengirim. Cek koneksi internet lalu coba lagi.', 'danger');
@@ -557,8 +582,54 @@ function onBarcodeDetected(rawValue) {
   showToast(`Ditemukan: ${sku.name}`, 'success');
 }
 
-function showModal() { el('modalBackdrop').classList.add('show'); }
+// ---------- Hitung otomatis Penjualan ----------
+// Rumus: Jual minggu N = Stock minggu N + Barang Masuk minggu N - Stock minggu N+1.
+// Baru bisa dihitung setelah Stock minggu N+1 (minggu depannya) sudah diisi.
+// Dipanggil dari 2 arah: (1) setelah SBA submit stock minggu ini -> hitung ulang
+// Jual minggu SEBELUMNYA, dan (2) setelah Supervisor upload Barang Masuk untuk
+// suatu minggu -> hitung ulang Jual minggu itu (kalau stock minggu depannya sudah ada).
+async function computeAndSaveJualForStorePeriod(storeId, weekStart, skuList) {
+  const periodKey = isoDate(weekStart);
+  const nextPeriodKey = isoDate(addDays(weekStart, 7));
+  let curSnap, nextSnap;
+  try {
+    [curSnap, nextSnap] = await Promise.all([
+      getDoc(doc(db, 'entries', `${storeId}__${periodKey}`)),
+      getDoc(doc(db, 'entries', `${storeId}__${nextPeriodKey}`))
+    ]);
+  } catch (err) {
+    console.error('Gagal mengambil data untuk hitung Jual:', err);
+    return 0;
+  }
+  if (!curSnap.exists() || !nextSnap.exists()) return 0;
+  const curItems = curSnap.data().items || {};
+  const nextItems = nextSnap.data().items || {};
+  const updates = {};
+  let count = 0;
+  for (const sku of skuList) {
+    const stockN = normalizeField((curItems[sku.barcode] || {}).stock);
+    if (fieldIsEmpty(stockN)) continue;
+    const stockN1 = normalizeField((nextItems[sku.barcode] || {}).stock);
+    if (fieldIsEmpty(stockN1)) continue;
+    const masukN = normalizeField((curItems[sku.barcode] || {}).masuk);
+    const jualQty = fieldTotal(stockN, sku.isi) + fieldTotal(masukN, sku.isi) - fieldTotal(stockN1, sku.isi);
+    updates[sku.barcode] = {
+      jual: { karton: '0', lusin: '0', pcs: String(jualQty), masukIncluded: !fieldIsEmpty(masukN) }
+    };
+    count++;
+  }
+  if (count > 0) {
+    try {
+      await setDoc(doc(db, 'entries', `${storeId}__${periodKey}`), { items: updates, jualComputedAt: serverTimestamp() }, { merge: true });
+    } catch (err) {
+      console.error('Gagal menyimpan hasil hitung Jual:', err);
+      return 0;
+    }
+  }
+  return count;
+}
 function hideModal() { el('modalBackdrop').classList.remove('show'); }
+function showModal() { el('modalBackdrop').classList.add('show'); }
 
 let toastTimer;
 function showToast(message, type) {
@@ -626,6 +697,143 @@ async function onStockSave() {
   } finally {
     el('stockSaveBtn').textContent = 'Simpan ke database';
     el('stockSaveBtn').disabled = false;
+  }
+}
+
+// ---------- Barang Masuk (upload pembelian toko dari distributor, oleh Supervisor) ----------
+
+let pendingMasukResult = null;
+
+function refreshMasukTab() {
+  if (!currentWeek) return;
+  el('masukPeriodInfo').textContent = `Periode target: ${currentWeek.label} (${fmtShort(currentWeek.start)} - ${fmtShort(currentWeek.end)})`;
+  el('masukParsePreview').textContent = '';
+  el('masukPreviewDetail').innerHTML = '';
+  el('masukSaveBtn').disabled = true;
+  pendingMasukResult = null;
+}
+
+// Cocokkan baris mentah hasil parsing ke toko (by Outlet=storeId) & SKU wajib toko itu
+// (by SKUCode=PC Code), sambil membuang baris yang tanggalnya di luar minggu yang sedang dipilih.
+async function processPurchaseRows(rows) {
+  const weekStart = currentWeek.start;
+  const weekEnd = currentWeek.end;
+  let outOfRange = 0;
+  const unmatchedStoreSet = new Set();
+  let nonWajibCount = 0;
+  const perStoreQty = {}; // storeId -> { barcode: totalQty }
+  const pcodeMapCache = {}; // scopeSlug -> Map(pcode -> barcode)
+
+  for (const row of rows) {
+    if (row.invDate && (row.invDate < weekStart || row.invDate > weekEnd)) {
+      outOfRange++;
+      continue;
+    }
+    const store = stores.find(s => s.id === row.outlet);
+    if (!store) {
+      unmatchedStoreSet.add(row.outlet);
+      continue;
+    }
+    if (!pcodeMapCache[store.scopeSlug]) {
+      const skuList = await loadSkuList(store.scopeSlug);
+      pcodeMapCache[store.scopeSlug] = new Map(skuList.filter(s => s.pcode).map(s => [s.pcode, s.barcode]));
+    }
+    const barcode = pcodeMapCache[store.scopeSlug].get(row.skuCode);
+    if (!barcode) {
+      nonWajibCount++;
+      continue;
+    }
+    if (!perStoreQty[store.id]) perStoreQty[store.id] = {};
+    perStoreQty[store.id][barcode] = (perStoreQty[store.id][barcode] || 0) + row.qty;
+  }
+
+  const matchedStoreNames = Object.keys(perStoreQty).map(id => (stores.find(s => s.id === id) || {}).name || id);
+  return { perStoreQty, outOfRange, unmatchedStores: [...unmatchedStoreSet], nonWajibCount, matchedStoreNames, totalRows: rows.length };
+}
+
+function onMasukFileSelected(e) {
+  const file = e.target.files[0];
+  if (!file) return;
+  el('masukParsePreview').textContent = 'Membaca file...';
+  el('masukSaveBtn').disabled = true;
+  const reader = new FileReader();
+  reader.onload = async (ev) => {
+    try {
+      const { rows, headerMissing } = parsePurchaseWorkbook(ev.target.result);
+      if (headerMissing) {
+        el('masukParsePreview').textContent = 'Format file tidak dikenali. Pastikan ada kolom Outlet, SKUCode, TotalQuantity(PCS).';
+        return;
+      }
+      const result = await processPurchaseRows(rows);
+      pendingMasukResult = result;
+      const skuCombos = Object.values(result.perStoreQty).reduce((n, m) => n + Object.keys(m).length, 0);
+      el('masukParsePreview').textContent = `${rows.length} baris dibaca. ${result.matchedStoreNames.length} toko terdeteksi, ${skuCombos} kombinasi toko+SKU siap disimpan.`;
+      let detail = '';
+      if (result.outOfRange > 0) detail += `<p class="upload-status">${result.outOfRange} baris di luar rentang ${currentWeek.label} diabaikan.</p>`;
+      if (result.unmatchedStores.length) detail += `<p class="upload-status">Kode outlet tidak dikenal (diabaikan): ${result.unmatchedStores.join(', ')}</p>`;
+      if (result.nonWajibCount > 0) detail += `<p class="upload-status">${result.nonWajibCount} baris di luar SKU wajib toko terkait diabaikan.</p>`;
+      if (result.matchedStoreNames.length) detail += `<p class="upload-status">Toko terdeteksi: ${result.matchedStoreNames.join(', ')}</p>`;
+      el('masukPreviewDetail').innerHTML = detail;
+      el('masukSaveBtn').disabled = result.matchedStoreNames.length === 0;
+    } catch (err) {
+      console.error(err);
+      el('masukParsePreview').textContent = 'Gagal membaca file. Pastikan formatnya sesuai.';
+    }
+  };
+  reader.readAsArrayBuffer(file);
+}
+
+async function onMasukSave() {
+  if (!pendingMasukResult) return;
+  const btn = el('masukSaveBtn');
+  btn.disabled = true;
+  btn.textContent = 'Menyimpan...';
+  const result = pendingMasukResult;
+  try {
+    const periodKey = currentWeek.periodKey;
+    const storeIds = Object.keys(result.perStoreQty);
+    await Promise.all(storeIds.map(storeId => {
+      const store = stores.find(s => s.id === storeId);
+      const items = {};
+      for (const [barcode, qty] of Object.entries(result.perStoreQty[storeId])) {
+        items[barcode] = { masuk: { karton: '0', lusin: '0', pcs: String(qty) } };
+      }
+      const ref = doc(db, 'entries', `${storeId}__${periodKey}`);
+      return setDoc(ref, {
+        storeId,
+        storeName: store ? store.name : storeId,
+        area: store ? store.area : null,
+        scopeSlug: store ? store.scopeSlug : null,
+        periodKey,
+        weekStart: currentWeek.start.toISOString(),
+        weekEnd: currentWeek.end.toISOString(),
+        items,
+        masukUpdatedAt: serverTimestamp()
+      }, { merge: true });
+    }));
+    showToast(`Barang masuk tersimpan untuk ${storeIds.length} toko, periode ${currentWeek.label}`, 'success');
+    // Coba hitung ulang Jual untuk minggu ini juga, sekarang Masuk-nya sudah ada
+    // (baru berhasil kalau stock minggu depannya juga sudah diisi).
+    Promise.all(storeIds.map(async storeId => {
+      const store = stores.find(s => s.id === storeId);
+      if (!store) return;
+      const skuList = await loadSkuList(store.scopeSlug);
+      return computeAndSaveJualForStorePeriod(storeId, currentWeek.start, skuList);
+    })).catch(err => console.error('Gagal hitung ulang Jual setelah upload Masuk:', err));
+    if (currentStore && result.perStoreQty[currentStore.id]) {
+      await loadEntryForCurrentPeriod();
+      renderAll();
+    }
+    pendingMasukResult = null;
+    el('masukFileInput').value = '';
+    el('masukParsePreview').textContent = '';
+    el('masukPreviewDetail').innerHTML = '';
+  } catch (err) {
+    console.error('Gagal menyimpan barang masuk:', err);
+    showToast('Gagal menyimpan. Cek koneksi internet lalu coba lagi.', 'danger');
+  } finally {
+    btn.textContent = 'Simpan ke database';
+    btn.disabled = !pendingMasukResult;
   }
 }
 

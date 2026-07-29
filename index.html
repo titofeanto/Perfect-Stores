@@ -57,10 +57,11 @@
     <div class="progress-track"><div id="progBar" class="progress-fill" style="width:0%"></div></div>
   </div>
 
-  <div class="tabs">
+  <div class="tabs tabs-4">
     <button id="tabInput" class="active">Input</button>
     <button id="tabRecap">Rekap<span id="recapBadge" class="tab-badge" style="display:none;"></span></button>
-    <button id="tabStock">Stock distributor</button>
+    <button id="tabStock">Stock dist.</button>
+    <button id="tabMasuk">Barang Masuk</button>
   </div>
 
   <div id="viewInput" class="view">
@@ -100,6 +101,18 @@
     </div>
   </div>
 
+  <div id="viewMasuk" class="view hidden">
+    <div class="card">
+      <p class="upload-status">Untuk Supervisor: upload data pembelian toko dari distributor (kolom yang dipakai: Outlet, SKUCode, TotalQuantity(PCS), INVDate). File boleh berisi 1 toko, 1 area, atau semua toko sekaligus.</p>
+      <p id="masukPeriodInfo" class="upload-status" style="font-weight:600; color:var(--text);"></p>
+      <label class="field-label" style="margin-top:10px;">Upload file pembelian</label>
+      <input id="masukFileInput" type="file" accept=".xlsx,.xls">
+      <p id="masukParsePreview" class="upload-status"></p>
+      <div id="masukPreviewDetail"></div>
+      <button id="masukSaveBtn" class="primary" style="margin-top:8px; width:100%;" disabled>Simpan ke database</button>
+    </div>
+  </div>
+
   <div id="modalBackdrop" class="modal-backdrop">
     <div class="modal-box">
       <h3>Data belum lengkap</h3>
@@ -127,6 +140,6 @@
 
 </div>
 <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
-<script type="module" src="js/app.js"></script>
+<script type="module" src="js/app.js?v=10"></script>
 </body>
 </html>
