@@ -26,13 +26,35 @@ let currentTab = 'input';
 
 const el = (id) => document.getElementById(id);
 
-function emptyEntryFor(barcode) {
-  return { stock: '', order: '', masuk: '', jual: '' };
+// Satu sub-field {karton, lusin, pcs} -> total pcs. 1 lusin selalu = 12 pcs.
+// Karton dikonversi pakai sku.isi (pcs per karton); kalau isi tidak diketahui, karton diabaikan (dan inputnya di-disable di UI).
+function fieldTotal(f, isi) {
+  const karton = f.karton === '' ? 0 : Number(f.karton) || 0;
+  const lusin = f.lusin === '' ? 0 : Number(f.lusin) || 0;
+  const pcs = f.pcs === '' ? 0 : Number(f.pcs) || 0;
+  return karton * (isi || 0) + lusin * 12 + pcs;
+}
+
+function fieldIsEmpty(f) {
+  return (!f.karton || f.karton === '') && (!f.lusin || f.lusin === '') && (!f.pcs || f.pcs === '');
+}
+
+// Data lama (sebelum fitur karton/lusin/pcs) tersimpan sebagai angka pcs polos.
+// Kalau ketemu format lama, dianggap sebagai isian "Pcs" supaya data yang sudah
+// masuk sebelumnya tidak hilang.
+function normalizeField(raw) {
+  if (raw && typeof raw === 'object' && ('karton' in raw || 'lusin' in raw || 'pcs' in raw)) {
+    return { karton: raw.karton ?? '', lusin: raw.lusin ?? '', pcs: raw.pcs ?? '' };
+  }
+  if (raw !== undefined && raw !== null && raw !== '') {
+    return { karton: '', lusin: '', pcs: String(raw) };
+  }
+  return { karton: '', lusin: '', pcs: '' };
 }
 
 function statusOf(item) {
-  const filled = FIELDS.filter(f => item[f] !== '' && item[f] !== undefined).length;
-  if (filled === 4) return 'lengkap';
+  const filled = FIELDS.filter(f => !fieldIsEmpty(item[f])).length;
+  if (filled === FIELDS.length) return 'lengkap';
   if (filled === 0) return 'kosong';
   return 'partial';
 }
@@ -43,7 +65,10 @@ function badgeHtml(sku, item) {
   if (s === 'lengkap') html += '<span class="badge lengkap">Lengkap</span>';
   else if (s === 'partial') html += '<span class="badge partial">Belum lengkap</span>';
   else html += '<span class="badge kosong">Belum diisi</span>';
-  if (String(item.stock) === '0') html += '<span class="badge stockzero">Tidak ada</span>';
+  if (!fieldIsEmpty(item.stock) && fieldTotal(item.stock, sku.isi) === 0) {
+    html += '<span class="badge stockzero">Tidak ada</span>';
+  }
+  if (s !== 'lengkap') html += '<div class="sku-warning">Kolom kosong akan tercatat 0 saat dikirim</div>';
   return html;
 }
 
@@ -170,7 +195,10 @@ async function loadEntryForCurrentPeriod() {
   const saved = snap.exists() ? (snap.data().items || {}) : {};
   currentEntry = {};
   for (const sku of currentSkuList) {
-    currentEntry[sku.barcode] = { ...emptyEntryFor(sku.barcode), ...(saved[sku.barcode] || {}) };
+    const savedItem = saved[sku.barcode] || {};
+    const entry = {};
+    for (const f of FIELDS) entry[f] = normalizeField(savedItem[f]);
+    currentEntry[sku.barcode] = entry;
   }
 }
 
@@ -180,6 +208,12 @@ function scheduleSaveField(barcode) {
 }
 
 async function saveField(barcode) {
+  const sku = currentSkuList.find(s => s.barcode === barcode);
+  const itemToSave = {};
+  for (const f of FIELDS) {
+    const fo = currentEntry[barcode][f];
+    itemToSave[f] = { karton: fo.karton, lusin: fo.lusin, pcs: fo.pcs, total: fieldTotal(fo, sku.isi) };
+  }
   const ref = doc(db, 'entries', currentEntryDocId);
   await setDoc(ref, {
     storeId: currentStore.id,
@@ -189,7 +223,7 @@ async function saveField(barcode) {
     periodKey: currentWeek.periodKey,
     weekStart: currentWeek.start.toISOString(),
     weekEnd: currentWeek.end.toISOString(),
-    items: { [barcode]: currentEntry[barcode] },
+    items: { [barcode]: itemToSave },
     updatedAt: serverTimestamp()
   }, { merge: true });
 }
@@ -199,7 +233,16 @@ async function submitAllZeroFilled() {
   for (const sku of currentSkuList) {
     const item = currentEntry[sku.barcode];
     const filled = {};
-    for (const f of FIELDS) filled[f] = item[f] === '' || item[f] === undefined ? 0 : item[f];
+    for (const f of FIELDS) {
+      const fo = item[f];
+      const normalized = {
+        karton: fo.karton === '' ? 0 : fo.karton,
+        lusin: fo.lusin === '' ? 0 : fo.lusin,
+        pcs: fo.pcs === '' ? 0 : fo.pcs
+      };
+      normalized.total = fieldTotal(normalized, sku.isi);
+      filled[f] = normalized;
+    }
     currentEntry[sku.barcode] = filled;
     itemsToSave[sku.barcode] = filled;
   }
@@ -288,44 +331,62 @@ function renderSkuList() {
 
   el('skuList').innerHTML = filtered.map(sku => {
     const item = currentEntry[sku.barcode];
-    const s = statusOf(item);
-    const warning = s !== 'lengkap'
-      ? '<div class="sku-warning">Kolom kosong akan tercatat 0 saat dikirim</div>' : '';
     let distHint = '';
     if (distStock && sku.pcode && distStock.items[sku.pcode]) {
       const d = distStock.items[sku.pcode];
       distHint = `<div class="sku-distributor">Stock distributor (${currentStore.area}): ${d.karton} karton, ${d.lusin} lusin, ${d.pcs} pcs</div>`;
     }
+    const isiNote = sku.isi
+      ? `<p class="sku-isi">1 karton = ${sku.isi} pcs &middot; 1 lusin = 12 pcs</p>`
+      : `<p class="sku-isi sku-isi-missing">Isi per karton tidak diketahui untuk SKU ini &mdash; gunakan Lusin/Pcs</p>`;
     return `
       <div class="sku-item">
         <p class="sku-name">${sku.name}</p>
         <p class="sku-code">${sku.barcode}${sku.pcode ? ' &middot; PC ' + sku.pcode : ''}</p>
-        <div>${badgeHtml(sku, item)}</div>
-        ${warning}
+        <div class="sku-badges">${badgeHtml(sku, item)}</div>
         ${distHint}
-        <div class="field-grid" style="margin-top:6px;">
-          ${FIELDS.map(f => `
-            <div>
-              <label class="field-label">${FIELD_LABELS[f]}</label>
-              <input type="number" min="0" data-barcode="${sku.barcode}" data-field="${f}" value="${item[f]}" placeholder="-">
-            </div>
-          `).join('')}
+        ${isiNote}
+        <div class="field-subheader">
+          <span>Karton</span><span>Lusin</span><span>Pcs</span>
+        </div>
+        <div class="field-list" style="margin-top:2px;">
+          ${FIELDS.map(f => {
+            const fo = item[f];
+            const total = fieldTotal(fo, sku.isi);
+            const kartonAttrs = sku.isi ? '' : 'disabled title="Isi per karton tidak diketahui untuk SKU ini"';
+            return `
+              <div class="field-row">
+                <div class="field-row-head">
+                  <label class="field-label">${FIELD_LABELS[f]}</label>
+                  <span class="field-total" data-total-for="${f}">= ${total} pcs</span>
+                </div>
+                <div class="field-subinputs">
+                  <input type="number" min="0" data-barcode="${sku.barcode}" data-field="${f}" data-sub="karton" value="${fo.karton}" placeholder="Krtn" ${kartonAttrs}>
+                  <input type="number" min="0" data-barcode="${sku.barcode}" data-field="${f}" data-sub="lusin" value="${fo.lusin}" placeholder="Lsn">
+                  <input type="number" min="0" data-barcode="${sku.barcode}" data-field="${f}" data-sub="pcs" value="${fo.pcs}" placeholder="Pcs">
+                </div>
+              </div>
+            `;
+          }).join('')}
         </div>
       </div>
     `;
   }).join('') || '<p class="upload-status">Tidak ada produk yang cocok.</p>';
 
-  el('skuList').querySelectorAll('input[type=number]').forEach(inp => {
+  el('skuList').querySelectorAll('.field-subinputs input[type=number]').forEach(inp => {
     inp.addEventListener('input', () => {
       const barcode = inp.dataset.barcode;
-      currentEntry[barcode][inp.dataset.field] = inp.value;
+      const field = inp.dataset.field;
+      const sub = inp.dataset.sub;
+      currentEntry[barcode][field][sub] = inp.value;
       scheduleSaveField(barcode);
       renderProgress();
       renderReminder();
-      // update just this item's badge/warning inline without full re-render for smoother typing
       const container = inp.closest('.sku-item');
       const sku = currentSkuList.find(s => s.barcode === barcode);
-      container.querySelector('div').outerHTML = badgeHtml(sku, currentEntry[barcode]);
+      container.querySelector('.sku-badges').innerHTML = badgeHtml(sku, currentEntry[barcode]);
+      const totalEl = container.querySelector(`[data-total-for="${field}"]`);
+      if (totalEl) totalEl.textContent = `= ${fieldTotal(currentEntry[barcode][field], sku.isi)} pcs`;
     });
   });
 }
@@ -334,7 +395,10 @@ function renderRecap() {
   const total = currentSkuList.length;
   const lengkap = currentSkuList.filter(sku => statusOf(currentEntry[sku.barcode]) === 'lengkap').length;
   const belum = total - lengkap;
-  const tidakAda = currentSkuList.filter(sku => String(currentEntry[sku.barcode].stock) === '0').length;
+  const tidakAda = currentSkuList.filter(sku => {
+    const stockField = currentEntry[sku.barcode].stock;
+    return !fieldIsEmpty(stockField) && fieldTotal(stockField, sku.isi) === 0;
+  }).length;
 
   let html = `
     <div class="metric-grid">
@@ -367,7 +431,7 @@ function onSubmitClick() {
   const missing = total - lengkap;
   const emptyFields = currentSkuList.reduce((n, sku) => {
     const item = currentEntry[sku.barcode];
-    return n + FIELDS.filter(f => item[f] === '' || item[f] === undefined).length;
+    return n + FIELDS.filter(f => fieldIsEmpty(item[f])).length;
   }, 0);
   if (missing > 0) {
     el('modalBody').textContent = `${missing} dari ${total} SKU wajib untuk ${currentWeek.label} belum lengkap, dengan total ${emptyFields} kolom kosong. Kolom kosong akan otomatis tercatat 0 jika Anda kirim sekarang.`;

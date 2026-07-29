@@ -225,6 +225,60 @@ button:active { transform: scale(0.98); }
   .field-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }
 
+.sku-isi {
+  font-size: 11px;
+  color: var(--text-muted);
+  margin: 2px 0 0;
+}
+.sku-isi-missing {
+  color: var(--warning);
+}
+
+.field-subheader {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 6px;
+  padding: 0 8px;
+  margin-top: 4px;
+}
+.field-subheader span {
+  font-size: 10px;
+  color: var(--text-muted);
+  text-align: center;
+}
+
+.field-list { display: flex; flex-direction: column; gap: 8px; }
+.field-row {
+  background: var(--surface-muted);
+  border-radius: var(--radius);
+  padding: 6px 8px;
+}
+.field-row-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 4px;
+}
+.field-row-head .field-label { margin: 0; }
+.field-total {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text);
+}
+.field-subinputs {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 6px;
+}
+.field-subinputs input {
+  text-align: center;
+  padding: 7px 4px;
+}
+.field-subinputs input:disabled {
+  background: var(--border);
+  color: var(--text-muted);
+}
+
 .metric-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
