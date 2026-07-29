@@ -1,0 +1,59 @@
+// Logic bersama untuk status kelengkapan SKU wajib -- dipakai oleh app.js (input per toko)
+// dan dashboard.js (rekap lintas toko), supaya definisi "lengkap/belum lengkap" selalu sama.
+
+export const FIELDS = ['stock', 'order', 'masuk', 'jual'];
+
+// Satu sub-field {karton, lusin, pcs} -> total pcs. 1 lusin selalu = 12 pcs.
+// Karton dikonversi pakai sku.isi (pcs per karton); kalau isi tidak diketahui, karton diabaikan.
+export function fieldTotal(f, isi) {
+  const karton = f.karton === '' || f.karton == null ? 0 : Number(f.karton) || 0;
+  const lusin = f.lusin === '' || f.lusin == null ? 0 : Number(f.lusin) || 0;
+  const pcs = f.pcs === '' || f.pcs == null ? 0 : Number(f.pcs) || 0;
+  return karton * (isi || 0) + lusin * 12 + pcs;
+}
+
+export function fieldIsEmpty(f) {
+  if (!f) return true;
+  return (!f.karton || f.karton === '') && (!f.lusin || f.lusin === '') && (!f.pcs || f.pcs === '');
+}
+
+// Data lama (sebelum fitur karton/lusin/pcs) tersimpan sebagai angka pcs polos.
+export function normalizeField(raw) {
+  if (raw && typeof raw === 'object' && ('karton' in raw || 'lusin' in raw || 'pcs' in raw)) {
+    return { karton: raw.karton ?? '', lusin: raw.lusin ?? '', pcs: raw.pcs ?? '' };
+  }
+  if (raw !== undefined && raw !== null && raw !== '') {
+    return { karton: '', lusin: '', pcs: String(raw) };
+  }
+  return { karton: '', lusin: '', pcs: '' };
+}
+
+export function statusOf(item) {
+  const filled = FIELDS.filter(f => !fieldIsEmpty(item[f])).length;
+  if (filled === FIELDS.length) return 'lengkap';
+  if (filled === 0) return 'kosong';
+  return 'partial';
+}
+
+// Ringkas 1 dokumen entry (hasil isian 1 toko utk 1 minggu) terhadap 1 daftar SKU wajib.
+// items: map {barcode: {stock,order,masuk,jual}} dari Firestore (bisa format lama/baru/kosong).
+// skuList: array SKU wajib toko itu (dari data/sku-*.json).
+export function summarizeEntry(items, skuList) {
+  items = items || {};
+  let lengkap = 0;
+  let tidakAda = 0;
+  for (const sku of skuList) {
+    const raw = items[sku.barcode] || {};
+    const entryItem = {};
+    for (const f of FIELDS) entryItem[f] = normalizeField(raw[f]);
+    if (statusOf(entryItem) === 'lengkap') lengkap++;
+    if (!fieldIsEmpty(entryItem.stock) && fieldTotal(entryItem.stock, sku.isi) === 0) tidakAda++;
+  }
+  return {
+    total: skuList.length,
+    lengkap,
+    belum: skuList.length - lengkap,
+    tidakAda,
+    pct: skuList.length ? Math.round((lengkap / skuList.length) * 100) : 0
+  };
+}

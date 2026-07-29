@@ -3,8 +3,8 @@ import { loadStores, loadSkuList, groupStoresByArea } from './store-data.js';
 import { getWeeksForMonth, findWeekContaining, fmtShort, MONTHS_ID } from './weeks.js';
 import { loadDistributorStock, parseDistributorWorkbook, saveDistributorStock } from './stock-upload.js';
 import { supportsNativeBarcodeDetector, startNativeScan, stopNativeScan, startFallbackScan, stopFallbackScan } from './barcode-scan.js';
+import { FIELDS, fieldTotal, fieldIsEmpty, normalizeField, statusOf } from './entry-utils.js';
 
-const FIELDS = ['stock', 'order', 'masuk', 'jual'];
 const FIELD_LABELS = { stock: 'Stock', order: 'Order', masuk: 'Masuk', jual: 'Jual' };
 const FLAG_LABELS = { 'COTC': 'COTC', 'MARKET MAKING': 'Market making', 'NPD': 'NPD' };
 const FLAG_CLASS = { 'COTC': 'flag-cotc', 'MARKET MAKING': 'flag-market', 'NPD': 'flag-npd' };
@@ -28,37 +28,7 @@ let currentTab = 'input';
 const el = (id) => document.getElementById(id);
 
 // Satu sub-field {karton, lusin, pcs} -> total pcs. 1 lusin selalu = 12 pcs.
-// Karton dikonversi pakai sku.isi (pcs per karton); kalau isi tidak diketahui, karton diabaikan (dan inputnya di-disable di UI).
-function fieldTotal(f, isi) {
-  const karton = f.karton === '' ? 0 : Number(f.karton) || 0;
-  const lusin = f.lusin === '' ? 0 : Number(f.lusin) || 0;
-  const pcs = f.pcs === '' ? 0 : Number(f.pcs) || 0;
-  return karton * (isi || 0) + lusin * 12 + pcs;
-}
-
-function fieldIsEmpty(f) {
-  return (!f.karton || f.karton === '') && (!f.lusin || f.lusin === '') && (!f.pcs || f.pcs === '');
-}
-
-// Data lama (sebelum fitur karton/lusin/pcs) tersimpan sebagai angka pcs polos.
-// Kalau ketemu format lama, dianggap sebagai isian "Pcs" supaya data yang sudah
-// masuk sebelumnya tidak hilang.
-function normalizeField(raw) {
-  if (raw && typeof raw === 'object' && ('karton' in raw || 'lusin' in raw || 'pcs' in raw)) {
-    return { karton: raw.karton ?? '', lusin: raw.lusin ?? '', pcs: raw.pcs ?? '' };
-  }
-  if (raw !== undefined && raw !== null && raw !== '') {
-    return { karton: '', lusin: '', pcs: String(raw) };
-  }
-  return { karton: '', lusin: '', pcs: '' };
-}
-
-function statusOf(item) {
-  const filled = FIELDS.filter(f => !fieldIsEmpty(item[f])).length;
-  if (filled === FIELDS.length) return 'lengkap';
-  if (filled === 0) return 'kosong';
-  return 'partial';
-}
+// (fieldTotal, fieldIsEmpty, normalizeField, statusOf sekarang diimpor dari entry-utils.js)
 
 function badgeHtml(sku, item) {
   const s = statusOf(item);
@@ -84,7 +54,40 @@ async function init() {
   populateMonthSelect();
   attachStaticHandlers();
 
-  await onAreaChange();
+  await applyUrlParamsAndLoad();
+}
+
+// Dashboard rekap lintas toko mengirim link seperti index.html?store=<id>&period=<YYYY-MM-DD>
+// supaya supervisor bisa klik "Buka" dan langsung diarahkan ke toko + minggu yang tepat.
+async function applyUrlParamsAndLoad() {
+  const params = new URLSearchParams(window.location.search);
+  const paramStore = params.get('store') ? stores.find(s => s.id === params.get('store')) : null;
+  const paramPeriod = params.get('period');
+
+  if (paramStore) {
+    el('areaSel').value = paramStore.area;
+    populateStoreSelect(paramStore.area);
+    el('storeSel').value = paramStore.id;
+  } else {
+    populateStoreSelect(el('areaSel').value);
+  }
+
+  if (paramPeriod) {
+    const periodDate = new Date(paramPeriod + 'T00:00:00');
+    if (!isNaN(periodDate)) {
+      const monthValue = `${periodDate.getFullYear()}-${periodDate.getMonth()}`;
+      if (![...el('monthSel').options].some(o => o.value === monthValue)) {
+        const opt = document.createElement('option');
+        opt.value = monthValue;
+        opt.textContent = `${MONTHS_ID[periodDate.getMonth()]} ${periodDate.getFullYear()}`;
+        el('monthSel').appendChild(opt);
+      }
+      el('monthSel').value = monthValue;
+    }
+  }
+
+  await onStoreChange(paramPeriod || undefined);
+  if (paramStore) showToast(`Dibuka dari dashboard: ${paramStore.name}`, 'success');
 }
 
 function populateAreaSelect() {
@@ -114,13 +117,15 @@ function populateMonthSelect() {
   el('monthSel').value = `${y}-${m}`;
 }
 
-function populateWeekSelect() {
+function populateWeekSelect(preferPeriodKey) {
   const [y, m] = el('monthSel').value.split('-').map(Number);
   currentWeeks = getWeeksForMonth(y, m);
   el('weekSel').innerHTML = currentWeeks
     .map((w, i) => `<option value="${i}">${w.label} (${fmtShort(w.start)} - ${fmtShort(w.end)})</option>`)
     .join('');
-  let idx = findWeekContaining(currentWeeks, TODAY);
+  let idx = -1;
+  if (preferPeriodKey) idx = currentWeeks.findIndex(w => w.periodKey === preferPeriodKey);
+  if (idx === -1) idx = findWeekContaining(currentWeeks, TODAY);
   if (idx === -1) idx = 0;
   el('weekSel').value = idx;
   currentWeek = currentWeeks[idx];
@@ -130,7 +135,7 @@ function populateWeekSelect() {
 
 function attachStaticHandlers() {
   el('areaSel').addEventListener('change', onAreaChange);
-  el('storeSel').addEventListener('change', onStoreChange);
+  el('storeSel').addEventListener('change', () => onStoreChange());
   el('monthSel').addEventListener('change', onPeriodChange);
   el('weekSel').addEventListener('change', onPeriodChange);
   el('searchBox').addEventListener('input', (e) => { searchText = e.target.value; renderSkuList(); });
@@ -155,13 +160,13 @@ async function onAreaChange() {
   await onStoreChange();
 }
 
-async function onStoreChange() {
+async function onStoreChange(preferPeriodKey) {
   const storeId = el('storeSel').value;
   currentStore = stores.find(s => s.id === storeId);
   if (!currentStore) return;
   el('scopeInfo').textContent = `Scope channel: ${currentStore.scopeChannel} (${currentStore.subChannel})`;
   currentSkuList = await loadSkuList(currentStore.scopeSlug);
-  populateWeekSelect();
+  populateWeekSelect(preferPeriodKey);
   await Promise.all([
     loadEntryForCurrentPeriod(),
     ensureDistributorStockLoaded(currentStore.area)

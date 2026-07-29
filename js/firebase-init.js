@@ -3,7 +3,7 @@
 import { firebaseConfig } from '../firebase-config.js';
 import { initializeApp } from 'https://www.gstatic.com/firebasejs/12.16.0/firebase-app.js';
 import {
-  getFirestore, doc, getDoc, setDoc, collection, serverTimestamp
+  getFirestore, doc, getDoc, setDoc, collection, serverTimestamp, query, where, getDocs
 } from 'https://www.gstatic.com/firebasejs/12.16.0/firebase-firestore.js';
 import {
   getAuth, signInAnonymously, onAuthStateChanged
@@ -23,4 +23,4 @@ export const authReady = new Promise((resolve, reject) => {
   });
 });
 
-export { doc, getDoc, setDoc, collection, serverTimestamp };
+export { doc, getDoc, setDoc, collection, serverTimestamp, query, where, getDocs };

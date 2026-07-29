@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dashboard Rekap - SBA COTC</title>
+<link rel="stylesheet" href="css/style.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tabler-icons/2.44.0/iconfont/tabler-icons.min.css">
+<style>
+  .app { max-width: 720px; }
+  table.recap-table { width: 100%; border-collapse: collapse; font-size: 12.5px; }
+  table.recap-table th, table.recap-table td { text-align: left; padding: 8px 6px; border-bottom: 1px solid var(--border); white-space: nowrap; }
+  table.recap-table th { color: var(--text-secondary); font-weight: 500; font-size: 11px; }
+  table.recap-table td.name-cell { white-space: normal; max-width: 160px; }
+  .table-wrap { overflow-x: auto; }
+  .status-pill { font-size: 11px; padding: 2px 8px; border-radius: 99px; white-space: nowrap; }
+  .status-pill.submitted { background: var(--success-bg); color: var(--success); }
+  .status-pill.progress { background: var(--warning-bg); color: var(--warning); }
+  .status-pill.notstarted { background: var(--surface-muted); color: var(--text-muted); }
+  .pct-bar-wrap { display: flex; align-items: center; gap: 6px; }
+  .pct-bar-track { width: 46px; height: 5px; background: var(--surface-muted); border-radius: 99px; overflow: hidden; }
+  .pct-bar-fill { height: 100%; background: var(--success); }
+  a.open-link { color: var(--accent); text-decoration: none; font-size: 12px; }
+  .area-subtitle { font-size: 12px; font-weight: 600; color: var(--text-secondary); margin: 14px 0 6px; }
+</style>
+</head>
+<body>
+<div class="app">
+
+  <header class="appbar">
+    <div style="display:flex; justify-content:space-between; align-items:center;">
+      <div>
+        <h1>Dashboard Rekap</h1>
+        <p>Rekap 36 toko - Sorong &amp; Timika</p>
+      </div>
+      <a href="index.html" style="font-size:12px; color:var(--accent); text-decoration:none;">&larr; Ke app input</a>
+    </div>
+  </header>
+
+  <div class="card">
+    <div class="row2">
+      <div>
+        <label class="field-label">Bulan</label>
+        <select id="monthSel"></select>
+      </div>
+      <div>
+        <label class="field-label">Minggu (Senin - Minggu)</label>
+        <select id="weekSel"></select>
+      </div>
+    </div>
+  </div>
+
+  <div id="loadingNote" class="upload-status">Memuat data...</div>
+
+  <div id="dashboardContent" style="display:none;">
+
+    <div class="metric-grid">
+      <div class="metric-card"><div class="label">Total toko</div><div class="value" id="mTotal">-</div></div>
+      <div class="metric-card"><div class="label">Sudah kirim</div><div class="value" id="mSubmitted">-</div></div>
+      <div class="metric-card"><div class="label">Belum kirim</div><div class="value" id="mNotSubmitted">-</div></div>
+      <div class="metric-card"><div class="label">Rata-rata kelengkapan</div><div class="value" id="mAvgPct">-</div></div>
+    </div>
+
+    <div class="card">
+      <p class="section-title" style="margin:0 0 8px;">Per area</p>
+      <div id="areaSummary"></div>
+    </div>
+
+    <div class="card">
+      <p class="section-title" style="margin:0 0 8px;">Semua toko (belum kirim &amp; belum lengkap ditampilkan lebih dulu)</p>
+      <div class="table-wrap">
+        <table class="recap-table">
+          <thead>
+            <tr>
+              <th>Toko</th>
+              <th>Area</th>
+              <th>Status</th>
+              <th>Lengkap</th>
+              <th>Tidak ada</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody id="recapTableBody"></tbody>
+        </table>
+      </div>
+    </div>
+
+  </div>
+
+</div>
+<script type="module" src="js/dashboard.js"></script>
+</body>
+</html>
