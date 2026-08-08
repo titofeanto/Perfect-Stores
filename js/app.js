@@ -802,7 +802,11 @@ function onMasukFileSelected(e) {
       el('masukParsePreview').textContent = `${rows.length} baris dibaca. ${result.matchedStoreNames.length} toko terdeteksi, ${skuCombos} kombinasi toko+SKU siap disimpan.`;
       let detail = '';
       if (result.outOfRange > 0) detail += `<p class="upload-status">${result.outOfRange} baris di luar rentang ${currentWeek.label} diabaikan.</p>`;
-      if (result.unmatchedStores.length) detail += `<p class="upload-status">Kode outlet tidak dikenal (diabaikan): ${result.unmatchedStores.join(', ')}</p>`;
+      if (result.unmatchedStores.length) {
+        const shown = result.unmatchedStores.slice(0, 8).join(', ');
+        const more = result.unmatchedStores.length > 8 ? ` &middot; dan ${result.unmatchedStores.length - 8} kode outlet lain (di luar 36 toko SBA COTC)` : '';
+        detail += `<p class="upload-status">${result.unmatchedStores.length} kode outlet tidak dikenal diabaikan: ${shown}${more}</p>`;
+      }
       if (result.nonWajibCount > 0) detail += `<p class="upload-status">${result.nonWajibCount} baris di luar SKU wajib toko terkait diabaikan.</p>`;
       if (result.matchedStoreNames.length) detail += `<p class="upload-status">Toko terdeteksi: ${result.matchedStoreNames.join(', ')}</p>`;
       el('masukPreviewDetail').innerHTML = detail;
@@ -821,9 +825,11 @@ async function onMasukSave() {
   btn.disabled = true;
   btn.textContent = 'Menyimpan...';
   const result = pendingMasukResult;
+  const periodKey = currentWeek.periodKey;
+  const storeIds = Object.keys(result.perStoreQty);
+
+  // Langkah 1: simpan ke Firestore. INI SATU-SATUNYA yang menentukan toast sukses/gagal.
   try {
-    const periodKey = currentWeek.periodKey;
-    const storeIds = Object.keys(result.perStoreQty);
     await Promise.all(storeIds.map(storeId => {
       const store = stores.find(s => s.id === storeId);
       const items = {};
@@ -843,29 +849,39 @@ async function onMasukSave() {
         masukUpdatedAt: serverTimestamp()
       }, { merge: true });
     }));
-    showToast(`Barang masuk tersimpan untuk ${storeIds.length} toko, periode ${currentWeek.label}`, 'success');
-    // Coba hitung ulang Jual untuk minggu ini juga, sekarang Masuk-nya sudah ada
-    // (baru berhasil kalau stock minggu depannya juga sudah diisi).
-    Promise.all(storeIds.map(async storeId => {
-      const store = stores.find(s => s.id === storeId);
-      if (!store) return;
-      const skuList = await loadSkuList(store.scopeSlug);
-      return computeAndSaveJualForStorePeriod(storeId, currentWeek.start, skuList);
-    })).catch(err => console.error('Gagal hitung ulang Jual setelah upload Masuk:', err));
-    if (currentStore && result.perStoreQty[currentStore.id]) {
-      await loadEntryForCurrentPeriod();
-      renderAll();
-    }
-    pendingMasukResult = null;
-    el('masukFileInput').value = '';
-    el('masukParsePreview').textContent = '';
-    el('masukPreviewDetail').innerHTML = '';
   } catch (err) {
     console.error('Gagal menyimpan barang masuk:', err);
-    showToast('Gagal menyimpan. Cek koneksi internet lalu coba lagi.', 'danger');
-  } finally {
+    showToast(`Gagal menyimpan (${err.code || err.message || 'error tidak diketahui'}). Cek koneksi internet lalu coba lagi.`, 'danger');
     btn.textContent = 'Simpan ke database';
-    btn.disabled = !pendingMasukResult;
+    btn.disabled = false;
+    return;
+  }
+
+  showToast(`Barang masuk tersimpan untuk ${storeIds.length} toko, periode ${currentWeek.label}`, 'success');
+  pendingMasukResult = null;
+  el('masukFileInput').value = '';
+  el('masukParsePreview').textContent = '';
+  el('masukPreviewDetail').innerHTML = '';
+  btn.textContent = 'Simpan ke database';
+  btn.disabled = true;
+
+  // Langkah 2: hitung ulang Jual (best-effort, tidak boleh mengubah toast di atas kalau gagal)
+  Promise.all(storeIds.map(async storeId => {
+    const store = stores.find(s => s.id === storeId);
+    if (!store) return;
+    const skuList = await loadSkuList(store.scopeSlug);
+    return computeAndSaveJualForStorePeriod(storeId, currentWeek.start, skuList);
+  })).catch(err => console.error('Gagal hitung ulang Jual setelah upload Masuk:', err));
+
+  // Langkah 3: refresh tampilan toko yang sedang dibuka, kalau termasuk yang baru diupdate
+  // (best-effort juga -- data sudah AMAN tersimpan di langkah 1, ini cuma soal tampilan).
+  if (currentStore && result.perStoreQty[currentStore.id]) {
+    try {
+      await loadEntryForCurrentPeriod();
+      renderAll();
+    } catch (err) {
+      console.error('Data tersimpan, tapi gagal me-refresh tampilan:', err);
+    }
   }
 }
 
