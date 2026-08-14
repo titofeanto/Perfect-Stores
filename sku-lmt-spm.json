@@ -1,0 +1,1409 @@
+[
+  {
+    "barcode": "8999999026400",
+    "pcode": "64840063",
+    "isi": 12,
+    "name": "DOVE DEEPLY NOURISH PUMP RL 6X2X550ML",
+    "flag": "MARKET MAKING"
+  },
+  {
+    "barcode": "8999999035273",
+    "pcode": "69965241",
+    "isi": 24,
+    "name": "VASELINE HB SPF30 PPF VIT SRM 8X3X180ML",
+    "flag": "MARKET MAKING"
+  },
+  {
+    "barcode": "8999999559588",
+    "pcode": "69794123",
+    "isi": 12,
+    "name": "VASELINE HB SOFT GLOW VIT SRM 2X6X180ML",
+    "flag": "MARKET MAKING"
+  },
+  {
+    "barcode": "8999999598068",
+    "pcode": "65085559",
+    "isi": 12,
+    "name": "VIXAL KUAT SEGAR BKC PCH 12X600ML",
+    "flag": "MARKET MAKING"
+  },
+  {
+    "barcode": "8999999602932",
+    "pcode": "65491674",
+    "isi": 12,
+    "name": "VASELINE GH SPF 50 VCT SERUM 2X6X200ML",
+    "flag": "MARKET MAKING"
+  },
+  {
+    "barcode": "8999999606817",
+    "pcode": "64807523",
+    "isi": 12,
+    "name": "DOVE PAMPERING CARE PCH 12X800ML",
+    "flag": "MARKET MAKING"
+  },
+  {
+    "barcode": "8999999606824",
+    "pcode": "64807525",
+    "isi": 24,
+    "name": "DOVE SENSITIVE PCH 24X400ML",
+    "flag": "MARKET MAKING"
+  },
+  {
+    "barcode": "8999999606831",
+    "pcode": "64807527",
+    "isi": 24,
+    "name": "DOVE SERUM BODY WASH PAMPERING CARE 400 ML",
+    "flag": "MARKET MAKING"
+  },
+  {
+    "barcode": "8999999609467",
+    "pcode": "64872226",
+    "isi": 36,
+    "name": "CLOSE UP WHITE NOW PURPLE 36X95G",
+    "flag": "MARKET MAKING"
+  },
+  {
+    "barcode": "8999999609474",
+    "pcode": "64872228",
+    "isi": 36,
+    "name": "CLOSE UP WHITE NOW KAOLIN 36X95G",
+    "flag": "MARKET MAKING"
+  },
+  {
+    "barcode": "8999999613518",
+    "pcode": "64980518",
+    "isi": 12,
+    "name": "RINSO PURE LIQD 12X700G",
+    "flag": "MARKET MAKING"
+  },
+  {
+    "barcode": "8999999613747",
+    "pcode": "64986424",
+    "isi": 12,
+    "name": "MOLTO PEWANGI GENTLE FRESH (12X765ML)",
+    "flag": "MARKET MAKING"
+  },
+  {
+    "barcode": "8999999614171",
+    "pcode": "65680827",
+    "isi": 72,
+    "name": "ROYCO BUMBU RENDANG 12X(6X45G)",
+    "flag": "MARKET MAKING"
+  },
+  {
+    "barcode": "8999999614188",
+    "pcode": "65680815",
+    "isi": 72,
+    "name": "ROYCO BUMBU OPOR 12X(6X45G)",
+    "flag": "MARKET MAKING"
+  },
+  {
+    "barcode": "8999999614195",
+    "pcode": "65680821",
+    "isi": 72,
+    "name": "ROYCO BUMBU SOTO 12X(6X40G)",
+    "flag": "MARKET MAKING"
+  },
+  {
+    "barcode": "8999999614294",
+    "pcode": "65073502",
+    "isi": 36,
+    "name": "PEPSODENT ULTRA WHITE FRESH 36X90G",
+    "flag": "MARKET MAKING"
+  },
+  {
+    "barcode": "8999999614300",
+    "pcode": "65073495",
+    "isi": 36,
+    "name": "PEPSODENT ULTRA WHITE ULTIMATE 36X90G",
+    "flag": "MARKET MAKING"
+  },
+  {
+    "barcode": "8999999614454",
+    "pcode": "65081675",
+    "isi": 6,
+    "name": "RINSO PURE PWD 6X1440G",
+    "flag": "MARKET MAKING"
+  },
+  {
+    "barcode": "8999999615482",
+    "pcode": "65244762",
+    "isi": 12,
+    "name": "SUNLIGHT LIME WKB BOTTLE  12X675 GR",
+    "flag": "MARKET MAKING"
+  },
+  {
+    "barcode": "8999999615604",
+    "pcode": "65245518",
+    "isi": 12,
+    "name": "REXONA MEN AE ARCTIC SEA 12X150ML",
+    "flag": "MARKET MAKING"
+  },
+  {
+    "barcode": "8999999615611",
+    "pcode": "65245522",
+    "isi": 12,
+    "name": "REXONA WMN AE FRZN ENGLISH PEAR 12X150ML",
+    "flag": "MARKET MAKING"
+  },
+  {
+    "barcode": "8999999615772",
+    "pcode": "65250887",
+    "isi": 48,
+    "name": "BANGO KECAP ASIN BTL 48X132ML",
+    "flag": "NPD"
+  },
+  {
+    "barcode": "8999999616397",
+    "pcode": "65445203",
+    "isi": 12,
+    "name": "SUNLIGHT BERRY & LIME DT BTL12X675GR",
+    "flag": "NPD"
+  },
+  {
+    "barcode": "8999999616649",
+    "pcode": "66304132",
+    "isi": 36,
+    "name": "CLEAR MEN ULTRA SH HAIRFLL CTRL 36X160ML",
+    "flag": "NPD"
+  },
+  {
+    "barcode": "8999999616670",
+    "pcode": "66304142",
+    "isi": 36,
+    "name": "CLEAR MEN ULTRA SH OIL CONTROL 36X160ML",
+    "flag": "MARKET MAKING"
+  },
+  {
+    "barcode": "8999999616779",
+    "pcode": "65472649",
+    "isi": 36,
+    "name": "LIFEBUOY SH ANTIKTMB COOLBLAST 36X170ML",
+    "flag": "NPD"
+  },
+  {
+    "barcode": "9300830020218",
+    "pcode": "64915109",
+    "isi": 12,
+    "name": "REXONA WMN AP SHWR CLN BRT 72H 2X6X135ML",
+    "flag": "MARKET MAKING"
+  },
+  {
+    "barcode": "9300830023493",
+    "pcode": "69621052",
+    "isi": 12,
+    "name": "REXONA MEN APA ICE COOL 2X6X150ML",
+    "flag": "MARKET MAKING"
+  },
+  {
+    "barcode": "9300830025831",
+    "pcode": "69621939",
+    "isi": 12,
+    "name": "REXONA MEN APA INVIS DRY FIFA 2X6X135ML",
+    "flag": "MARKET MAKING"
+  },
+  {
+    "barcode": "9300830047086",
+    "pcode": "69664183",
+    "isi": 12,
+    "name": "DOVE AP ULT REPAIR LILY STCKR 2X6X135ML",
+    "flag": "MARKET MAKING"
+  },
+  {
+    "barcode": "9556126670661",
+    "pcode": "65486854",
+    "isi": 12,
+    "name": "VASELINE GH DEWY VCT SERUM 4X3X330ML",
+    "flag": "COTC"
+  },
+  {
+    "barcode": "8999999612214",
+    "pcode": "64939438",
+    "isi": 36,
+    "name": "SUNSILK SHP ANT DDRF SILKY 36X160ML",
+    "flag": "COTC"
+  },
+  {
+    "barcode": "8999999612344",
+    "pcode": "64947124",
+    "isi": 24,
+    "name": "DOVE SHP BIOTIN AHL KERINGSEHAT 24X155ML",
+    "flag": "COTC"
+  },
+  {
+    "barcode": "8999999612351",
+    "pcode": "64947131",
+    "isi": 24,
+    "name": "DOVE SHP NIACINAMIDE AHL KTMBE 24X155ML",
+    "flag": "COTC"
+  },
+  {
+    "barcode": "8999999613013",
+    "pcode": "64960795",
+    "isi": 12,
+    "name": "DOVE CON BIOTIN AHL KERINGSEHAT 12X290ML",
+    "flag": "COTC"
+  },
+  {
+    "barcode": "8999999059903",
+    "pcode": "69993013",
+    "isi": 36,
+    "name": "PONDS AGE MIR FM DAY CREAM UY 12X3X9G",
+    "flag": "COTC"
+  },
+  {
+    "barcode": "8999999605889",
+    "pcode": "64781848",
+    "isi": 12,
+    "name": "CITRA HBL BENGKOANG PERFECT UV 12X380ML",
+    "flag": "COTC"
+  },
+  {
+    "barcode": "8999999605940",
+    "pcode": "64781782",
+    "isi": 24,
+    "name": "CITRA HBL BENGKOANG PERFECT UV 24X210ML",
+    "flag": "COTC"
+  },
+  {
+    "barcode": "8999999605995",
+    "pcode": "64784526",
+    "isi": 24,
+    "name": "CITRA HBL PEARLY RADIANT UV 24X210ML",
+    "flag": "COTC"
+  },
+  {
+    "barcode": "8999999612054",
+    "pcode": "64939351",
+    "isi": 36,
+    "name": "SUNSILK SHP GLOSSYBLACK 36X160ML",
+    "flag": "COTC"
+  },
+  {
+    "barcode": "8999999612139",
+    "pcode": "64939387",
+    "isi": 36,
+    "name": "SUNSILK SHP SILKYSMOOTH 36X160ML",
+    "flag": "COTC"
+  },
+  {
+    "barcode": "8999999612061",
+    "pcode": "64939355",
+    "isi": 18,
+    "name": "SUNSILK SHP GLOSSYBLACK 18X320ML",
+    "flag": "COTC"
+  },
+  {
+    "barcode": "8999999613143",
+    "pcode": "64968093",
+    "isi": 36,
+    "name": "LIFEBUOY SH ANTIKTMB 36X170ML",
+    "flag": "COTC"
+  },
+  {
+    "barcode": "8999999526405",
+    "pcode": "64306118",
+    "isi": 18,
+    "name": "TRESEMME SHP KS KERATIN SMOOTH 18X170ML",
+    "flag": "COTC"
+  },
+  {
+    "barcode": "8999999529734",
+    "pcode": "64880614",
+    "isi": 36,
+    "name": "CLEAR SHP ICM MENTHOL SEGAR NEW 36X160ML",
+    "flag": "COTC"
+  },
+  {
+    "barcode": "8999999613174",
+    "pcode": "64968109",
+    "isi": 36,
+    "name": "LIFEBUOY SH KUATBERKILAU 36X170ML",
+    "flag": "COTC"
+  },
+  {
+    "barcode": "8999999566654",
+    "pcode": "64825645",
+    "isi": 24,
+    "name": "GLOW & LOVELY BRIGHT C GLOW 4X6X100G",
+    "flag": "COTC"
+  },
+  {
+    "barcode": "8999999566647",
+    "pcode": "64825646",
+    "isi": 24,
+    "name": "GLOW & LOVELY BRIGHT C GLOW 4X6X50G",
+    "flag": "COTC"
+  },
+  {
+    "barcode": "8999999007799",
+    "pcode": "62759353",
+    "isi": 24,
+    "name": "GLOW & LOVELY MVIT DERMA CREAM 24X46G",
+    "flag": "COTC"
+  },
+  {
+    "barcode": "8999999007782",
+    "pcode": "62759351",
+    "isi": 48,
+    "name": "GLOW & LOVELY MVIT DERMA CREAM 48X23G",
+    "flag": "COTC"
+  },
+  {
+    "barcode": "8999999055776",
+    "pcode": "64297849",
+    "isi": 24,
+    "name": "GLOW & LOVELY MVIT DERMA FF 4X6X100G",
+    "flag": "COTC"
+  },
+  {
+    "barcode": "8999999055769",
+    "pcode": "64297850",
+    "isi": 24,
+    "name": "GLOW & LOVELY MVIT DERMA FF 4X6X50G",
+    "flag": "COTC"
+  },
+  {
+    "barcode": "8999999589417",
+    "pcode": "64835146",
+    "isi": 24,
+    "name": "GLOW & LOVELY SUN UV SPF35 VITC 24X40G",
+    "flag": "COTC"
+  },
+  {
+    "barcode": "8999999589400",
+    "pcode": "64835147",
+    "isi": 48,
+    "name": "GLOW & LOVELY SUN UV SPF35 VITC 48X20G",
+    "flag": "COTC"
+  },
+  {
+    "barcode": "8999999048501",
+    "pcode": "65434864",
+    "isi": 36,
+    "name": "SUNSILK SHP COOL MENTHOL AD 36X160ML",
+    "flag": "COTC"
+  },
+  {
+    "barcode": "8999999529741",
+    "pcode": "64880610",
+    "isi": 18,
+    "name": "CLEAR SHP ICM MENTHOL SEGAR NEW 18X300ML",
+    "flag": "COTC"
+  },
+  {
+    "barcode": "8999999529628",
+    "pcode": "64880609",
+    "isi": 36,
+    "name": "CLEAR SHP CSC PRWTN KOMPLIT NEW 36X160ML",
+    "flag": "COTC"
+  },
+  {
+    "barcode": "8999999613198",
+    "pcode": "64968149",
+    "isi": 18,
+    "name": "LIFEBUOY SH ANTIKTMB 18X340ML",
+    "flag": "COTC"
+  },
+  {
+    "barcode": "8999999526399",
+    "pcode": "64308956",
+    "isi": 12,
+    "name": "TRESEMME SHP KS KERATIN SMOOTH 12X340ML",
+    "flag": "COTC"
+  },
+  {
+    "barcode": "8999999612290",
+    "pcode": "64939523",
+    "isi": 36,
+    "name": "SUNSILK CON SILKYSMOOTH 12X160ML",
+    "flag": "COTC"
+  },
+  {
+    "barcode": "8999999529635",
+    "pcode": "64880608",
+    "isi": 18,
+    "name": "CLEAR SHP CSC PRWTN KOMPLIT NEW 18X300ML",
+    "flag": "COTC"
+  },
+  {
+    "barcode": "8999999613228",
+    "pcode": "64968164",
+    "isi": 18,
+    "name": "LIFEBUOY SH KUATBERKILAU 18X340ML",
+    "flag": "COTC"
+  },
+  {
+    "barcode": "8999999059934",
+    "pcode": "69993021",
+    "isi": 36,
+    "name": "PONDS AGE MIR FM NIGHT CREAM UY 12X3X9G",
+    "flag": "COTC"
+  },
+  {
+    "barcode": "8999999053048",
+    "pcode": "69989686",
+    "isi": 24,
+    "name": "PONDS BRIGHT MIR FC FOAM DTOXX 4X6X100G",
+    "flag": "COTC"
+  },
+  {
+    "barcode": "8999999053031",
+    "pcode": "69989680",
+    "isi": 24,
+    "name": "PONDS BRIGHT MIR FC FOAM UC 4X6X100G",
+    "flag": "COTC"
+  },
+  {
+    "barcode": "8999999052959",
+    "pcode": "69989683",
+    "isi": 24,
+    "name": "PONDS BRIGHT MIR FC FOAM UC 4X6X50G",
+    "flag": "COTC"
+  },
+  {
+    "barcode": "8999999562182",
+    "pcode": "69989733",
+    "isi": 24,
+    "name": "PONDS BRIGHT MIR FC WHIP UC 4X6X100G",
+    "flag": "COTC"
+  },
+  {
+    "barcode": "8999999056858",
+    "pcode": "69989485",
+    "isi": 24,
+    "name": "PONDS BRIGHT MIR FM CREAM U CLAR 24X40G",
+    "flag": "COTC"
+  },
+  {
+    "barcode": "8999999056841",
+    "pcode": "69989416",
+    "isi": 48,
+    "name": "PONDS BRIGHT MIR FM CREAM U CLAR 48X20G",
+    "flag": "COTC"
+  },
+  {
+    "barcode": "8999999034733",
+    "pcode": "64858949",
+    "isi": 24,
+    "name": "PONDS MEN BRIGHT ADS SCRUB 24X100G",
+    "flag": "COTC"
+  },
+  {
+    "barcode": "8999999613129",
+    "pcode": "64968079",
+    "isi": 48,
+    "name": "LIFEBUOY SH KUATBERKILAU 48X(70+20)ML",
+    "flag": "COTC"
+  },
+  {
+    "barcode": "8999999506520",
+    "pcode": "65434869",
+    "isi": 18,
+    "name": "SUNSILK SHP COOL MENTHOL AD 18X300ML",
+    "flag": "COTC"
+  },
+  {
+    "barcode": "8999999526467",
+    "pcode": "65069630",
+    "isi": 18,
+    "name": "TRESEMME SHP AD SCALP CARE NF 18X170ML",
+    "flag": "COTC"
+  },
+  {
+    "barcode": "8999999526382",
+    "pcode": "64306484",
+    "isi": 18,
+    "name": "TRESEMME CON KS KERATIN SMOOTH 18X170ML",
+    "flag": "COTC"
+  },
+  {
+    "barcode": "8999999560423",
+    "pcode": "65427393",
+    "isi": 24,
+    "name": "DOVE SUPER SHAMPOO 24X135ML",
+    "flag": "COTC"
+  },
+  {
+    "barcode": "8999999613167",
+    "pcode": "64968104",
+    "isi": 36,
+    "name": "LIFEBUOY SH ANTIKTMB MENTHOL 36X170ML",
+    "flag": "COTC"
+  },
+  {
+    "barcode": "8999999595463",
+    "pcode": "64901842",
+    "isi": 36,
+    "name": "CLEAR SHP ANTI KTMB & RNTK NEW 36X160ML",
+    "flag": "COTC"
+  },
+  {
+    "barcode": "8999999526344",
+    "pcode": "64306114",
+    "isi": 18,
+    "name": "TRESEMME SHP HF BOND REPAIR 18X170ML",
+    "flag": "COTC"
+  },
+  {
+    "barcode": "9556126670654",
+    "pcode": "64398227",
+    "isi": 12,
+    "name": "VASELINE GH FLAWLESS VCT SERUM 4X3X330ML",
+    "flag": "COTC"
+  },
+  {
+    "barcode": "8999999590055",
+    "pcode": "64398224",
+    "isi": 12,
+    "name": "VASELINE GH OVRNGHT VCT SERUM 4X3X330 ML",
+    "flag": "COTC"
+  },
+  {
+    "barcode": "8999999581947",
+    "pcode": "65486851",
+    "isi": 12,
+    "name": "VASELINE GH DEWY VCT SERUM 2X6X200ML",
+    "flag": "COTC"
+  },
+  {
+    "barcode": "8999999003043",
+    "pcode": "68826565",
+    "isi": 18,
+    "name": "VASELINE HBRIGHT SPF24 VNC 18X200ML",
+    "flag": "COTC"
+  },
+  {
+    "barcode": "8999999502942",
+    "pcode": "64346401",
+    "isi": 12,
+    "name": "VASELINE REPAIRING JELLY PJ TH 12X50ML",
+    "flag": "COTC"
+  },
+  {
+    "barcode": "8999999719401",
+    "pcode": "68826582",
+    "isi": 12,
+    "name": "VASELINE UV EXT BRIGHTENING VNC 12X400ML",
+    "flag": "COTC"
+  },
+  {
+    "barcode": "8999999719418",
+    "pcode": "68826561",
+    "isi": 18,
+    "name": "VASELINE UV EXT BRIGHTENING VNC 18X200ML",
+    "flag": "COTC"
+  },
+  {
+    "barcode": "8998009020186",
+    "pcode": "65232502",
+    "isi": 24,
+    "name": "BUAVITA GUAVA RL3 24X245ML",
+    "flag": "COTC"
+  },
+  {
+    "barcode": "8998009020193",
+    "pcode": "69980451",
+    "isi": 24,
+    "name": "BUAVITA MANGO RL 24X245ML",
+    "flag": "COTC"
+  },
+  {
+    "barcode": "8999999055714",
+    "pcode": "64354584",
+    "isi": 12,
+    "name": "BUAVITA GUAVA WD NEW R2 12X1000ML",
+    "flag": "COTC"
+  },
+  {
+    "barcode": "8998009020179",
+    "pcode": "69980449",
+    "isi": 24,
+    "name": "BUAVITA ORANGE RL 24X245ML",
+    "flag": "COTC"
+  },
+  {
+    "barcode": "8999999055721",
+    "pcode": "64386245",
+    "isi": 12,
+    "name": "BUAVITA MANGO RL2 12X1000ML",
+    "flag": "COTC"
+  },
+  {
+    "barcode": "8999999516208",
+    "pcode": "64873191",
+    "isi": 24,
+    "name": "ROYCO FDS CHICKEN RL3 24X220G",
+    "flag": "COTC"
+  },
+  {
+    "barcode": "8999999516215",
+    "pcode": "64873190",
+    "isi": 24,
+    "name": "ROYCO BEEF RL2 24X220G",
+    "flag": "COTC"
+  },
+  {
+    "barcode": "8999999192150",
+    "pcode": "64873192",
+    "isi": 36,
+    "name": "ROYCO FDS CHICKEN RL3 36X94G",
+    "flag": "COTC"
+  },
+  {
+    "barcode": "8999999192198",
+    "pcode": "64873198",
+    "isi": 36,
+    "name": "ROYCO FDS BEEF RL2 36X94G",
+    "flag": "COTC"
+  },
+  {
+    "barcode": "8999999576950",
+    "pcode": "68721983",
+    "isi": 24,
+    "name": "ROYCO SAUS TIRAM 24X275ML",
+    "flag": "COTC"
+  },
+  {
+    "barcode": "8999999100506",
+    "pcode": "64972453",
+    "isi": 12,
+    "name": "BANGO MANIS RLV2 12X700G",
+    "flag": "COTC"
+  },
+  {
+    "barcode": "8999999002503",
+    "pcode": "64838903",
+    "isi": 24,
+    "name": "BANGO MANIS RL2 BTL 24X385G",
+    "flag": "COTC"
+  },
+  {
+    "barcode": "8990121011073",
+    "pcode": "64838904",
+    "isi": 48,
+    "name": "BANGO MANIS RL2 BTL 48X189G",
+    "flag": "COTC"
+  },
+  {
+    "barcode": "8999999578282",
+    "pcode": "64972461",
+    "isi": 6,
+    "name": "BANGO MANIS RLV2 6X950G",
+    "flag": "COTC"
+  },
+  {
+    "barcode": "8999999617615",
+    "pcode": "66302730",
+    "isi": 12,
+    "name": "SUNLIGHT LIME D4C WKB POUCH 12X610GR",
+    "flag": "COTC"
+  },
+  {
+    "barcode": "8999999008475",
+    "pcode": "64827400",
+    "isi": 6,
+    "name": "SUNLIGHT LIME WKB PCH 6X1500GR",
+    "flag": "COTC"
+  },
+  {
+    "barcode": "8999999592448",
+    "pcode": "64935710",
+    "isi": 12,
+    "name": "SUNLIGHT EXTRA LEMBUT PCH 12X600G",
+    "flag": "COTC"
+  },
+  {
+    "barcode": "8999999585259",
+    "pcode": "64924201",
+    "isi": 12,
+    "name": "SUNLIGHT KOREAN STRAWBERRY PCH 12X600G",
+    "flag": "COTC"
+  },
+  {
+    "barcode": "8999999589219",
+    "pcode": "65465996",
+    "isi": 12,
+    "name": "SUNLIGHT ANTI BAU POUCH 12X600G",
+    "flag": "COTC"
+  },
+  {
+    "barcode": "8999999588199",
+    "pcode": "64924065",
+    "isi": 6,
+    "name": "LIFEBUOY DWL BOTANITECH POUCH 6X1500G",
+    "flag": "COTC"
+  },
+  {
+    "barcode": "8999999588182",
+    "pcode": "64924053",
+    "isi": 12,
+    "name": "LIFEBUOY PENCUCI PIRING+SPONGE 12X650ML",
+    "flag": "COTC"
+  },
+  {
+    "barcode": "8999999589202",
+    "pcode": "64924024",
+    "isi": 12,
+    "name": "SUNLIGHT POWER HIGIENIS POUCH 12X600G",
+    "flag": "COTC"
+  },
+  {
+    "barcode": "8999999603052",
+    "pcode": "65696770",
+    "isi": 12,
+    "name": "LIFEBUOY DWL LEMON POUCH 12X660G",
+    "flag": "COTC"
+  },
+  {
+    "barcode": "8999999045265",
+    "pcode": "65087925",
+    "isi": 12,
+    "name": "RINSO ROSE FRESH PWD 12X720G",
+    "flag": "COTC"
+  },
+  {
+    "barcode": "8999999041731",
+    "pcode": "64884247",
+    "isi": 6,
+    "name": "RINSO MATIC LIQ FRONT LOAD NEW 6X1.45KG",
+    "flag": "COTC"
+  },
+  {
+    "barcode": "8999999614447",
+    "pcode": "65081669",
+    "isi": 6,
+    "name": "RINSO ROSE FRESH PWD 6X1440G",
+    "flag": "COTC"
+  },
+  {
+    "barcode": "8999999561598",
+    "pcode": "64956555",
+    "isi": 6,
+    "name": "RINSO ROSE FRESH LIQUID 6X1.5KG",
+    "flag": "COTC"
+  },
+  {
+    "barcode": "8999999553302",
+    "pcode": "64956561",
+    "isi": 6,
+    "name": "RINSO PERFUME ESSENCE LIQUID 6X1.5KG",
+    "flag": "COTC"
+  },
+  {
+    "barcode": "8999999401238",
+    "pcode": "65087929",
+    "isi": 12,
+    "name": "RINSO CLASSIC FRESH PWD 12X720G",
+    "flag": "COTC"
+  },
+  {
+    "barcode": "8999999614430",
+    "pcode": "65081663",
+    "isi": 6,
+    "name": "RINSO PERFUME ESSENCE PWD 6X1440G",
+    "flag": "COTC"
+  },
+  {
+    "barcode": "8999999518998",
+    "pcode": "65087926",
+    "isi": 12,
+    "name": "RINSO PERFUME ESSENCE PWD 12X720G",
+    "flag": "COTC"
+  },
+  {
+    "barcode": "8999999016128",
+    "pcode": "64956517",
+    "isi": 12,
+    "name": "RINSO ROSE FRESH LIQUID 12X700G",
+    "flag": "COTC"
+  },
+  {
+    "barcode": "8999999041755",
+    "pcode": "64884248",
+    "isi": 6,
+    "name": "RINSO MATIC LIQ TOP LOAD NEW 6X1.45KG",
+    "flag": "COTC"
+  },
+  {
+    "barcode": "8999999603731",
+    "pcode": "65087924",
+    "isi": 6,
+    "name": "RINSO JAPANESE PEACH PWD 6X1.5KG",
+    "flag": "COTC"
+  },
+  {
+    "barcode": "8999999603724",
+    "pcode": "65087922",
+    "isi": 6,
+    "name": "RINSO KOR STRAWBERRY PWD 6X1.5KG",
+    "flag": "COTC"
+  },
+  {
+    "barcode": "8999999553135",
+    "pcode": "68806216",
+    "isi": 6,
+    "name": "RINSO MATIC PWD FRONT LOAD NEW 6X1.8KG",
+    "flag": "COTC"
+  },
+  {
+    "barcode": "8999999042608",
+    "pcode": "64956523",
+    "isi": 12,
+    "name": "RINSO PERFUME ESSENCE LIQUID 12X700G",
+    "flag": "COTC"
+  },
+  {
+    "barcode": "8999999614423",
+    "pcode": "65081657",
+    "isi": 6,
+    "name": "RINSO CLASSIC FRESH PWD 6X1440G",
+    "flag": "COTC"
+  },
+  {
+    "barcode": "8999999006006",
+    "pcode": "64956529",
+    "isi": 12,
+    "name": "RINSO CLASSIC FRESH LIQUID 12X700G",
+    "flag": "COTC"
+  },
+  {
+    "barcode": "8999999603755",
+    "pcode": "65087923",
+    "isi": 4,
+    "name": "RINSO JAPANESE PEACH PWD 4X3KG",
+    "flag": "COTC"
+  },
+  {
+    "barcode": "8999999612788",
+    "pcode": "64956581",
+    "isi": 6,
+    "name": "RINSO JAPANESE PEACH LIQUID 6X1.5KG",
+    "flag": "COTC"
+  },
+  {
+    "barcode": "8999999572044",
+    "pcode": "65087059",
+    "isi": 6,
+    "name": "MOLTO PURE BLOSSOM 6X1500ML",
+    "flag": "COTC"
+  },
+  {
+    "barcode": "8999999572006",
+    "pcode": "65087058",
+    "isi": 6,
+    "name": "MOLTO AIO BLUE BLOSSOM 6X1500ML",
+    "flag": "COTC"
+  },
+  {
+    "barcode": "8999999571634",
+    "pcode": "69598305",
+    "isi": 6,
+    "name": "MOLTO PEWANGI BLUE BLSM 6X1700ML",
+    "flag": "COTC"
+  },
+  {
+    "barcode": "8999999571580",
+    "pcode": "64328797",
+    "isi": 12,
+    "name": "MOLTO PEWANGI BLUE LIQ 12X765ML",
+    "flag": "COTC"
+  },
+  {
+    "barcode": "8999999571627",
+    "pcode": "69598303",
+    "isi": 6,
+    "name": "MOLTO PEWANGI PINK BLSM 6X1700ML",
+    "flag": "COTC"
+  },
+  {
+    "barcode": "8999999571658",
+    "pcode": "69598304",
+    "isi": 6,
+    "name": "MOLTO PEWANGI PURPLE BLSM 6X1700ML",
+    "flag": "COTC"
+  },
+  {
+    "barcode": "8999999571993",
+    "pcode": "64328796",
+    "isi": 12,
+    "name": "MOLTO PURE LIQ 12X550ML",
+    "flag": "COTC"
+  },
+  {
+    "barcode": "8999999571535",
+    "pcode": "64328795",
+    "isi": 12,
+    "name": "MOLTO PEWANGI PINK LIQ 12X765ML",
+    "flag": "COTC"
+  },
+  {
+    "barcode": "8999999571931",
+    "pcode": "62752710",
+    "isi": 12,
+    "name": "MOLTO AIO BLUE LIQ 12X550ML",
+    "flag": "COTC"
+  },
+  {
+    "barcode": "8999999571610",
+    "pcode": "64328794",
+    "isi": 12,
+    "name": "MOLTO PEWANGI PURPLE LIQ 12X765ML",
+    "flag": "COTC"
+  },
+  {
+    "barcode": "8999999571955",
+    "pcode": "64770291",
+    "isi": 12,
+    "name": "MOLTO EDP PURPLE LIQ 12X650ML",
+    "flag": "COTC"
+  },
+  {
+    "barcode": "8999999571948",
+    "pcode": "62752715",
+    "isi": 12,
+    "name": "MOLTO AIO PINK LIQ 12X550ML",
+    "flag": "COTC"
+  },
+  {
+    "barcode": "8999999407858",
+    "pcode": "65466561",
+    "isi": 12,
+    "name": "WIPOL KARBOL LEMON PCH 12X750G",
+    "flag": "COTC"
+  },
+  {
+    "barcode": "8999999006204",
+    "pcode": "65085600",
+    "isi": 12,
+    "name": "WIPOL KARBOL CEMARA BTL MDF 12X730G",
+    "flag": "COTC"
+  },
+  {
+    "barcode": "8999999595968",
+    "pcode": "65085586",
+    "isi": 6,
+    "name": "WIPOL KARBOL CEMARA MDF 6X1400G",
+    "flag": "COTC"
+  },
+  {
+    "barcode": "8999999406929",
+    "pcode": "65223548",
+    "isi": 12,
+    "name": "SUPERPELL GREEN CRT 12X760G",
+    "flag": "COTC"
+  },
+  {
+    "barcode": "8999999406905",
+    "pcode": "65223741",
+    "isi": 6,
+    "name": "SUPERPELL GREEN CRT 6X1600G",
+    "flag": "COTC"
+  },
+  {
+    "barcode": "8999999406943",
+    "pcode": "65223653",
+    "isi": 12,
+    "name": "SUPERPELL YELLOW RL PCH 12X760G",
+    "flag": "COTC"
+  },
+  {
+    "barcode": "8999999057022",
+    "pcode": "65223716",
+    "isi": 12,
+    "name": "SUPERPELL PINK RL PCH 12X760G",
+    "flag": "COTC"
+  },
+  {
+    "barcode": "8999999585440",
+    "pcode": "65223671",
+    "isi": 12,
+    "name": "SUPERPELL KOREAN STRAWBERRY PCH 12X760G",
+    "flag": "COTC"
+  },
+  {
+    "barcode": "8999999406912",
+    "pcode": "65223710",
+    "isi": 12,
+    "name": "SUPERPELL RED RL PCH 12X760G",
+    "flag": "COTC"
+  },
+  {
+    "barcode": "8999999611897",
+    "pcode": null,
+    "isi": null,
+    "name": "SUNLIGHT BIOCARE NATURE D4C PCH 12X600G",
+    "flag": "COTC"
+  },
+  {
+    "barcode": "8999999616908",
+    "pcode": "65486546",
+    "isi": 12,
+    "name": "VIXAL EKSTRA KUAT BIRU BTL 12X700G",
+    "flag": "COTC"
+  },
+  {
+    "barcode": "8999999616571",
+    "pcode": "65464839",
+    "isi": 12,
+    "name": "WIPOL KARBOL CEMARA PCH 12X720G",
+    "flag": "COTC"
+  },
+  {
+    "barcode": "8999999616915",
+    "pcode": "65486548",
+    "isi": 12,
+    "name": "VIXAL KUAT HARUM HIJAU BTL 12X700G",
+    "flag": "COTC"
+  },
+  {
+    "barcode": "8999999616595",
+    "pcode": "65464843",
+    "isi": 12,
+    "name": "WIPOL SEREH&JERUK PCH 12X720G",
+    "flag": "COTC"
+  },
+  {
+    "barcode": "8999999597450",
+    "pcode": "62696186",
+    "isi": 12,
+    "name": "ZWITSAL H&B ALOE VERA POUCH 12X400ML",
+    "flag": "COTC"
+  },
+  {
+    "barcode": "8999999569785",
+    "pcode": "62731532",
+    "isi": 12,
+    "name": "ZWITSAL H&B ALOE VERA POUCH 12X600ML",
+    "flag": "COTC"
+  },
+  {
+    "barcode": "8999999049447",
+    "pcode": "69606014",
+    "isi": 24,
+    "name": "REXONA ADVANCED BRGHTENING RO RL 24X45ML",
+    "flag": "COTC"
+  },
+  {
+    "barcode": "8999999049454",
+    "pcode": "65215526",
+    "isi": 24,
+    "name": "REXONA FREE SPIRIT RO NEW 24X45ML",
+    "flag": "COTC"
+  },
+  {
+    "barcode": "8999999580797",
+    "pcode": "68732617",
+    "isi": 24,
+    "name": "REXONA MEN ACTIV BRIGHT RO 4X6X45ML",
+    "flag": "COTC"
+  },
+  {
+    "barcode": "8999999580735",
+    "pcode": "65075484",
+    "isi": 24,
+    "name": "REXONA MEN ICE COOL RO NEW 24X45ML",
+    "flag": "COTC"
+  },
+  {
+    "barcode": "8999999580773",
+    "pcode": "65075494",
+    "isi": 24,
+    "name": "REXONA MEN INVISIBLE DRY RO NEW 24X45ML",
+    "flag": "COTC"
+  },
+  {
+    "barcode": "8999999580742",
+    "pcode": "65075486",
+    "isi": 24,
+    "name": "REXONA MEN SPORT DEFENSE RO NEW 24X45ML",
+    "flag": "COTC"
+  },
+  {
+    "barcode": "8999999580766",
+    "pcode": "65075488",
+    "isi": 24,
+    "name": "REXONA MEN ULTRA RECHARGE RO NEW 24X45ML",
+    "flag": "COTC"
+  },
+  {
+    "barcode": "8999999049492",
+    "pcode": "65215528",
+    "isi": 24,
+    "name": "REXONA POWDER DRY RO NEW 24X45ML",
+    "flag": "COTC"
+  },
+  {
+    "barcode": "8999999534660",
+    "pcode": "68513104",
+    "isi": 24,
+    "name": "REXONA RO DREAMY BRIGHT RL 4X6X40ML",
+    "flag": "COTC"
+  },
+  {
+    "barcode": "8999999534677",
+    "pcode": "68513099",
+    "isi": 24,
+    "name": "REXONA RO GLOWING RL 4X6X40ML",
+    "flag": "COTC"
+  },
+  {
+    "barcode": "8999999049508",
+    "pcode": "65215524",
+    "isi": 24,
+    "name": "REXONA SHOWER CLEAN RO NEW 24X45ML",
+    "flag": "COTC"
+  },
+  {
+    "barcode": "8999999049461",
+    "pcode": "68732504",
+    "isi": 24,
+    "name": "REXONA WMN INVISIBLE DRY RO 4X6X45ML",
+    "flag": "COTC"
+  },
+  {
+    "barcode": "8999999606091",
+    "pcode": "65067543",
+    "isi": 24,
+    "name": "CLOSE UP GREEN VALUEPACK NEW 24X(2X160G)",
+    "flag": "COTC"
+  },
+  {
+    "barcode": "8999999707859",
+    "pcode": "65067531",
+    "isi": 48,
+    "name": "CLOSEUP GREEN NEW 48X(160+20)G",
+    "flag": "COTC"
+  },
+  {
+    "barcode": "8999999707842",
+    "pcode": "65067525",
+    "isi": 48,
+    "name": "CLOSEUP GREEN NEW 48X100G",
+    "flag": "COTC"
+  },
+  {
+    "barcode": "8999999706487",
+    "pcode": "65427350",
+    "isi": 48,
+    "name": "CLOSEUP ICY WHITE NEW 48X160G",
+    "flag": "COTC"
+  },
+  {
+    "barcode": "8999999030186",
+    "pcode": "64353066",
+    "isi": 48,
+    "name": "PEPSODENT ACTION123 HD 4X12X190G",
+    "flag": "COTC"
+  },
+  {
+    "barcode": "8999999715588",
+    "pcode": "64353054",
+    "isi": 48,
+    "name": "PEPSODENT CENTER FRESH HD 48X160G",
+    "flag": "COTC"
+  },
+  {
+    "barcode": "8999999707781",
+    "pcode": "65631005",
+    "isi": 48,
+    "name": "PEPSODENT CMPLT 8 PLUS WHITENING 48X180G",
+    "flag": "COTC"
+  },
+  {
+    "barcode": "8999999710866",
+    "pcode": "65446138",
+    "isi": 48,
+    "name": "PEPSODENT HERBAL NEW 48X190G",
+    "flag": "COTC"
+  },
+  {
+    "barcode": "8999999534042",
+    "pcode": "64946410",
+    "isi": 36,
+    "name": "PEPSODENT KIDS STRAWBERRY RL MN 36X45G",
+    "flag": "COTC"
+  },
+  {
+    "barcode": "8999999564421",
+    "pcode": "64353058",
+    "isi": 48,
+    "name": "PEPSODENT MULTI PROTECTION HD 48X150G",
+    "flag": "COTC"
+  },
+  {
+    "barcode": "8999999028701",
+    "pcode": "20281077",
+    "isi": 48,
+    "name": "PEPSODENT PGB FRESH COOL MINT 4X12X190G",
+    "flag": "COTC"
+  },
+  {
+    "barcode": "8999999035563",
+    "pcode": "64353063",
+    "isi": 36,
+    "name": "PEPSODENT SENS EXP FRESH HD 36X100G",
+    "flag": "COTC"
+  },
+  {
+    "barcode": "8999999032890",
+    "pcode": "64353070",
+    "isi": 36,
+    "name": "PEPSODENT SENS EXP WHITENING HD 36X100G",
+    "flag": "COTC"
+  },
+  {
+    "barcode": "8999999574819",
+    "pcode": "68597750",
+    "isi": 24,
+    "name": "PEPSODENT TB BRILIAN MP3 24X3PC",
+    "flag": "COTC"
+  },
+  {
+    "barcode": "8999999008062",
+    "pcode": "65427340",
+    "isi": 24,
+    "name": "PEPSODENT TB NANOSFT SNSTV MP3 RL 24X3PC",
+    "flag": "COTC"
+  },
+  {
+    "barcode": "8999999706180",
+    "pcode": "65445075",
+    "isi": 48,
+    "name": "PEPSODENT WHITE NEW 48X190G",
+    "flag": "COTC"
+  },
+  {
+    "barcode": "8999999561031",
+    "pcode": "65454891",
+    "isi": 24,
+    "name": "PEPSODENT WHITE PRM VALUPACK 24X(2X225G)",
+    "flag": "COTC"
+  },
+  {
+    "barcode": "8999999037765",
+    "pcode": "65445093",
+    "isi": 36,
+    "name": "PEPSODENT WHITE RL 12X3X225G",
+    "flag": "COTC"
+  },
+  {
+    "barcode": "8999999564513",
+    "pcode": "64806760",
+    "isi": 12,
+    "name": "DOVE MOISTURE RENEW PCH 12X800ML",
+    "flag": "COTC"
+  },
+  {
+    "barcode": "8999999030575",
+    "pcode": "64806761",
+    "isi": 24,
+    "name": "DOVE MOISTURE RENEW PCH 24X400ML",
+    "flag": "COTC"
+  },
+  {
+    "barcode": "8999999027261",
+    "pcode": "65249078",
+    "isi": 24,
+    "name": "LIFEBUOY BW LEMON FRESH PCH 24X380G",
+    "flag": "COTC"
+  },
+  {
+    "barcode": "8999999515621",
+    "pcode": "64990963",
+    "isi": 12,
+    "name": "LIFEBUOY BW LEMON FRESH PCH RL 12X800G",
+    "flag": "COTC"
+  },
+  {
+    "barcode": "8999999598761",
+    "pcode": "64998520",
+    "isi": 6,
+    "name": "LIFEBUOY BW LEMONFRSH HR RL 6X(2X800G)",
+    "flag": "COTC"
+  },
+  {
+    "barcode": "8999999598754",
+    "pcode": "64998516",
+    "isi": 6,
+    "name": "LIFEBUOY BW MILD CARE HR RL 6X(2X800G)",
+    "flag": "COTC"
+  },
+  {
+    "barcode": "8999999515607",
+    "pcode": "64990961",
+    "isi": 12,
+    "name": "LIFEBUOY BW MILD CARE PCH RL 12X800G",
+    "flag": "COTC"
+  },
+  {
+    "barcode": "8999999574994",
+    "pcode": "65446749",
+    "isi": 12,
+    "name": "LIFEBUOY BW SHISO & MINERAL PCH 12X800G",
+    "flag": "COTC"
+  },
+  {
+    "barcode": "8999999515577",
+    "pcode": "64990959",
+    "isi": 12,
+    "name": "LIFEBUOY BW TOTAL 10 PCH RL 12X800G",
+    "flag": "COTC"
+  },
+  {
+    "barcode": "8999999587420",
+    "pcode": "64998524",
+    "isi": 6,
+    "name": "LIFEBUOY BW TOTAL 10 PCH RL 6X(2X800G)",
+    "flag": "COTC"
+  },
+  {
+    "barcode": "8999999562113",
+    "pcode": "65446752",
+    "isi": 12,
+    "name": "LIFEBUOY BW YOGHURT CARE PCH 12X720G",
+    "flag": "COTC"
+  },
+  {
+    "barcode": "8999999053291",
+    "pcode": "69979933",
+    "isi": 24,
+    "name": "LIFEBUOY TS LEMONFRESH STR 24X(4X100G)",
+    "flag": "COTC"
+  },
+  {
+    "barcode": "8999999045920",
+    "pcode": "69979932",
+    "isi": 24,
+    "name": "LIFEBUOY TS TOTAL10 STR 24X(4X100G)",
+    "flag": "COTC"
+  },
+  {
+    "barcode": "8999999046996",
+    "pcode": "64994142",
+    "isi": 36,
+    "name": "LIFEBUOY TS TOTAL10 STR 36X(4X60G)",
+    "flag": "COTC"
+  },
+  {
+    "barcode": "8999999550639",
+    "pcode": "64950958",
+    "isi": 12,
+    "name": "LUX BW MAGICAL ORCHID PCH 12X800G",
+    "flag": "COTC"
+  },
+  {
+    "barcode": "8999999535896",
+    "pcode": "64950964",
+    "isi": 12,
+    "name": "LUX BW SAKURA BLOOM PCH 12X800G",
+    "flag": "COTC"
+  },
+  {
+    "barcode": "8999999565534",
+    "pcode": "64950952",
+    "isi": 12,
+    "name": "LUX BW SOFT ROSE PCH 12X800G",
+    "flag": "COTC"
+  }
+]
