@@ -1,0 +1,290 @@
+[
+  {
+    "id": "910717000401263480",
+    "name": "SAGA AIMAS",
+    "area": "Sorong",
+    "scopeChannel": "LMT SPM",
+    "scopeSlug": "lmt-spm",
+    "subChannel": "LOCAL SUPERMARKET EC BIG"
+  },
+  {
+    "id": "917102001100864622",
+    "name": "CV PAPUA SEJAHTERA",
+    "area": "Sorong",
+    "scopeChannel": "LMT SPM",
+    "scopeSlug": "lmt-spm",
+    "subChannel": "LOCAL SUPERMARKET EC BIG"
+  },
+  {
+    "id": "917102100501325258",
+    "name": "PT CAHAYA RETAIL PAPUA",
+    "area": "Sorong",
+    "scopeChannel": "LMT SPM",
+    "scopeSlug": "lmt-spm",
+    "subChannel": "LOCAL SUPERMARKET EC BIG"
+  },
+  {
+    "id": "917102200200864624",
+    "name": "SAGA RETAILINDO, CV.",
+    "area": "Sorong",
+    "scopeChannel": "LMT SPM",
+    "scopeSlug": "lmt-spm",
+    "subChannel": "LOCAL SUPERMARKET EC BIG"
+  },
+  {
+    "id": "917102200201336183",
+    "name": "SAGA BEAUTY",
+    "area": "Sorong",
+    "scopeChannel": "HABA DT",
+    "scopeSlug": "haba-dt",
+    "subChannel": "COSMETIC EXPERT TRADITIONAL"
+  },
+  {
+    "id": "917102200301264582",
+    "name": "SAGA REMU",
+    "area": "Sorong",
+    "scopeChannel": "LMT SPM",
+    "scopeSlug": "lmt-spm",
+    "subChannel": "LOCAL SUPERMARKET EC BIG"
+  },
+  {
+    "id": "917102300501328695",
+    "name": "DELLI MART",
+    "area": "Sorong",
+    "scopeChannel": "LMT SPM",
+    "scopeSlug": "lmt-spm",
+    "subChannel": "LOCAL SUPERMARKET EC BIG"
+  },
+  {
+    "id": "941203000301217627",
+    "name": "A MART",
+    "area": "Timika",
+    "scopeChannel": "LOCAL MINIS",
+    "scopeSlug": "local-minis",
+    "subChannel": "LOCAL MINIS BIG"
+  },
+  {
+    "id": "941203000301350375",
+    "name": "PERINTIS, TOKO",
+    "area": "Timika",
+    "scopeChannel": "LOCAL MINIS",
+    "scopeSlug": "local-minis",
+    "subChannel": "LOCAL MINIS BIG"
+  },
+  {
+    "id": "941203000400865727",
+    "name": "SEJAHTERA",
+    "area": "Timika",
+    "scopeChannel": "LOCAL MINIS",
+    "scopeSlug": "local-minis",
+    "subChannel": "LOCAL MINIS BIG"
+  },
+  {
+    "id": "941203000400865731",
+    "name": "ABADI",
+    "area": "Timika",
+    "scopeChannel": "LOCAL MINIS",
+    "scopeSlug": "local-minis",
+    "subChannel": "LOCAL MINIS BIG"
+  },
+  {
+    "id": "941203000400976537",
+    "name": "BRAM MAMA",
+    "area": "Timika",
+    "scopeChannel": "LOCAL MINIS",
+    "scopeSlug": "local-minis",
+    "subChannel": "LOCAL MINIS BIG"
+  },
+  {
+    "id": "941203000401030669",
+    "name": "ADITAMA BOUGENVILLE",
+    "area": "Timika",
+    "scopeChannel": "LMT SPM",
+    "scopeSlug": "lmt-spm",
+    "subChannel": "LOCAL SUPERMARKET EC MEDIUM"
+  },
+  {
+    "id": "941203000401030670",
+    "name": "DEDE, MAMA",
+    "area": "Timika",
+    "scopeChannel": "HABA DT",
+    "scopeSlug": "haba-dt",
+    "subChannel": "COSMETIC EXPERT TRADITIONAL"
+  },
+  {
+    "id": "941203000401250689",
+    "name": "GC / GROSIR MULTI SEJAHTERA, PT",
+    "area": "Timika",
+    "scopeChannel": "LOCAL MINIS",
+    "scopeSlug": "local-minis",
+    "subChannel": "LOCAL MINIS BIG"
+  },
+  {
+    "id": "941203000401320457",
+    "name": "ZAYN JAYA",
+    "area": "Timika",
+    "scopeChannel": "LMT SPM",
+    "scopeSlug": "lmt-spm",
+    "subChannel": "LOCAL SUPERMARKET EC MEDIUM"
+  },
+  {
+    "id": "941203000500865733",
+    "name": "RAIHAN TOKO",
+    "area": "Timika",
+    "scopeChannel": "LMT SPM",
+    "scopeSlug": "lmt-spm",
+    "subChannel": "LOCAL SUPERMARKET EC MEDIUM"
+  },
+  {
+    "id": "941203000500984190",
+    "name": "TRANSABADI",
+    "area": "Timika",
+    "scopeChannel": "LOCAL MINIS",
+    "scopeSlug": "local-minis",
+    "subChannel": "LOCAL MINIS BIG"
+  },
+  {
+    "id": "941203000501056365",
+    "name": "SENJA INDAH",
+    "area": "Timika",
+    "scopeChannel": "LOCAL MINIS",
+    "scopeSlug": "local-minis",
+    "subChannel": "LOCAL MINIS BIG"
+  },
+  {
+    "id": "941203000501216897",
+    "name": "KOPERASI JAYA WIJAYA",
+    "area": "Timika",
+    "scopeChannel": "LOCAL MINIS",
+    "scopeSlug": "local-minis",
+    "subChannel": "LOCAL MINIS BIG"
+  },
+  {
+    "id": "941203000501295225",
+    "name": "TOKO SEMBAKO PUTRI MIMIKA",
+    "area": "Timika",
+    "scopeChannel": "LOCAL MINIS",
+    "scopeSlug": "local-minis",
+    "subChannel": "LOCAL MINIS BIG"
+  },
+  {
+    "id": "941203000900865732",
+    "name": "CV. KARUNIA PAPUA ABADI - SP 4",
+    "area": "Timika",
+    "scopeChannel": "LMT SPM",
+    "scopeSlug": "lmt-spm",
+    "subChannel": "LOCAL SUPERMARKET EC MEDIUM"
+  },
+  {
+    "id": "941203000900976536",
+    "name": "LEO",
+    "area": "Timika",
+    "scopeChannel": "LOCAL MINIS",
+    "scopeSlug": "local-minis",
+    "subChannel": "LOCAL MINIS BIG"
+  },
+  {
+    "id": "941203000900983101",
+    "name": "SAHABAT, TOKO",
+    "area": "Timika",
+    "scopeChannel": "LMT SPM",
+    "scopeSlug": "lmt-spm",
+    "subChannel": "LOCAL SUPERMARKET EC MEDIUM"
+  },
+  {
+    "id": "941203001201336710",
+    "name": "GC SUPERMARKET (SP 2)",
+    "area": "Timika",
+    "scopeChannel": "LMT SPM",
+    "scopeSlug": "lmt-spm",
+    "subChannel": "LOCAL SUPERMARKET EC MEDIUM"
+  },
+  {
+    "id": "941203001300865728",
+    "name": "ADITAMA SWALAYAN",
+    "area": "Timika",
+    "scopeChannel": "LMT SPM",
+    "scopeSlug": "lmt-spm",
+    "subChannel": "LOCAL SUPERMARKET EC BIG"
+  },
+  {
+    "id": "941203001300865735",
+    "name": "GELAEL INDOTIM, PT",
+    "area": "Timika",
+    "scopeChannel": "LOCAL MINIS",
+    "scopeSlug": "local-minis",
+    "subChannel": "LOCAL MINIS BIG"
+  },
+  {
+    "id": "941203001300865740-2",
+    "name": "TIMIKA MAKMUR JAYA SENTOSA 2",
+    "area": "Timika",
+    "scopeChannel": "LOCAL MINIS",
+    "scopeSlug": "local-minis",
+    "subChannel": "LOCAL MINIS BIG"
+  },
+  {
+    "id": "941203001300865740-3",
+    "name": "TIMIKA MAKMUR JAYA SENTOSA 3",
+    "area": "Timika",
+    "scopeChannel": "LOCAL MINIS",
+    "scopeSlug": "local-minis",
+    "subChannel": "LOCAL MINIS BIG"
+  },
+  {
+    "id": "941203001300865740-4",
+    "name": "TIMIKA MAKMUR JAYA SENTOSA 4",
+    "area": "Timika",
+    "scopeChannel": "LOCAL MINIS",
+    "scopeSlug": "local-minis",
+    "subChannel": "LOCAL MINIS BIG"
+  },
+  {
+    "id": "941203001300865740-5",
+    "name": "TIMIKA MAKMUR JAYA SENTOSA 5",
+    "area": "Timika",
+    "scopeChannel": "LOCAL MINIS",
+    "scopeSlug": "local-minis",
+    "subChannel": "LOCAL MINIS BIG"
+  },
+  {
+    "id": "941203001300865740-6",
+    "name": "TIMIKA MAKMUR JAYA SENTOSA 6",
+    "area": "Timika",
+    "scopeChannel": "LOCAL MINIS",
+    "scopeSlug": "local-minis",
+    "subChannel": "LOCAL MINIS BIG"
+  },
+  {
+    "id": "941203001300865740-7",
+    "name": "TIMIKA MAKMUR JAYA SENTOSA 7",
+    "area": "Timika",
+    "scopeChannel": "LOCAL MINIS",
+    "scopeSlug": "local-minis",
+    "subChannel": "LOCAL MINIS BIG"
+  },
+  {
+    "id": "941203001300865740-8",
+    "name": "TIMIKA MAKMUR JAYA SENTOSA 8",
+    "area": "Timika",
+    "scopeChannel": "LOCAL MINIS",
+    "scopeSlug": "local-minis",
+    "subChannel": "LOCAL MINIS BIG"
+  },
+  {
+    "id": "941203001300865740",
+    "name": "TIMIKA MAKMUR JAYA SENTOSA, PT",
+    "area": "Timika",
+    "scopeChannel": "LMT SPM",
+    "scopeSlug": "lmt-spm",
+    "subChannel": "LOCAL SUPERMARKET EC BIG"
+  },
+  {
+    "id": "941203002101269958",
+    "name": "PT. HADI RETAIL INDONESIA",
+    "area": "Timika",
+    "scopeChannel": "LMT SPM",
+    "scopeSlug": "lmt-spm",
+    "subChannel": "LOCAL SUPERMARKET EC MEDIUM"
+  }
+]
