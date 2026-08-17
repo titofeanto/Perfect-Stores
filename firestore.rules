@@ -20,5 +20,13 @@ service cloud.firestore {
     match /distributorStock/{area} {
       allow read, write: if request.auth != null;
     }
+
+    match /priceEntries/{entryId} {
+      allow read, write: if request.auth != null;
+    }
+
+    match /competitors/{docId} {
+      allow read, write: if request.auth != null;
+    }
   }
 }
