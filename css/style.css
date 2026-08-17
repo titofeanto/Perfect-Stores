@@ -251,6 +251,12 @@ button:active { transform: scale(0.98); }
 .order-ref-value {
   color: var(--accent);
 }
+.recap-jump {
+  cursor: pointer;
+}
+.recap-jump:active {
+  opacity: 0.7;
+}
 
 .field-subheader {
   display: grid;
