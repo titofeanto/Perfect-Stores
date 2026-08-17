@@ -44,22 +44,38 @@ export function statusOf(item) {
 // Ringkas 1 dokumen entry (hasil isian 1 toko utk 1 minggu) terhadap 1 daftar SKU wajib.
 // items: map {barcode: {stock,order,masuk,jual}} dari Firestore (bisa format lama/baru/kosong).
 // skuList: array SKU wajib toko itu (dari data/sku-*.json).
+// byFlag: breakdown ketersediaan (stock > 0) per flag COTC/MARKET MAKING/NPD -- dipakai
+// dashboard untuk persentase "barang yang terdapat di toko" per kategori.
 export function summarizeEntry(items, skuList) {
   items = items || {};
   let lengkap = 0;
   let tidakAda = 0;
+  const byFlag = {};
   for (const sku of skuList) {
     const raw = items[sku.barcode] || {};
     const entryItem = {};
     for (const f of FIELDS) entryItem[f] = normalizeField(raw[f]);
     if (statusOf(entryItem) === 'lengkap') lengkap++;
-    if (!fieldIsEmpty(entryItem.stock) && fieldTotal(entryItem.stock, sku.isi) === 0) tidakAda++;
+
+    const stockFilled = !fieldIsEmpty(entryItem.stock);
+    const stockQty = stockFilled ? fieldTotal(entryItem.stock, sku.isi) : null;
+    const isTidakAda = stockFilled && stockQty === 0;
+    const isAda = stockFilled && stockQty > 0;
+    if (isTidakAda) tidakAda++;
+
+    const flag = sku.flag || 'COTC';
+    if (!byFlag[flag]) byFlag[flag] = { total: 0, ada: 0, tidakAda: 0, belumIsi: 0 };
+    byFlag[flag].total++;
+    if (isAda) byFlag[flag].ada++;
+    else if (isTidakAda) byFlag[flag].tidakAda++;
+    else byFlag[flag].belumIsi++;
   }
   return {
     total: skuList.length,
     lengkap,
     belum: skuList.length - lengkap,
     tidakAda,
-    pct: skuList.length ? Math.round((lengkap / skuList.length) * 100) : 0
+    pct: skuList.length ? Math.round((lengkap / skuList.length) * 100) : 0,
+    byFlag
   };
 }

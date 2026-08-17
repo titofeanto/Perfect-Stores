@@ -82,6 +82,7 @@ async function loadAndRender() {
 
   renderMetrics(rows);
   renderAreaSummary(rows);
+  renderFlagAvailability(rows);
   renderTable(rows, week);
 
   el('loadingNote').style.display = 'none';
@@ -116,6 +117,38 @@ function statusPillHtml(status) {
   if (status === 'submitted') return '<span class="status-pill submitted">Sudah kirim</span>';
   if (status === 'progress') return '<span class="status-pill progress">Sedang diisi</span>';
   return '<span class="status-pill notstarted">Belum mulai</span>';
+}
+
+const FLAG_LABELS = { 'COTC': 'COTC', 'MARKET MAKING': 'Market making', 'NPD': 'NPD' };
+const FLAG_ORDER = ['COTC', 'MARKET MAKING', 'NPD'];
+
+// Persentase SKU yang stock-nya > 0 (tersedia di toko), diagregasi lintas 36 toko, per flag.
+// "Belum diisi" tidak dihitung sebagai tersedia maupun tidak tersedia -- cuma dikeluarkan
+// dari pembilang, supaya persentase tidak salah tafsir sebelum data lengkap semua.
+function renderFlagAvailability(rows) {
+  const agg = {};
+  for (const r of rows) {
+    for (const [flag, stats] of Object.entries(r.summary.byFlag || {})) {
+      if (!agg[flag]) agg[flag] = { total: 0, ada: 0, belumIsi: 0 };
+      agg[flag].total += stats.total;
+      agg[flag].ada += stats.ada;
+      agg[flag].belumIsi += stats.belumIsi;
+    }
+  }
+  const flags = FLAG_ORDER.filter(f => agg[f]);
+  el('flagAvailability').innerHTML = flags.map(flag => {
+    const stats = agg[flag];
+    const pct = stats.total ? Math.round((stats.ada / stats.total) * 100) : 0;
+    return `
+      <div style="margin-bottom:12px;">
+        <div style="display:flex; justify-content:space-between; font-size:12px; margin-bottom:4px;">
+          <span>${FLAG_LABELS[flag] || flag}</span>
+          <span style="color:var(--text-secondary);">${stats.ada}/${stats.total} toko-SKU tersedia &middot; ${pct}%</span>
+        </div>
+        <div class="pct-bar-track" style="width:100%; height:8px;"><div class="pct-bar-fill" style="width:${pct}%;"></div></div>
+      </div>
+    `;
+  }).join('') || '<p class="upload-status">Belum ada data untuk periode ini.</p>';
 }
 
 function renderTable(rows, week) {

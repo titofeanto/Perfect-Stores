@@ -483,10 +483,11 @@ function renderRecap() {
   const total = currentSkuList.length;
   const lengkap = currentSkuList.filter(sku => statusOf(currentEntry[sku.barcode]) === 'lengkap').length;
   const belum = total - lengkap;
-  const tidakAda = currentSkuList.filter(sku => {
+  const tidakAdaSkus = currentSkuList.filter(sku => {
     const stockField = currentEntry[sku.barcode].stock;
     return !fieldIsEmpty(stockField) && fieldTotal(stockField, sku.isi) === 0;
-  }).length;
+  });
+  const tidakAda = tidakAdaSkus.length;
 
   let html = `
     <div class="metric-grid">
@@ -497,11 +498,22 @@ function renderRecap() {
     </div>
   `;
 
+  if (tidakAdaSkus.length) {
+    html += '<p class="section-title">SKU tidak ada di toko (perlu ditindaklanjuti restock)</p>';
+    html += tidakAdaSkus.map(sku => `
+      <div class="sku-item recap-jump" data-jump-barcode="${sku.barcode}">
+        <p class="sku-name">${sku.name}</p>
+        <p class="sku-code">${sku.barcode}${sku.pcode ? ' &middot; PC ' + sku.pcode : ''}</p>
+        <div>${badgeHtml(sku, currentEntry[sku.barcode])}</div>
+      </div>
+    `).join('');
+  }
+
   const missing = currentSkuList.filter(sku => statusOf(currentEntry[sku.barcode]) !== 'lengkap');
   if (missing.length) {
-    html += '<p class="section-title">Perlu ditindaklanjuti</p>';
+    html += '<p class="section-title">Belum lengkap diisi</p>';
     html += missing.map(sku => `
-      <div class="sku-item">
+      <div class="sku-item recap-jump" data-jump-barcode="${sku.barcode}">
         <p class="sku-name">${sku.name}</p>
         <div>${badgeHtml(sku, currentEntry[sku.barcode])}</div>
       </div>
@@ -511,6 +523,9 @@ function renderRecap() {
   html += '<button id="submitBtn" class="primary" style="width:100%; margin-top:12px;">Konfirmasi dan kirim</button>';
   el('viewRecap').innerHTML = html;
   el('submitBtn').addEventListener('click', onSubmitClick);
+  el('viewRecap').querySelectorAll('.recap-jump').forEach(elm => {
+    elm.addEventListener('click', () => jumpToSku(elm.dataset.jumpBarcode));
+  });
 }
 
 function onSubmitClick() {
@@ -591,14 +606,9 @@ function onScanError(err) {
   el('scanStatus').textContent = 'Tidak bisa mengakses kamera. Pastikan izin kamera diaktifkan untuk situs ini.';
 }
 
-function onBarcodeDetected(rawValue) {
-  closeScanModal();
-  const barcode = String(rawValue).trim();
+function jumpToSku(barcode, toastMessage) {
   const sku = currentSkuList.find(s => s.barcode === barcode);
-  if (!sku) {
-    showToast(`Barcode ${barcode} tidak ada di SKU wajib toko ini.`, 'danger');
-    return;
-  }
+  if (!sku) return;
   switchTab('input');
   flagFilter = 'all';
   searchText = barcode;
@@ -611,7 +621,18 @@ function onBarcodeDetected(rawValue) {
     card.classList.add('flash-highlight');
     setTimeout(() => card.classList.remove('flash-highlight'), 1600);
   }
-  showToast(`Ditemukan: ${sku.name}`, 'success');
+  if (toastMessage) showToast(toastMessage, 'success');
+}
+
+function onBarcodeDetected(rawValue) {
+  closeScanModal();
+  const barcode = String(rawValue).trim();
+  const sku = currentSkuList.find(s => s.barcode === barcode);
+  if (!sku) {
+    showToast(`Barcode ${barcode} tidak ada di SKU wajib toko ini.`, 'danger');
+    return;
+  }
+  jumpToSku(barcode, `Ditemukan: ${sku.name}`);
 }
 
 // ---------- Hitung otomatis Penjualan ----------
