@@ -22,6 +22,16 @@
   .pct-bar-fill { height: 100%; background: var(--success); }
   a.open-link { color: var(--accent); text-decoration: none; font-size: 12px; }
   .area-subtitle { font-size: 12px; font-weight: 600; color: var(--text-secondary); margin: 14px 0 6px; }
+  .oos-link {
+    color: var(--danger);
+    background: var(--danger-bg);
+    border: none;
+    border-radius: 99px;
+    padding: 2px 10px;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+  }
 </style>
 </head>
 <body>
@@ -62,6 +72,15 @@
     </div>
 
     <div class="card">
+      <p class="section-title" style="margin:0 0 8px;">On Shelf Availability (OSA)</p>
+      <div style="display:flex; justify-content:space-between; align-items:baseline;">
+        <span style="font-size:28px; font-weight:600;" id="mOsa">-</span>
+        <span style="font-size:12px; color:var(--text-secondary);" id="mOsaDetail"></span>
+      </div>
+      <p class="upload-status" style="margin-top:4px;">Barang yang ada di toko (stock &gt; 0) dibagi total target SKU wajib, lintas 36 toko.</p>
+    </div>
+
+    <div class="card">
       <p class="section-title" style="margin:0 0 8px;">Per area</p>
       <div id="areaSummary"></div>
     </div>
@@ -72,7 +91,7 @@
     </div>
 
     <div class="card">
-      <p class="section-title" style="margin:0 0 8px;">Semua toko (belum kirim &amp; belum lengkap ditampilkan lebih dulu)</p>
+      <p class="section-title" style="margin:0 0 8px;">Semua toko (yang sudah diisi ditampilkan lebih dulu)</p>
       <div class="table-wrap">
         <table class="recap-table">
           <thead>
@@ -81,6 +100,7 @@
               <th>Area</th>
               <th>Status</th>
               <th>Lengkap</th>
+              <th>OSA</th>
               <th>Tidak ada</th>
               <th></th>
             </tr>
@@ -92,7 +112,16 @@
 
   </div>
 
+  <div id="oosModal" class="modal-backdrop">
+    <div class="modal-box" style="max-width:420px; max-height:80vh; overflow-y:auto;">
+      <h3 id="oosModalTitle">SKU tidak ada di toko</h3>
+      <p id="oosModalSubtitle" class="upload-status" style="margin-bottom:10px;"></p>
+      <div id="oosModalBody"></div>
+      <button id="oosModalClose" style="width:100%; margin-top:12px;">Tutup</button>
+    </div>
+  </div>
+
 </div>
-<script type="module" src="js/dashboard.js?v=3"></script>
+<script type="module" src="js/dashboard.js?v=4"></script>
 </body>
 </html>

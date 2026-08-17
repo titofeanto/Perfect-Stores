@@ -1,7 +1,7 @@
-import { db, collection, query, where, getDocs, authReady } from './firebase-init.js';
+import { db, doc, getDoc, collection, query, where, getDocs, authReady } from './firebase-init.js';
 import { loadStores, loadSkuList } from './store-data.js';
 import { getWeeksForMonth, findWeekContaining, fmtShort, MONTHS_ID } from './weeks.js';
-import { summarizeEntry } from './entry-utils.js';
+import { summarizeEntry, buildOosDetail } from './entry-utils.js';
 
 const TODAY = new Date();
 const el = (id) => document.getElementById(id);
@@ -9,6 +9,8 @@ const el = (id) => document.getElementById(id);
 let stores = [];
 let skuListCache = {}; // scopeSlug -> sku list
 let currentWeeks = [];
+let distStockByArea = {};
+let rowsByStoreId = {};
 
 async function init() {
   await authReady;
@@ -16,13 +18,31 @@ async function init() {
   // Preload semua daftar SKU wajib (cuma 3 file kecil) supaya perhitungan % per toko tidak perlu fetch berulang
   const uniqueSlugs = [...new Set(stores.map(s => s.scopeSlug))];
   await Promise.all(uniqueSlugs.map(async slug => { skuListCache[slug] = await loadSkuList(slug); }));
+  await loadDistributorStockAll();
 
   populateMonthSelect();
   populateWeekSelect();
   el('monthSel').addEventListener('change', () => { populateWeekSelect(); loadAndRender(); });
   el('weekSel').addEventListener('change', loadAndRender);
+  el('oosModalClose').addEventListener('click', () => el('oosModal').classList.remove('show'));
 
   await loadAndRender();
+}
+
+// distributorStock cuma menyimpan snapshot TERBARU (bukan histori per minggu) --
+// dimuat sekali saja, bukan tergantung minggu yang dipilih.
+async function loadDistributorStockAll() {
+  const areas = ['Sorong', 'Timika'];
+  const results = await Promise.all(areas.map(async area => {
+    try {
+      const snap = await getDoc(doc(db, 'distributorStock', area));
+      return [area, snap.exists() ? (snap.data().items || {}) : {}];
+    } catch (err) {
+      console.error('Gagal memuat stock distributor', area, err);
+      return [area, {}];
+    }
+  }));
+  distStockByArea = Object.fromEntries(results);
 }
 
 function populateMonthSelect() {
@@ -74,11 +94,13 @@ async function loadAndRender() {
     const entry = entriesByStore[store.id] || null;
     const skuList = skuListCache[store.scopeSlug] || [];
     const summary = summarizeEntry(entry ? entry.items : null, skuList);
+    const oosDetail = buildOosDetail(entry ? entry.items : null, skuList, distStockByArea[store.area] || {});
     let status = 'notstarted';
     if (entry && entry.submitted) status = 'submitted';
     else if (entry) status = 'progress';
-    return { store, entry, summary, status };
+    return { store, entry, summary, status, oosDetail };
   });
+  rowsByStoreId = Object.fromEntries(rows.map(r => [r.store.id, r]));
 
   renderMetrics(rows);
   renderAreaSummary(rows);
@@ -94,10 +116,15 @@ function renderMetrics(rows) {
   const submitted = rows.filter(r => r.status === 'submitted').length;
   const notSubmitted = total - submitted;
   const avgPct = total ? Math.round(rows.reduce((sum, r) => sum + r.summary.pct, 0) / total) : 0;
+  const totalSku = rows.reduce((s, r) => s + r.summary.total, 0);
+  const totalAda = rows.reduce((s, r) => s + r.summary.ada, 0);
+  const osaPct = totalSku ? Math.round((totalAda / totalSku) * 100) : 0;
   el('mTotal').textContent = total;
   el('mSubmitted').textContent = submitted;
   el('mNotSubmitted').textContent = notSubmitted;
   el('mAvgPct').textContent = avgPct + '%';
+  el('mOsa').textContent = `${osaPct}%`;
+  el('mOsaDetail').textContent = `${totalAda}/${totalSku} SKU-toko tersedia`;
 }
 
 function renderAreaSummary(rows) {
@@ -152,15 +179,20 @@ function renderFlagAvailability(rows) {
 }
 
 function renderTable(rows, week) {
-  const statusPriority = { notstarted: 0, progress: 1, submitted: 2 };
+  // Toko yang sudah diisi ditampilkan lebih dulu (kebalikan dari sebelumnya), lalu
+  // di dalam grup yang sama, yang paling lengkap duluan.
+  const statusPriority = { submitted: 0, progress: 1, notstarted: 2 };
   const sorted = [...rows].sort((a, b) => {
     const sp = statusPriority[a.status] - statusPriority[b.status];
     if (sp !== 0) return sp;
-    return a.summary.pct - b.summary.pct;
+    return b.summary.pct - a.summary.pct;
   });
 
   el('recapTableBody').innerHTML = sorted.map(r => {
     const link = `index.html?store=${encodeURIComponent(r.store.id)}&period=${encodeURIComponent(week.periodKey)}`;
+    const tidakAdaCell = r.summary.tidakAda > 0
+      ? `<button type="button" class="oos-link" data-store-id="${r.store.id}">${r.summary.tidakAda}</button>`
+      : r.summary.tidakAda;
     return `
       <tr>
         <td class="name-cell">${r.store.name}</td>
@@ -172,11 +204,51 @@ function renderTable(rows, week) {
             <span>${r.summary.lengkap}/${r.summary.total}</span>
           </div>
         </td>
-        <td>${r.summary.tidakAda}</td>
+        <td>
+          <div class="pct-bar-wrap">
+            <div class="pct-bar-track"><div class="pct-bar-fill" style="width:${r.summary.osaPct}%;"></div></div>
+            <span>${r.summary.osaPct}%</span>
+          </div>
+        </td>
+        <td>${tidakAdaCell}</td>
         <td><a class="open-link" href="${link}">Buka &rarr;</a></td>
       </tr>
     `;
   }).join('');
+
+  el('recapTableBody').querySelectorAll('.oos-link').forEach(btn => {
+    btn.addEventListener('click', () => openOosModal(btn.dataset.storeId, week));
+  });
+}
+
+function dtStatusBadge(dtQty) {
+  if (dtQty === null || dtQty === undefined) {
+    return '<span class="status-pill notstarted">Data DT tidak ada</span>';
+  }
+  if (dtQty > 0) {
+    return '<span class="status-pill submitted">Ada di DT &middot; push salesman</span>';
+  }
+  return '<span class="status-pill progress" style="background:var(--danger-bg); color:var(--danger);">OOS DT juga</span>';
+}
+
+function openOosModal(storeId, week) {
+  const row = rowsByStoreId[storeId];
+  if (!row) return;
+  el('oosModalTitle').textContent = `SKU tidak ada di toko - ${row.store.name}`;
+  el('oosModalSubtitle').textContent = `${week.label} (${fmtShort(week.start)} - ${fmtShort(week.end)}) &middot; dicocokkan ke stock distributor TERKINI (bukan histori minggu itu)`;
+  if (!row.oosDetail.length) {
+    el('oosModalBody').innerHTML = '<p class="upload-status">Tidak ada SKU dengan stock 0 untuk toko ini.</p>';
+  } else {
+    el('oosModalBody').innerHTML = row.oosDetail.map(d => `
+      <div class="sku-item">
+        <p class="sku-name">${d.name}</p>
+        <p class="sku-code">${d.barcode}${d.pcode ? ' &middot; PC ' + d.pcode : ''}</p>
+        <div>${dtStatusBadge(d.dtQty)}</div>
+        ${d.dtQty !== null ? `<p class="upload-status">Stock distributor (${row.store.area}): ${d.dtQty} pcs</p>` : ''}
+      </div>
+    `).join('');
+  }
+  el('oosModal').classList.add('show');
 }
 
 init();

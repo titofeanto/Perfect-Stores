@@ -41,6 +41,38 @@ export function statusOf(item) {
   return 'partial';
 }
 
+// Daftar SKU yang stock tokonya 0, dicocokkan dengan stock distributor (kalau ada
+// datanya) -- dipakai dashboard untuk drill-down "Tidak ada" per toko.
+// distStockItems: map {pcode: {karton,lusin,pcs}} dari koleksi distributorStock/{area}.
+// CATATAN: distributorStock cuma menyimpan snapshot TERBARU (bukan histori per minggu),
+// jadi kalau minggu yang dilihat bukan minggu berjalan, angka DT ini adalah kondisi
+// TERKINI, bukan kondisi persis pada minggu itu.
+export function buildOosDetail(items, skuList, distStockItems) {
+  items = items || {};
+  distStockItems = distStockItems || {};
+  const result = [];
+  for (const sku of skuList) {
+    const raw = items[sku.barcode] || {};
+    const stockField = normalizeField(raw.stock);
+    if (fieldIsEmpty(stockField)) continue;
+    const qty = fieldTotal(stockField, sku.isi);
+    if (qty !== 0) continue;
+    const dt = sku.pcode ? distStockItems[sku.pcode] : null;
+    let dtQty = null;
+    if (dt) {
+      dtQty = (Number(dt.karton) || 0) * (sku.isi || 0) + (Number(dt.lusin) || 0) * 12 + (Number(dt.pcs) || 0);
+    }
+    result.push({
+      barcode: sku.barcode,
+      pcode: sku.pcode,
+      name: sku.name,
+      flag: sku.flag,
+      dtQty, // null = tidak ada data DT sama sekali, angka (termasuk 0) = ada datanya
+    });
+  }
+  return result;
+}
+
 // Ringkas 1 dokumen entry (hasil isian 1 toko utk 1 minggu) terhadap 1 daftar SKU wajib.
 // items: map {barcode: {stock,order,masuk,jual}} dari Firestore (bisa format lama/baru/kosong).
 // skuList: array SKU wajib toko itu (dari data/sku-*.json).
@@ -50,6 +82,7 @@ export function summarizeEntry(items, skuList) {
   items = items || {};
   let lengkap = 0;
   let tidakAda = 0;
+  let ada = 0;
   const byFlag = {};
   for (const sku of skuList) {
     const raw = items[sku.barcode] || {};
@@ -62,6 +95,7 @@ export function summarizeEntry(items, skuList) {
     const isTidakAda = stockFilled && stockQty === 0;
     const isAda = stockFilled && stockQty > 0;
     if (isTidakAda) tidakAda++;
+    if (isAda) ada++;
 
     const flag = sku.flag || 'COTC';
     if (!byFlag[flag]) byFlag[flag] = { total: 0, ada: 0, tidakAda: 0, belumIsi: 0 };
@@ -75,6 +109,9 @@ export function summarizeEntry(items, skuList) {
     lengkap,
     belum: skuList.length - lengkap,
     tidakAda,
+    ada,
+    // OSA (On Shelf Availability) = SKU dengan stock > 0 dibagi total SKU wajib.
+    osaPct: skuList.length ? Math.round((ada / skuList.length) * 100) : 0,
     pct: skuList.length ? Math.round((lengkap / skuList.length) * 100) : 0,
     byFlag
   };
