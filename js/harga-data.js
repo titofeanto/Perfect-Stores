@@ -31,6 +31,24 @@ export async function addCompetitor(pcode, competitor) {
   return competitorId;
 }
 
+// Koreksi data kompetitor yang sudah ada (misal salah ketik nama brand) -- berlaku
+// global juga, langsung berubah untuk semua toko begitu disimpan.
+export async function updateCompetitor(pcode, competitorId, competitor) {
+  const ref = doc(db, 'competitors', COMPETITORS_DOC);
+  await setDoc(ref, {
+    items: {
+      [pcode]: {
+        [competitorId]: {
+          brand: competitor.brand,
+          productName: competitor.productName,
+          packSize: competitor.packSize || null,
+          editedAt: serverTimestamp()
+        }
+      }
+    }
+  }, { merge: true });
+}
+
 function priceDocId(storeId, periodKey) {
   return `${storeId}__${periodKey}`;
 }

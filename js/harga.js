@@ -1,7 +1,8 @@
 import { authReady } from './firebase-init.js';
 import { loadStores, loadHargaProduk } from './store-data.js';
 import { MONTHS_ID } from './weeks.js';
-import { loadCompetitors, addCompetitor, loadPriceEntry, savePriceField } from './harga-data.js';
+import { loadCompetitors, addCompetitor, updateCompetitor, loadPriceEntry, savePriceField } from './harga-data.js';
+import { supportsNativeBarcodeDetector, startNativeScan, stopNativeScan, startFallbackScan, stopFallbackScan } from './barcode-scan.js';
 
 const TODAY = new Date();
 const el = (id) => document.getElementById(id);
@@ -19,6 +20,7 @@ let searchText = '';
 let flagFilter = 'all';
 let saveTimers = {};
 let openAddForm = null; // pcode yang sedang buka form tambah kompetitor
+let editingCompetitor = null; // {pcode, competitorId} yang sedang diedit
 
 function rp(n) {
   if (n === null || n === undefined || n === '') return '-';
@@ -41,6 +43,8 @@ async function init() {
   el('storeSel').addEventListener('change', onStoreOrMonthChange);
   el('monthSel').addEventListener('change', onStoreOrMonthChange);
   el('searchBox').addEventListener('input', (e) => { searchText = e.target.value; renderProductList(); });
+  el('scanBtn').addEventListener('click', openScanModal);
+  el('scanCloseBtn').addEventListener('click', closeScanModal);
 
   await onStoreOrMonthChange();
 }
@@ -124,9 +128,31 @@ function renderProductList() {
     const compHtml = compIds.map(cid => {
       const c = compList[cid];
       const price = (entry.competitorPrices || {})[cid] ?? '';
+      const isEditing = editingCompetitor && editingCompetitor.pcode === p.pcode && editingCompetitor.competitorId === cid;
+      if (isEditing) {
+        return `
+          <div class="competitor-item">
+            <div class="competitor-form" data-edit-form-for="${p.pcode}" data-edit-competitor-id="${cid}">
+              <label class="field-label">Brand kompetitor</label>
+              <input type="text" class="comp-brand" value="${c.brand || ''}">
+              <label class="field-label">Nama produk</label>
+              <input type="text" class="comp-name" value="${c.productName || ''}">
+              <label class="field-label">Ukuran kemasan (opsional)</label>
+              <input type="text" class="comp-size" value="${c.packSize || ''}">
+              <div style="display:flex; gap:6px;">
+                <button type="button" class="comp-edit-cancel" style="flex:1;">Batal</button>
+                <button type="button" class="comp-edit-save primary" style="flex:1;">Simpan koreksi</button>
+              </div>
+            </div>
+          </div>
+        `;
+      }
       return `
         <div class="competitor-item">
-          <p class="competitor-name">${c.brand} - ${c.productName}${c.packSize ? ' (' + c.packSize + ')' : ''}</p>
+          <div class="competitor-name-row">
+            <p class="competitor-name">${c.brand} - ${c.productName}${c.packSize ? ' (' + c.packSize + ')' : ''}</p>
+            <button type="button" class="competitor-edit-btn" data-edit-pcode="${p.pcode}" data-edit-cid="${cid}" title="Koreksi data kompetitor">Edit</button>
+          </div>
           <div class="price-input-wrap">
             <span>Rp</span>
             <input type="number" min="0" data-pcode="${p.pcode}" data-kind="competitor" data-competitor-id="${cid}" value="${price}" placeholder="Harga di toko ini">
@@ -227,6 +253,44 @@ function wireProductListEvents() {
       }
     });
   });
+
+  el('productList').querySelectorAll('.competitor-edit-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      editingCompetitor = { pcode: btn.dataset.editPcode, competitorId: btn.dataset.editCid };
+      renderProductList();
+    });
+  });
+  el('productList').querySelectorAll('.comp-edit-cancel').forEach(btn => {
+    btn.addEventListener('click', () => { editingCompetitor = null; renderProductList(); });
+  });
+  el('productList').querySelectorAll('.comp-edit-save').forEach(btn => {
+    btn.addEventListener('click', async () => {
+      const form = btn.closest('.competitor-form');
+      const pcode = form.dataset.editFormFor;
+      const cid = form.dataset.editCompetitorId;
+      const brand = form.querySelector('.comp-brand').value.trim();
+      const productName = form.querySelector('.comp-name').value.trim();
+      const packSize = form.querySelector('.comp-size').value.trim();
+      if (!brand || !productName) {
+        showToast('Isi minimal brand dan nama produk kompetitor.', 'danger');
+        return;
+      }
+      btn.disabled = true;
+      btn.textContent = 'Menyimpan...';
+      try {
+        await updateCompetitor(pcode, cid, { brand, productName, packSize });
+        competitors[pcode][cid] = { ...competitors[pcode][cid], brand, productName, packSize };
+        editingCompetitor = null;
+        showToast(`Data kompetitor "${brand}" dikoreksi -- langsung berubah di semua toko.`, 'success');
+        renderProductList();
+      } catch (err) {
+        console.error('Gagal mengoreksi kompetitor:', err);
+        showToast('Gagal menyimpan koreksi. Cek koneksi internet.', 'danger');
+        btn.disabled = false;
+        btn.textContent = 'Simpan koreksi';
+      }
+    });
+  });
 }
 
 function scheduleSave(pcode, kind, competitorId, value) {
@@ -240,6 +304,60 @@ function scheduleSave(pcode, kind, competitorId, value) {
       showToast('Gagal menyimpan. Cek koneksi internet.', 'danger');
     }
   }, 600);
+}
+
+let usingNativeScan = false;
+
+async function openScanModal() {
+  el('scanModal').classList.add('show');
+  el('scanStatus').textContent = 'Meminta izin kamera...';
+  el('scanVideo').style.display = 'none';
+  el('scanFallbackContainer').innerHTML = '';
+
+  usingNativeScan = supportsNativeBarcodeDetector();
+
+  if (usingNativeScan) {
+    el('scanVideo').style.display = 'block';
+    await startNativeScan(el('scanVideo'), onBarcodeDetected, onScanError);
+    el('scanStatus').textContent = 'Arahkan kamera ke barcode produk.';
+  } else {
+    el('scanStatus').textContent = 'Menyiapkan scanner (perangkat ini pakai mode kompatibilitas)...';
+    await startFallbackScan('scanFallbackContainer', onBarcodeDetected, onScanError);
+    el('scanStatus').textContent = 'Arahkan kamera ke barcode produk.';
+  }
+}
+
+function closeScanModal() {
+  el('scanModal').classList.remove('show');
+  if (usingNativeScan) stopNativeScan(el('scanVideo'));
+  else stopFallbackScan();
+}
+
+function onScanError(err) {
+  console.error('Scan error:', err);
+  el('scanStatus').textContent = 'Tidak bisa mengakses kamera. Pastikan izin kamera diaktifkan untuk situs ini.';
+}
+
+function onBarcodeDetected(rawValue) {
+  closeScanModal();
+  const barcode = String(rawValue).trim();
+  const product = allProducts.find(p => p.barcode === barcode);
+  if (!product) {
+    showToast(`Barcode ${barcode} tidak ada di daftar produk survei harga.`, 'danger');
+    return;
+  }
+  flagFilter = 'all';
+  searchText = barcode;
+  el('searchBox').value = barcode;
+  renderFlagFilterChips();
+  renderProductList();
+  const card = document.querySelector(`.sku-item[data-pcode="${product.pcode}"]`);
+  if (card) {
+    card.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    card.classList.add('flash-highlight');
+    setTimeout(() => card.classList.remove('flash-highlight'), 1600);
+  }
+  showToast(`Ditemukan: ${product.name}`, 'success');
 }
 
 let toastTimer;
