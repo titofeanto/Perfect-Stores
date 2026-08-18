@@ -190,7 +190,7 @@ async function onPromoSave() {
     }
   } catch (err) {
     console.error('Gagal menyimpan SKU Promo:', err);
-    showToast('Gagal menyimpan. Cek koneksi internet.', 'danger');
+    showToast(`Gagal menyimpan (${err.code || err.message || 'error tidak diketahui'}).`, 'danger');
   } finally {
     btn.textContent = 'Simpan SKU Promo';
     btn.disabled = false;
@@ -367,7 +367,7 @@ function wireProductListEvents() {
         renderProductList();
       } catch (err) {
         console.error('Gagal menambah kompetitor:', err);
-        showToast('Gagal menyimpan kompetitor. Cek koneksi internet.', 'danger');
+        showToast(`Gagal menyimpan kompetitor (${err.code || err.message || 'error tidak diketahui'}).`, 'danger');
         btn.disabled = false;
         btn.textContent = 'Simpan kompetitor';
       }
@@ -405,7 +405,7 @@ function wireProductListEvents() {
         renderProductList();
       } catch (err) {
         console.error('Gagal mengoreksi kompetitor:', err);
-        showToast('Gagal menyimpan koreksi. Cek koneksi internet.', 'danger');
+        showToast(`Gagal menyimpan koreksi (${err.code || err.message || 'error tidak diketahui'}).`, 'danger');
         btn.disabled = false;
         btn.textContent = 'Simpan koreksi';
       }
@@ -421,7 +421,7 @@ function scheduleSave(pcode, kind, competitorId, value) {
       await savePriceField(currentStore, currentPeriodKey, pcode, kind, competitorId, value);
     } catch (err) {
       console.error('Gagal menyimpan harga:', err);
-      showToast('Gagal menyimpan. Cek koneksi internet.', 'danger');
+      showToast(`Gagal menyimpan (${err.code || err.message || 'error tidak diketahui'}).`, 'danger');
     }
   }, 600);
 }
