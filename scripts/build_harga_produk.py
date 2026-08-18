@@ -2,7 +2,9 @@
 Regenerate /data/harga-produk.json -- daftar produk untuk fitur Survei Harga.
 
 Gabungan dari:
-  - data/sku-lmt-spm.json (SKU wajib LMT SPM yang sudah ada, flag dipertahankan)
+  - data/sku-lmt-spm.json (SKU wajib LMT SPM -- untuk 8 toko EC BIG, flag dipertahankan)
+  - data/sku-haba-dt.json (SKU wajib HABA DT -- untuk toko Beauty/Cosmetic Expert
+    Traditional: SAGA BEAUTY, DEDE MAMA, flag dipertahankan)
   - Sheet "Detail Mekanisme" di file Consumer Promo (kolom SKU CODE MAPPING,
     SKU DESCRIPTION CURRENT, RSP) -- SKU yang cuma ada di sini diberi flag None.
 
@@ -17,6 +19,7 @@ from pathlib import Path
 import openpyxl
 
 DATA_DIR = Path("data")
+WAJIB_FILES = ['sku-lmt-spm.json', 'sku-haba-dt.json']
 
 
 def main():
@@ -25,8 +28,12 @@ def main():
         sys.exit(1)
     promo_path = sys.argv[1]
 
-    wajib = json.loads((DATA_DIR / 'sku-lmt-spm.json').read_text())
-    wajib_by_pcode = {it['pcode']: it for it in wajib if it['pcode']}
+    wajib_by_pcode = {}
+    for fname in WAJIB_FILES:
+        items = json.loads((DATA_DIR / fname).read_text())
+        for it in items:
+            if it['pcode']:
+                wajib_by_pcode[it['pcode']] = it
 
     wb = openpyxl.load_workbook(promo_path, data_only=True)
     ws = wb['Detail Mekanisme']

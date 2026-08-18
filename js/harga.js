@@ -32,7 +32,11 @@ function rp(n) {
 async function init() {
   await authReady;
   const allStores = await loadStores();
-  ecBigStores = allStores.filter(s => s.subChannel === 'LOCAL SUPERMARKET EC BIG');
+  // Survei harga: 8 toko LMT SPM "EC BIG" + 2 toko Beauty/Cosmetic Expert Traditional
+  // (SAGA BEAUTY, DEDE MAMA) -- keduanya scope HABA DT.
+  ecBigStores = allStores.filter(s =>
+    s.subChannel === 'LOCAL SUPERMARKET EC BIG' || s.subChannel === 'COSMETIC EXPERT TRADITIONAL'
+  );
   allProducts = await loadHargaProduk();
   competitors = await loadCompetitors();
 

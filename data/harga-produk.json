@@ -333,6 +333,15 @@
     "source": "promo"
   },
   {
+    "pcode": "64955932",
+    "barcode": "8999999612696",
+    "name": "CITRA FACE&BODY SRM FRESH GLOW 2X6X180ML",
+    "flag": "MARKET MAKING",
+    "isi": 12,
+    "rsp": null,
+    "source": "wajib"
+  },
+  {
     "pcode": "64781848",
     "barcode": "8999999605889",
     "name": "CITRA HBL BENGKOANG PERFECT UV 12X380ML",
@@ -351,6 +360,24 @@
     "source": "wajib"
   },
   {
+    "pcode": "64784528",
+    "barcode": "8999999605957",
+    "name": "CITRA HBL BENGKOANG PERFECT UV 36X110ML",
+    "flag": "COTC",
+    "isi": 36,
+    "rsp": null,
+    "source": "wajib"
+  },
+  {
+    "pcode": "64784532",
+    "barcode": "8999999605988",
+    "name": "CITRA HBL BENGKOANG PERFECT UV 36X60ML",
+    "flag": "COTC",
+    "isi": 36,
+    "rsp": null,
+    "source": "wajib"
+  },
+  {
     "pcode": "64784522",
     "barcode": "8999999606053",
     "name": "CITRA HBL HYDRA COOL UV 24X210ML",
@@ -358,6 +385,24 @@
     "isi": null,
     "rsp": 27285,
     "source": "promo"
+  },
+  {
+    "pcode": "64784520",
+    "barcode": "8999999606022",
+    "name": "CITRA HBL NOURISH MOIST UV 24X210ML",
+    "flag": "COTC",
+    "isi": 24,
+    "rsp": null,
+    "source": "wajib"
+  },
+  {
+    "pcode": "64781852",
+    "barcode": "8999999605902",
+    "name": "CITRA HBL PEARLY RADIANT UV 12X380ML",
+    "flag": "COTC",
+    "isi": 12,
+    "rsp": null,
+    "source": "wajib"
   },
   {
     "pcode": "64784526",
@@ -369,13 +414,49 @@
     "source": "wajib"
   },
   {
+    "pcode": "64784530",
+    "barcode": "8999999606008",
+    "name": "CITRA HBL PEARLY RADIANT UV 36X110ML",
+    "flag": "COTC",
+    "isi": 36,
+    "rsp": null,
+    "source": "wajib"
+  },
+  {
+    "pcode": "64784512",
+    "barcode": "8999999605964",
+    "name": "CITRA HBL SAKURA SUPPLE UV 24X210ML",
+    "flag": "COTC",
+    "isi": 24,
+    "rsp": null,
+    "source": "wajib"
+  },
+  {
+    "pcode": "68483853",
+    "barcode": "8999999003890",
+    "name": "CITRA PEARLY GLOW UV FM 24X40G",
+    "flag": "COTC",
+    "isi": 24,
+    "rsp": null,
+    "source": "wajib"
+  },
+  {
+    "pcode": "68483852",
+    "barcode": "8999999517793",
+    "name": "CITRA SAKURA GLOW UV FM 24X40G",
+    "flag": "COTC",
+    "isi": 24,
+    "rsp": null,
+    "source": "wajib"
+  },
+  {
     "pcode": "64955944",
     "barcode": "8999999612726",
     "name": "CITRA UV BODY SRM BOUNCY GLOW 2X6X180ML",
-    "flag": null,
-    "isi": null,
+    "flag": "MARKET MAKING",
+    "isi": 12,
     "rsp": 31600,
-    "source": "promo"
+    "source": "wajib"
   },
   {
     "pcode": "64955926",
@@ -390,19 +471,19 @@
     "pcode": "64955908",
     "barcode": "8999999612658",
     "name": "CITRA UV BODY SRM RADIANT FRSH 2X6X180ML",
-    "flag": null,
-    "isi": null,
+    "flag": "COTC",
+    "isi": 12,
     "rsp": 31600,
-    "source": "promo"
+    "source": "wajib"
   },
   {
     "pcode": "64955920",
     "barcode": "8999999612672",
     "name": "CITRA UV BODY SRM SPF 30 PA++ 2X6X180ML",
-    "flag": null,
-    "isi": null,
+    "flag": "COTC",
+    "isi": 12,
     "rsp": 38300,
-    "source": "promo"
+    "source": "wajib"
   },
   {
     "pcode": "66304132",
@@ -459,21 +540,30 @@
     "source": "promo"
   },
   {
+    "pcode": "64880609",
+    "barcode": "8999999529628",
+    "name": "CLEAR SHP COMPLETE SOFT CARE 36X160ML",
+    "flag": "COTC",
+    "isi": 36,
+    "rsp": 35650,
+    "source": "wajib"
+  },
+  {
+    "pcode": "65426464",
+    "barcode": "8999999529710",
+    "name": "CLEAR SHP COOL SPORT MNTL MEN 36X160ML",
+    "flag": "COTC",
+    "isi": 36,
+    "rsp": 37450,
+    "source": "wajib"
+  },
+  {
     "pcode": "64880608",
     "barcode": "8999999529635",
     "name": "CLEAR SHP CSC PRWTN KOMPLIT NEW 18X300ML",
     "flag": "COTC",
     "isi": 18,
     "rsp": 61900,
-    "source": "wajib"
-  },
-  {
-    "pcode": "64880609",
-    "barcode": "8999999529628",
-    "name": "CLEAR SHP CSC PRWTN KOMPLIT NEW 36X160ML",
-    "flag": "COTC",
-    "isi": 36,
-    "rsp": 35650,
     "source": "wajib"
   },
   {
@@ -510,15 +600,6 @@
     "flag": null,
     "isi": null,
     "rsp": 35650,
-    "source": "promo"
-  },
-  {
-    "pcode": "65426464",
-    "barcode": "8999999529710",
-    "name": "CLEAR SHP MENTHOL FRESH ACT NEW 36X160ML",
-    "flag": null,
-    "isi": null,
-    "rsp": 37450,
     "source": "promo"
   },
   {
@@ -684,21 +765,21 @@
     "source": "promo"
   },
   {
+    "pcode": "64806761",
+    "barcode": "8999999030575",
+    "name": "DOVE BW DEEPLY NOURISH KR REFF 24X400ML",
+    "flag": "MARKET MAKING",
+    "isi": 24,
+    "rsp": 33300,
+    "source": "wajib"
+  },
+  {
     "pcode": "65446689",
     "barcode": "8999999005580",
     "name": "DOVE COMPLETE CARE+VSLN 24X(40ML+20ML)",
     "flag": null,
     "isi": null,
     "rsp": 29375,
-    "source": "promo"
-  },
-  {
-    "pcode": "64960783",
-    "barcode": "8999999612993",
-    "name": "DOVE CON BIOTIN AHL KERINGSEHAT 12X135ML",
-    "flag": null,
-    "isi": null,
-    "rsp": 36800,
     "source": "promo"
   },
   {
@@ -711,13 +792,22 @@
     "source": "wajib"
   },
   {
+    "pcode": "64960783",
+    "barcode": "8999999612993",
+    "name": "DOVE CON BIOTIN HAIRFALL CONTROL 135 ML",
+    "flag": "COTC",
+    "isi": 18,
+    "rsp": 36800,
+    "source": "wajib"
+  },
+  {
     "pcode": "64960777",
     "barcode": "8999999612986",
     "name": "DOVE CON MICELLAR AHL BERMINYAK 12X135ML",
-    "flag": null,
-    "isi": null,
+    "flag": "COTC",
+    "isi": 12,
     "rsp": 36800,
-    "source": "promo"
+    "source": "wajib"
   },
   {
     "pcode": "68507675",
@@ -727,6 +817,15 @@
     "isi": null,
     "rsp": 68050,
     "source": "promo"
+  },
+  {
+    "pcode": "64987261",
+    "barcode": "8999999613815",
+    "name": "DOVE CRMBTH BIOTIN AHL KRGSHT 4X12X30G",
+    "flag": "MARKET MAKING",
+    "isi": 48,
+    "rsp": null,
+    "source": "wajib"
   },
   {
     "pcode": "64840063",
@@ -768,10 +867,10 @@
     "pcode": "64314038",
     "barcode": "8999999601454",
     "name": "DOVE DEO RO ORANGE NIA+VITC&E 8X3X45ML",
-    "flag": null,
-    "isi": null,
+    "flag": "MARKET MAKING",
+    "isi": 24,
     "rsp": 33150,
-    "source": "promo"
+    "source": "wajib"
   },
   {
     "pcode": "64314042",
@@ -819,15 +918,6 @@
     "source": "wajib"
   },
   {
-    "pcode": "64806761",
-    "barcode": "8999999030575",
-    "name": "DOVE MOISTURE RENEW PCH 24X400ML",
-    "flag": "COTC",
-    "isi": 24,
-    "rsp": 33300,
-    "source": "wajib"
-  },
-  {
     "pcode": "64807523",
     "barcode": "8999999606817",
     "name": "DOVE PAMPERING CARE PCH 12X800ML",
@@ -862,6 +952,15 @@
     "isi": null,
     "rsp": 120000,
     "source": "promo"
+  },
+  {
+    "pcode": "64947124",
+    "barcode": "8999999612344",
+    "name": "DOVE SAMPO BIOTIN HAIRFALL CONTROL 155 ML",
+    "flag": "COTC",
+    "isi": 24,
+    "rsp": 33200,
+    "source": "wajib"
   },
   {
     "pcode": "64807521",
@@ -909,15 +1008,6 @@
     "source": "promo"
   },
   {
-    "pcode": "64947124",
-    "barcode": "8999999612344",
-    "name": "DOVE SHP BIOTIN AHL KERINGSEHAT 24X155ML",
-    "flag": "COTC",
-    "isi": 24,
-    "rsp": 33200,
-    "source": "wajib"
-  },
-  {
     "pcode": "64947313",
     "barcode": "8999999573140",
     "name": "DOVE SHP HYALURON AHL SENSITIF 12X290ML",
@@ -948,10 +1038,10 @@
     "pcode": "64947143",
     "barcode": "8999999612375",
     "name": "DOVE SHP MICELLAR AHL BERMINYAK 24X155ML",
-    "flag": null,
-    "isi": null,
+    "flag": "COTC",
+    "isi": 24,
     "rsp": 33200,
-    "source": "promo"
+    "source": "wajib"
   },
   {
     "pcode": "64947307",
@@ -999,6 +1089,15 @@
     "source": "wajib"
   },
   {
+    "pcode": "64954018",
+    "barcode": "8999999612580",
+    "name": "DOVE TONIC BIOTIN AHL KERINGSEHAT 6X75ML",
+    "flag": "MARKET MAKING",
+    "isi": 6,
+    "rsp": null,
+    "source": "wajib"
+  },
+  {
     "pcode": "65446692",
     "barcode": "8999999027865",
     "name": "DOVE ULT REPAIR+VSLN 24X(40ML+20ML)",
@@ -1008,9 +1107,54 @@
     "source": "promo"
   },
   {
+    "pcode": "64835146",
+    "barcode": "8999999589417",
+    "name": "FAIR & LOVELY G&L KRIM VIT C 24X40G",
+    "flag": "COTC",
+    "isi": 24,
+    "rsp": null,
+    "source": "wajib"
+  },
+  {
+    "pcode": "62759353",
+    "barcode": "8999999007799",
+    "name": "FAIR & LOVELY G&L MVIT CREAM 24X46G",
+    "flag": "COTC",
+    "isi": 24,
+    "rsp": 48200,
+    "source": "wajib"
+  },
+  {
+    "pcode": "62759351",
+    "barcode": "8999999007782",
+    "name": "FAIR & LOVELY G&L MVIT CREAM 48X23G",
+    "flag": "COTC",
+    "isi": 48,
+    "rsp": 25700,
+    "source": "wajib"
+  },
+  {
+    "pcode": "64297850",
+    "barcode": "8999999055769",
+    "name": "FAIR & LOVELY G&L MVIT FF 4X6X50G",
+    "flag": "COTC",
+    "isi": 24,
+    "rsp": null,
+    "source": "wajib"
+  },
+  {
+    "pcode": "68493495",
+    "barcode": "8999999520892",
+    "name": "FAIR & LOVELY G&L POWDER CREAM 48X20G",
+    "flag": "COTC",
+    "isi": 48,
+    "rsp": null,
+    "source": "wajib"
+  },
+  {
     "pcode": "64825645",
     "barcode": "8999999566654",
-    "name": "GLOW & LOVELY BRIGHT C GLOW 4X6X100G",
+    "name": "FAIR & LOVELY G&L VIT C GLOW FF 4X6X100G",
     "flag": "COTC",
     "isi": 24,
     "rsp": 36400,
@@ -1019,7 +1163,7 @@
   {
     "pcode": "64825646",
     "barcode": "8999999566647",
-    "name": "GLOW & LOVELY BRIGHT C GLOW 4X6X50G",
+    "name": "FAIR & LOVELY G&L VIT C GLOW FF 4X6X50G",
     "flag": "COTC",
     "isi": 24,
     "rsp": null,
@@ -1029,10 +1173,19 @@
     "pcode": "64985526",
     "barcode": "8999999613617",
     "name": "GLOW & LOVELY GLASSBRIGHT CREAM 12X30G",
-    "flag": null,
-    "isi": null,
+    "flag": "MARKET MAKING",
+    "isi": 12,
     "rsp": 39000,
-    "source": "promo"
+    "source": "wajib"
+  },
+  {
+    "pcode": "64985530",
+    "barcode": "8999999613648",
+    "name": "GLOW & LOVELY GLASSBRIGHT CREAM 12X50G",
+    "flag": "MARKET MAKING",
+    "isi": 12,
+    "rsp": null,
+    "source": "wajib"
   },
   {
     "pcode": "65630297",
@@ -1098,21 +1251,21 @@
     "source": "promo"
   },
   {
-    "pcode": "62759353",
-    "barcode": "8999999007799",
-    "name": "GLOW & LOVELY MVIT DERMA CREAM 24X46G",
+    "pcode": "62760401",
+    "barcode": "8999999007768",
+    "name": "GLOW & LOVELY MVIT DERMA CRM 12X12X7.5G",
     "flag": "COTC",
-    "isi": 24,
-    "rsp": 48200,
+    "isi": 144,
+    "rsp": null,
     "source": "wajib"
   },
   {
-    "pcode": "62759351",
-    "barcode": "8999999007782",
-    "name": "GLOW & LOVELY MVIT DERMA CREAM 48X23G",
+    "pcode": "65080353",
+    "barcode": "8999999055752",
+    "name": "GLOW & LOVELY MVIT DERMA FF 12X12X7G",
     "flag": "COTC",
-    "isi": 48,
-    "rsp": 25700,
+    "isi": 144,
+    "rsp": null,
     "source": "wajib"
   },
   {
@@ -1125,27 +1278,36 @@
     "source": "wajib"
   },
   {
-    "pcode": "64297850",
-    "barcode": "8999999055769",
-    "name": "GLOW & LOVELY MVIT DERMA FF 4X6X50G",
-    "flag": "COTC",
+    "pcode": "64866730",
+    "barcode": "8999999608903",
+    "name": "GLOW & LOVELY SUN UV DUO SPF50 24X30G",
+    "flag": "MARKET MAKING",
     "isi": 24,
     "rsp": null,
     "source": "wajib"
   },
   {
-    "pcode": "64835146",
-    "barcode": "8999999589417",
-    "name": "GLOW & LOVELY SUN UV SPF35 VITC 24X40G",
+    "pcode": "64866732",
+    "barcode": "8999999608910",
+    "name": "GLOW & LOVELY SUN UV DUO SPF50 48X15G",
+    "flag": "MARKET MAKING",
+    "isi": 48,
+    "rsp": null,
+    "source": "wajib"
+  },
+  {
+    "pcode": "65426411",
+    "barcode": "8999999616045",
+    "name": "GLOW & LOVELY SUN UV SPF35 VITC 6X12X7G",
     "flag": "COTC",
-    "isi": 24,
+    "isi": 144,
     "rsp": null,
     "source": "wajib"
   },
   {
     "pcode": "64835147",
     "barcode": "8999999589400",
-    "name": "GLOW & LOVELY SUN UV SPF35 VITC 48X20G",
+    "name": "GLOW & LOVELY ULTIMATE UV DUO VIT C SPF 35 PA+++ TUB 20g",
     "flag": "COTC",
     "isi": 48,
     "rsp": 22250,
@@ -2441,20 +2603,38 @@
   {
     "pcode": "64875136",
     "barcode": "8999999609566",
-    "name": "POND'S BRIGHT MIR ULGEL FC 4X6X90G",
-    "flag": null,
-    "isi": null,
+    "name": "POND'S BRIGHT MIRACLE GENT CLEANSER NIASORCINOL 90G",
+    "flag": "MARKET MAKING",
+    "isi": 24,
     "rsp": 44000,
-    "source": "promo"
+    "source": "wajib"
   },
   {
     "pcode": "64875134",
     "barcode": "8999999609559",
-    "name": "POND'S HYDRA MIR ULGEL FC 4X6X90G",
-    "flag": null,
-    "isi": null,
+    "name": "POND'S HYDRA MIRACLE GENT CL CERAHYAMINO 90G",
+    "flag": "MARKET MAKING",
+    "isi": 24,
     "rsp": 44000,
-    "source": "promo"
+    "source": "wajib"
+  },
+  {
+    "pcode": "64851741",
+    "barcode": "8999999608460",
+    "name": "POND'S ULTRA LIGHT BIOME GEL CERA-HYAMINO 20G",
+    "flag": "MARKET MAKING",
+    "isi": 12,
+    "rsp": 60000,
+    "source": "wajib"
+  },
+  {
+    "pcode": "64851737",
+    "barcode": "8999999608484",
+    "name": "POND'S ULTRA LIGHT BIOME GEL NIASORNICOL 20G",
+    "flag": "MARKET MAKING",
+    "isi": 12,
+    "rsp": 60000,
+    "source": "wajib"
   },
   {
     "pcode": "69989941",
@@ -2466,45 +2646,54 @@
     "source": "promo"
   },
   {
+    "pcode": "69993016",
+    "barcode": "8999999059910",
+    "name": "PONDS AGE MIRACLE DAY CREAM 3X4X20G",
+    "flag": "COTC",
+    "isi": 12,
+    "rsp": 82800,
+    "source": "wajib"
+  },
+  {
+    "pcode": "69993015",
+    "barcode": "8999999059927",
+    "name": "PONDS AGE MIRACLE DAY CREAM 3X4X50G",
+    "flag": "COTC",
+    "isi": 12,
+    "rsp": null,
+    "source": "wajib"
+  },
+  {
     "pcode": "69993013",
     "barcode": "8999999059903",
-    "name": "PONDS AGE MIR FM DAY CREAM UY 12X3X9G",
+    "name": "PONDS AGE MIRACLE DAY CREAM12X3X10G",
     "flag": "COTC",
     "isi": 36,
     "rsp": 41400,
     "source": "wajib"
   },
   {
-    "pcode": "69993016",
-    "barcode": "8999999059910",
-    "name": "PONDS AGE MIR FM DAY CREAM UY 3X4X20G",
-    "flag": null,
-    "isi": null,
-    "rsp": 82800,
-    "source": "promo"
-  },
-  {
     "pcode": "69993021",
     "barcode": "8999999059934",
-    "name": "PONDS AGE MIR FM NIGHT CREAM UY 12X3X9G",
+    "name": "PONDS AGE MIRACLE NIGHT CREAM 12X3X10G",
     "flag": "COTC",
     "isi": 36,
     "rsp": null,
     "source": "wajib"
   },
   {
-    "pcode": "69989686",
-    "barcode": "8999999053048",
-    "name": "PONDS BRIGHT MIR FC FOAM DTOXX 4X6X100G",
+    "pcode": "69993014",
+    "barcode": "8999999059941",
+    "name": "PONDS AGE MIRACLE NIGHT CREAM 3X4X50G",
     "flag": "COTC",
-    "isi": 24,
+    "isi": 12,
     "rsp": null,
     "source": "wajib"
   },
   {
     "pcode": "69989680",
     "barcode": "8999999053031",
-    "name": "PONDS BRIGHT MIR FC FOAM UC 4X6X100G",
+    "name": "PONDS BRIGHT BEAUTY FACIAL FOAM 4X6X100G",
     "flag": "COTC",
     "isi": 24,
     "rsp": 42000,
@@ -2513,9 +2702,27 @@
   {
     "pcode": "69989683",
     "barcode": "8999999052959",
-    "name": "PONDS BRIGHT MIR FC FOAM UC 4X6X50G",
+    "name": "PONDS BRIGHT BEAUTY FACIAL FOAM 4X6X50G",
     "flag": "COTC",
     "isi": 24,
+    "rsp": null,
+    "source": "wajib"
+  },
+  {
+    "pcode": "69989485",
+    "barcode": "8999999056858",
+    "name": "PONDS BRIGHT BTY SERUM DAY CRM 24X40G",
+    "flag": "COTC",
+    "isi": 24,
+    "rsp": null,
+    "source": "wajib"
+  },
+  {
+    "pcode": "69989416",
+    "barcode": "8999999056841",
+    "name": "PONDS BRIGHT BTY SERUM DAY CRM 48X20G",
+    "flag": "COTC",
+    "isi": 48,
     "rsp": null,
     "source": "wajib"
   },
@@ -2529,33 +2736,6 @@
     "source": "wajib"
   },
   {
-    "pcode": "69989485",
-    "barcode": "8999999056858",
-    "name": "PONDS BRIGHT MIR FM CREAM U CLAR 24X40G",
-    "flag": "COTC",
-    "isi": 24,
-    "rsp": null,
-    "source": "wajib"
-  },
-  {
-    "pcode": "69989416",
-    "barcode": "8999999056841",
-    "name": "PONDS BRIGHT MIR FM CREAM U CLAR 48X20G",
-    "flag": "COTC",
-    "isi": 48,
-    "rsp": null,
-    "source": "wajib"
-  },
-  {
-    "pcode": "64851737",
-    "barcode": "8999999608484",
-    "name": "PONDS BRIGHT MIR ULGEL FM 4X3X20G",
-    "flag": null,
-    "isi": null,
-    "rsp": 60000,
-    "source": "promo"
-  },
-  {
     "pcode": "64851735",
     "barcode": "8999999608491",
     "name": "PONDS BRIGHT MIR ULGEL FM 4X3X50G",
@@ -2565,13 +2745,13 @@
     "source": "promo"
   },
   {
-    "pcode": "64851741",
-    "barcode": "8999999608460",
-    "name": "PONDS HYDRA MIR ULGEL FM 4X3X20G",
-    "flag": null,
-    "isi": null,
-    "rsp": 60000,
-    "source": "promo"
+    "pcode": "65463767",
+    "barcode": "8999999616618",
+    "name": "PONDS HYDRA MIRACLE FOAM 4X3X100G",
+    "flag": "COTC",
+    "isi": 12,
+    "rsp": null,
+    "source": "wajib"
   },
   {
     "pcode": "64858949",
@@ -2583,13 +2763,49 @@
     "source": "wajib"
   },
   {
+    "pcode": "69989686",
+    "barcode": "8999999053048",
+    "name": "PONDS PURE BRIGHT FACIAL FOAM 4X6X100G",
+    "flag": "COTC",
+    "isi": 24,
+    "rsp": null,
+    "source": "wajib"
+  },
+  {
+    "pcode": "69989688",
+    "barcode": "8999999052973",
+    "name": "PONDS PURE BRIGHT FACIAL FOAM 4X6X50G",
+    "flag": "COTC",
+    "isi": 24,
+    "rsp": null,
+    "source": "wajib"
+  },
+  {
+    "pcode": "62759134",
+    "barcode": "8999999549565",
+    "name": "PONDS ROSE MICELLAR WATER 4X3X100ML",
+    "flag": "COTC",
+    "isi": 12,
+    "rsp": null,
+    "source": "wajib"
+  },
+  {
+    "pcode": "64766549",
+    "barcode": "8999999605865",
+    "name": "PONDS UV MIRACLE BRIGHT SPF 35 12X25G",
+    "flag": "MARKET MAKING",
+    "isi": 12,
+    "rsp": null,
+    "source": "wajib"
+  },
+  {
     "pcode": "64766550",
     "barcode": "8999999605872",
     "name": "PONDS UV MIRACLE BRIGHT SPF 50 12X25G",
-    "flag": null,
-    "isi": null,
+    "flag": "COTC",
+    "isi": 12,
     "rsp": 66000,
-    "source": "promo"
+    "source": "wajib"
   },
   {
     "pcode": "69606014",
@@ -3636,6 +3852,51 @@
     "source": "promo"
   },
   {
+    "pcode": "64887609",
+    "barcode": "8999999611415",
+    "name": "SUNSILK CREAMBATH SILKY GLOSS 48X30G",
+    "flag": "MARKET MAKING",
+    "isi": 48,
+    "rsp": null,
+    "source": "wajib"
+  },
+  {
+    "pcode": "64887602",
+    "barcode": "8999999611408",
+    "name": "SUNSILK CREAMBATH SILKY SOFT 48X30G",
+    "flag": "MARKET MAKING",
+    "isi": 48,
+    "rsp": null,
+    "source": "wajib"
+  },
+  {
+    "pcode": "65280468",
+    "barcode": "8999999611347",
+    "name": "SUNSILK HAIR PERFUME SILKY GLOSS 50 ML",
+    "flag": "MARKET MAKING",
+    "isi": 24,
+    "rsp": null,
+    "source": "wajib"
+  },
+  {
+    "pcode": "65280469",
+    "barcode": "8999999611330",
+    "name": "SUNSILK HAIR PERFUME SILKY VOLUME 50 ML",
+    "flag": "MARKET MAKING",
+    "isi": 24,
+    "rsp": null,
+    "source": "wajib"
+  },
+  {
+    "pcode": "65280470",
+    "barcode": "8999999600303",
+    "name": "SUNSILK MULTIVTMN HAIR PERFUME 24X50ML",
+    "flag": "MARKET MAKING",
+    "isi": 24,
+    "rsp": null,
+    "source": "wajib"
+  },
+  {
     "pcode": "64939442",
     "barcode": "8999999612221",
     "name": "SUNSILK SHP ANT DDRF SILKY 18X320ML",
@@ -3798,9 +4059,36 @@
     "source": "wajib"
   },
   {
+    "pcode": "64399221",
+    "barcode": "8999999604851",
+    "name": "TRESEMME KERATIN SMOOTH KERATINBOND+ 30GR",
+    "flag": "MARKET MAKING",
+    "isi": 48,
+    "rsp": null,
+    "source": "wajib"
+  },
+  {
+    "pcode": "64888811",
+    "barcode": "8999999610005",
+    "name": "TRESEMME KERATIN SMOOTH SERUM 12X30ML",
+    "flag": "MARKET MAKING",
+    "isi": 12,
+    "rsp": null,
+    "source": "wajib"
+  },
+  {
     "pcode": "64306484",
     "barcode": "8999999526382",
-    "name": "TRESEMME CON KS KERATIN SMOOTH 18X170ML",
+    "name": "TRESEMME KRATIN SMOOTH ELXR CON 18X170ML",
+    "flag": "COTC",
+    "isi": 18,
+    "rsp": null,
+    "source": "wajib"
+  },
+  {
+    "pcode": "64306118",
+    "barcode": "8999999526405",
+    "name": "TRESEMME KRATIN SMOOTH ELXR SHP 18X170ML",
     "flag": "COTC",
     "isi": 18,
     "rsp": null,
@@ -3834,15 +4122,6 @@
     "source": "wajib"
   },
   {
-    "pcode": "64306118",
-    "barcode": "8999999526405",
-    "name": "TRESEMME SHP KS KERATIN SMOOTH 18X170ML",
-    "flag": "COTC",
-    "isi": 18,
-    "rsp": null,
-    "source": "wajib"
-  },
-  {
     "pcode": "64908468",
     "barcode": "8999999611569",
     "name": "VASELINE GH DEWY VCT SERUM 2X6X180ML",
@@ -3852,15 +4131,6 @@
     "source": "promo"
   },
   {
-    "pcode": "65486851",
-    "barcode": "8999999581947",
-    "name": "VASELINE GH DEWY VCT SERUM 2X6X200ML",
-    "flag": "COTC",
-    "isi": 12,
-    "rsp": null,
-    "source": "wajib"
-  },
-  {
     "pcode": "64394864",
     "barcode": "8999999581947",
     "name": "VASELINE GH DEWY VCT SERUM 2X6X200ML",
@@ -3868,15 +4138,6 @@
     "isi": null,
     "rsp": 64900,
     "source": "promo"
-  },
-  {
-    "pcode": "65486854",
-    "barcode": "9556126670661",
-    "name": "VASELINE GH DEWY VCT SERUM 4X3X330ML",
-    "flag": "COTC",
-    "isi": 12,
-    "rsp": null,
-    "source": "wajib"
   },
   {
     "pcode": "64398225",
@@ -3915,12 +4176,12 @@
     "source": "promo"
   },
   {
-    "pcode": "64398227",
-    "barcode": "9556126670654",
-    "name": "VASELINE GH FLAWLESS VCT SERUM 4X3X330ML",
-    "flag": "COTC",
-    "isi": 12,
-    "rsp": 93300,
+    "pcode": "65486826",
+    "barcode": "8999999596422",
+    "name": "VASELINE GH FLAWLESS VCT SERUM 4X6X100ML",
+    "flag": "MARKET MAKING",
+    "isi": 24,
+    "rsp": null,
     "source": "wajib"
   },
   {
@@ -3933,15 +4194,6 @@
     "source": "promo"
   },
   {
-    "pcode": "64398224",
-    "barcode": "8999999590055",
-    "name": "VASELINE GH OVRNGHT VCT SERUM 4X3X330 ML",
-    "flag": "COTC",
-    "isi": 12,
-    "rsp": null,
-    "source": "wajib"
-  },
-  {
     "pcode": "64840836",
     "barcode": "8999999608132",
     "name": "VASELINE GH OVRNGHT VCT SERUM 4X6X100 ML",
@@ -3949,6 +4201,15 @@
     "isi": null,
     "rsp": 37300,
     "source": "promo"
+  },
+  {
+    "pcode": "65486839",
+    "barcode": "8999999596972",
+    "name": "VASELINE GH PROAGE VCT SERUM 2X6X200ML",
+    "flag": "COTC",
+    "isi": 12,
+    "rsp": null,
+    "source": "wajib"
   },
   {
     "pcode": "64394853",
@@ -3972,25 +4233,88 @@
     "pcode": "65491674",
     "barcode": "8999999602932",
     "name": "VASELINE GH SPF 50 VCT SERUM 2X6X200ML",
-    "flag": "MARKET MAKING",
+    "flag": "COTC",
     "isi": 12,
     "rsp": 125000,
+    "source": "wajib"
+  },
+  {
+    "pcode": "64843038",
+    "barcode": "8999999608217",
+    "name": "VASELINE GH SPF 50 VCT SERUM 4X6X50ML",
+    "flag": "MARKET MAKING",
+    "isi": 24,
+    "rsp": null,
+    "source": "wajib"
+  },
+  {
+    "pcode": "65487083",
+    "barcode": "8999999590048",
+    "name": "VASELINE GLUTA SBL OVERNIGHT 4X3X200 ML",
+    "flag": "COTC",
+    "isi": 12,
+    "rsp": null,
+    "source": "wajib"
+  },
+  {
+    "pcode": "64398224",
+    "barcode": "8999999590055",
+    "name": "VASELINE GLUTA SBL OVERNIGHT 4X3X330 ML",
+    "flag": "COTC",
+    "isi": 12,
+    "rsp": null,
     "source": "wajib"
   },
   {
     "pcode": "69739799",
     "barcode": "8851932417464",
     "name": "VASELINE HB DS RFRESHNG SERUM 4X3X170ML",
-    "flag": null,
-    "isi": null,
+    "flag": "COTC",
+    "isi": 12,
     "rsp": 115500,
-    "source": "promo"
+    "source": "wajib"
+  },
+  {
+    "pcode": "65486833",
+    "barcode": "8999999581930",
+    "name": "VASELINE HB GLU SER BUR UV LOT 4X3X200ML",
+    "flag": "COTC",
+    "isi": 12,
+    "rsp": null,
+    "source": "wajib"
+  },
+  {
+    "pcode": "64398227",
+    "barcode": "9556126670654",
+    "name": "VASELINE HB GLU SER BUR UV LOT 4X3X330ML",
+    "flag": "COTC",
+    "isi": 12,
+    "rsp": 93300,
+    "source": "wajib"
+  },
+  {
+    "pcode": "65486851",
+    "barcode": "8999999581947",
+    "name": "VASELINE HB GLU SER BURST LOT 4X3X200ML",
+    "flag": "COTC",
+    "isi": 12,
+    "rsp": null,
+    "source": "wajib"
+  },
+  {
+    "pcode": "65486854",
+    "barcode": "9556126670661",
+    "name": "VASELINE HB GLU SER BURST LOT 4X3X330ML",
+    "flag": "COTC",
+    "isi": 12,
+    "rsp": null,
+    "source": "wajib"
   },
   {
     "pcode": "69794123",
     "barcode": "8999999559588",
     "name": "VASELINE HB SOFT GLOW VIT SRM 2X6X180ML",
-    "flag": "MARKET MAKING",
+    "flag": "COTC",
     "isi": 12,
     "rsp": 39500,
     "source": "wajib"
@@ -3999,8 +4323,17 @@
     "pcode": "69965241",
     "barcode": "8999999035273",
     "name": "VASELINE HB SPF30 PPF VIT SRM 8X3X180ML",
-    "flag": "MARKET MAKING",
+    "flag": "COTC",
     "isi": 24,
+    "rsp": null,
+    "source": "wajib"
+  },
+  {
+    "pcode": "68826573",
+    "barcode": "8999999506506",
+    "name": "VASELINE HBRIGHT SPF24 VNC 12X400ML",
+    "flag": "COTC",
+    "isi": 12,
     "rsp": null,
     "source": "wajib"
   },
@@ -4014,9 +4347,27 @@
     "source": "wajib"
   },
   {
+    "pcode": "68826564",
+    "barcode": "8999999003067",
+    "name": "VASELINE HBRIGHT SPF24 VNC 36X100ML",
+    "flag": "COTC",
+    "isi": 36,
+    "rsp": null,
+    "source": "wajib"
+  },
+  {
+    "pcode": "64346400",
+    "barcode": "8999999502973",
+    "name": "VASELINE REPAIRING JELLY PJ 12X100ML",
+    "flag": "COTC",
+    "isi": 12,
+    "rsp": null,
+    "source": "wajib"
+  },
+  {
     "pcode": "64346401",
     "barcode": "8999999502942",
-    "name": "VASELINE REPAIRING JELLY PJ TH 12X50ML",
+    "name": "VASELINE REPAIRING JELLY PJ 12X50ML",
     "flag": "COTC",
     "isi": 12,
     "rsp": null,
@@ -4044,10 +4395,19 @@
     "pcode": "68826566",
     "barcode": "8999999719395",
     "name": "VASELINE UV EXT BRIGHTENING VNC 36X100ML",
-    "flag": null,
-    "isi": null,
+    "flag": "COTC",
+    "isi": 36,
     "rsp": 19500,
-    "source": "promo"
+    "source": "wajib"
+  },
+  {
+    "pcode": "62071908",
+    "barcode": "8999999719081",
+    "name": "VICL H.SUNBLCK SPF 30 100ML/36",
+    "flag": "COTC",
+    "isi": 36,
+    "rsp": null,
+    "source": "wajib"
   },
   {
     "pcode": "65486546",
