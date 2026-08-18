@@ -1,7 +1,8 @@
 import { db, doc, getDoc, collection, query, where, getDocs, authReady } from './firebase-init.js';
 import { loadStores, loadSkuList } from './store-data.js';
 import { getWeeksForMonth, findWeekContaining, fmtShort, MONTHS_ID } from './weeks.js';
-import { summarizeEntry, buildOosDetail } from './entry-utils.js';
+import { summarizeEntry, buildOosDetail, normalizeField, fieldTotal, fieldIsEmpty } from './entry-utils.js';
+import { downloadAsExcel } from './export-utils.js';
 
 const TODAY = new Date();
 const el = (id) => document.getElementById(id);
@@ -25,6 +26,7 @@ async function init() {
   el('monthSel').addEventListener('change', () => { populateWeekSelect(); loadAndRender(); });
   el('weekSel').addEventListener('change', loadAndRender);
   el('oosModalClose').addEventListener('click', () => el('oosModal').classList.remove('show'));
+  el('exportAllBtn').addEventListener('click', exportAllStores);
 
   await loadAndRender();
 }
@@ -211,7 +213,10 @@ function renderTable(rows, week) {
           </div>
         </td>
         <td>${tidakAdaCell}</td>
-        <td><a class="open-link" href="${link}">Buka &rarr;</a></td>
+        <td>
+          <a class="open-link" href="${link}">Buka &rarr;</a>
+          <button type="button" class="export-store-link" data-store-id="${r.store.id}">Export</button>
+        </td>
       </tr>
     `;
   }).join('');
@@ -219,6 +224,115 @@ function renderTable(rows, week) {
   el('recapTableBody').querySelectorAll('.oos-link').forEach(btn => {
     btn.addEventListener('click', () => openOosModal(btn.dataset.storeId, week));
   });
+  el('recapTableBody').querySelectorAll('.export-store-link').forEach(btn => {
+    btn.addEventListener('click', () => exportOneStore(btn.dataset.storeId, btn));
+  });
+}
+
+function fieldValue(raw, isi) {
+  const f = normalizeField(raw);
+  return fieldIsEmpty(f) ? '' : fieldTotal(f, isi);
+}
+
+// Export 1 toko: SEMUA periode/minggu yang pernah diisi (bukan cuma bulan yang sedang dipilih).
+async function exportOneStore(storeId, triggerEl) {
+  const store = stores.find(s => s.id === storeId);
+  if (!store) return;
+  const original = triggerEl ? triggerEl.textContent : null;
+  if (triggerEl) { triggerEl.textContent = '...'; triggerEl.style.pointerEvents = 'none'; }
+  try {
+    const skuList = skuListCache[store.scopeSlug] || [];
+    const q = query(collection(db, 'entries'), where('storeId', '==', storeId));
+    const snap = await getDocs(q);
+    const rows = [];
+    snap.forEach(d => {
+      const data = d.data();
+      const items = data.items || {};
+      for (const sku of skuList) {
+        const it = items[sku.barcode] || {};
+        rows.push({
+          Toko: store.name,
+          Area: store.area,
+          ScopeChannel: store.scopeChannel,
+          Periode: data.periodKey || '',
+          MingguMulai: data.weekStart ? data.weekStart.slice(0, 10) : '',
+          MingguSelesai: data.weekEnd ? data.weekEnd.slice(0, 10) : '',
+          Flag: sku.flag || '',
+          Barcode: sku.barcode,
+          PCCode: sku.pcode || '',
+          NamaProduk: sku.name,
+          Stock_pcs: fieldValue(it.stock, sku.isi),
+          Order_pcs: fieldValue(it.order, sku.isi),
+          Masuk_pcs: fieldValue(it.masuk, sku.isi),
+          Jual_pcs: fieldValue(it.jual, sku.isi),
+          SudahKirim: data.submitted ? 'Ya' : 'Tidak'
+        });
+      }
+    });
+    if (!rows.length) {
+      alert(`Belum ada data yang bisa di-export untuk ${store.name}.`);
+      return;
+    }
+    downloadAsExcel(rows, `rekap_${store.name.replace(/[^a-z0-9]+/gi, '_')}.xlsx`, 'Rekap');
+  } catch (err) {
+    console.error('Gagal export toko:', err);
+    alert('Gagal export: ' + (err.message || err));
+  } finally {
+    if (triggerEl) { triggerEl.textContent = original; triggerEl.style.pointerEvents = ''; }
+  }
+}
+
+// Export semua toko: cuma untuk bulan yang sedang dipilih di dropdown (lintas semua minggu bulan itu).
+async function exportAllStores() {
+  const btn = el('exportAllBtn');
+  const original = btn.textContent;
+  btn.textContent = 'Menyiapkan export...';
+  btn.disabled = true;
+  try {
+    const allRows = [];
+    for (const week of currentWeeks) {
+      const q = query(collection(db, 'entries'), where('periodKey', '==', week.periodKey));
+      const snap = await getDocs(q);
+      snap.forEach(d => {
+        const data = d.data();
+        const store = stores.find(s => s.id === data.storeId);
+        if (!store) return;
+        const skuList = skuListCache[store.scopeSlug] || [];
+        const items = data.items || {};
+        for (const sku of skuList) {
+          const it = items[sku.barcode] || {};
+          allRows.push({
+            Toko: store.name,
+            Area: store.area,
+            ScopeChannel: store.scopeChannel,
+            Periode: week.periodKey,
+            MingguMulai: fmtShort(week.start),
+            MingguSelesai: fmtShort(week.end),
+            Flag: sku.flag || '',
+            Barcode: sku.barcode,
+            PCCode: sku.pcode || '',
+            NamaProduk: sku.name,
+            Stock_pcs: fieldValue(it.stock, sku.isi),
+            Order_pcs: fieldValue(it.order, sku.isi),
+            Masuk_pcs: fieldValue(it.masuk, sku.isi),
+            Jual_pcs: fieldValue(it.jual, sku.isi),
+            SudahKirim: data.submitted ? 'Ya' : 'Tidak'
+          });
+        }
+      });
+    }
+    if (!allRows.length) {
+      alert('Belum ada data yang bisa di-export untuk bulan ini.');
+      return;
+    }
+    downloadAsExcel(allRows, `rekap_semua_toko_${el('monthSel').value}.xlsx`, 'Rekap');
+  } catch (err) {
+    console.error('Gagal export semua toko:', err);
+    alert('Gagal export: ' + (err.message || err));
+  } finally {
+    btn.textContent = original;
+    btn.disabled = false;
+  }
 }
 
 function dtStatusBadge(dtQty) {

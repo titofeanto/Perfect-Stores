@@ -99,6 +99,14 @@
   </div>
 
   <div class="card">
+    <p class="section-title" style="margin:0 0 8px;">Export (format mentah, siap di-pivot di Excel)</p>
+    <div style="display:flex; gap:8px;">
+      <button id="exportStoreBtn" style="flex:1;">Export toko ini (semua bulan)</button>
+      <button id="exportAllPriceBtn" style="flex:1;">Export semua toko (bulan ini)</button>
+    </div>
+  </div>
+
+  <div class="card">
     <p class="section-title" style="margin:0 0 8px;">Upload SKU Promo (opsional, per Channel, berlaku 1 bulan berjalan)</p>
     <p class="upload-status">SKU Promo tidak menjadi kewajiban SBA -- cuma tambahan info ketersediaan &amp; harga.</p>
     <div class="row2" style="margin-top:8px;">
@@ -144,6 +152,7 @@
   <div id="toast" class="toast"></div>
 
 </div>
-<script type="module" src="js/harga.js?v=5"></script>
+<script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+<script type="module" src="js/harga.js?v=6"></script>
 </body>
 </html>

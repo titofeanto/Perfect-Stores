@@ -1,9 +1,10 @@
-import { authReady } from './firebase-init.js';
+import { db, collection, query, where, getDocs, authReady } from './firebase-init.js';
 import { loadStores, loadSkuList } from './store-data.js';
 import { MONTHS_ID } from './weeks.js';
 import { loadCompetitors, addCompetitor, updateCompetitor, loadPriceEntry, savePriceField, loadPromoSku, savePromoSku } from './harga-data.js';
 import { supportsNativeBarcodeDetector, startNativeScan, stopNativeScan, startFallbackScan, stopFallbackScan } from './barcode-scan.js';
 import { parsePromoWorkbook } from './promo-upload.js';
+import { downloadAsExcel } from './export-utils.js';
 
 const TODAY = new Date();
 const el = (id) => document.getElementById(id);
@@ -56,6 +57,8 @@ async function init() {
   el('promoFileInput').addEventListener('change', onPromoFileSelected);
   el('promoSaveBtn').addEventListener('click', onPromoSave);
   el('promoChannelSel').addEventListener('change', refreshPromoUploadInfo);
+  el('exportStoreBtn').addEventListener('click', exportOneStorePrice);
+  el('exportAllPriceBtn').addEventListener('click', exportAllStoresPrice);
 
   await onStoreOrMonthChange();
 }
@@ -484,6 +487,108 @@ function showToast(message, type) {
   t.className = 'toast show' + (type ? ' ' + type : '');
   clearTimeout(toastTimer);
   toastTimer = setTimeout(() => { t.classList.remove('show'); }, 3200);
+}
+
+// Export 1 toko: SEMUA bulan yang pernah diisi. Nama/flag/RSP produk dicocokkan dari
+// daftar produk yang sedang termuat (allProducts) -- untuk SKU wajib selalu akurat,
+// untuk SKU promo dari bulan LAIN yang sudah beda daftar promo-nya bisa kosong namanya
+// (PC Code tetap ada sebagai identitas).
+async function exportOneStorePrice() {
+  if (!currentStore) return;
+  const btn = el('exportStoreBtn');
+  const original = btn.textContent;
+  btn.textContent = 'Menyiapkan...';
+  btn.disabled = true;
+  try {
+    const lookup = Object.fromEntries(allProducts.map(p => [p.pcode, p]));
+    const q = query(collection(db, 'priceEntries'), where('storeId', '==', currentStore.id));
+    const snap = await getDocs(q);
+    const rows = [];
+    snap.forEach(d => {
+      const data = d.data();
+      const items = data.items || {};
+      for (const [pcode, it] of Object.entries(items)) {
+        appendPriceRows(rows, currentStore, data.periodKey, pcode, it, lookup[pcode]);
+      }
+    });
+    if (!rows.length) {
+      alert(`Belum ada data harga untuk ${currentStore.name}.`);
+      return;
+    }
+    downloadAsExcel(rows, `survei_harga_${currentStore.name.replace(/[^a-z0-9]+/gi, '_')}.xlsx`, 'Survei Harga');
+  } catch (err) {
+    console.error('Gagal export survei harga toko:', err);
+    alert('Gagal export: ' + (err.message || err));
+  } finally {
+    btn.textContent = original;
+    btn.disabled = false;
+  }
+}
+
+// Export semua toko (10 toko survei harga): cuma untuk bulan yang sedang dipilih.
+async function exportAllStoresPrice() {
+  const btn = el('exportAllPriceBtn');
+  const original = btn.textContent;
+  btn.textContent = 'Menyiapkan...';
+  btn.disabled = true;
+  try {
+    const q = query(collection(db, 'priceEntries'), where('periodKey', '==', currentPeriodKey));
+    const snap = await getDocs(q);
+    const rows = [];
+    const lookupCache = {};
+    for (const d of snap.docs) {
+      const data = d.data();
+      const store = ecBigStores.find(s => s.id === data.storeId);
+      if (!store) continue;
+      if (!lookupCache[store.scopeSlug]) {
+        const wajib = await loadSkuList(store.scopeSlug);
+        const promoDoc = await loadPromoSku(store.scopeSlug, currentPeriodKey);
+        lookupCache[store.scopeSlug] = mergeProducts(wajib, promoDoc);
+      }
+      const lookup = Object.fromEntries(lookupCache[store.scopeSlug].map(p => [p.pcode, p]));
+      const items = data.items || {};
+      for (const [pcode, it] of Object.entries(items)) {
+        appendPriceRows(rows, store, data.periodKey, pcode, it, lookup[pcode]);
+      }
+    }
+    if (!rows.length) {
+      alert('Belum ada data harga untuk bulan ini.');
+      return;
+    }
+    downloadAsExcel(rows, `survei_harga_semua_toko_${currentPeriodKey}.xlsx`, 'Survei Harga');
+  } catch (err) {
+    console.error('Gagal export survei harga semua toko:', err);
+    alert('Gagal export: ' + (err.message || err));
+  } finally {
+    btn.textContent = original;
+    btn.disabled = false;
+  }
+}
+
+// Tambahkan baris mentah (1 baris per harga -- Unilever atau tiap kompetitor) ke array rows.
+function appendPriceRows(rows, store, periodKey, pcode, it, meta) {
+  meta = meta || {};
+  if (it.unileverPrice !== undefined && it.unileverPrice !== '' && it.unileverPrice !== null) {
+    rows.push({
+      Toko: store.name, Area: store.area, Bulan: periodKey,
+      PCCode: pcode, Barcode: meta.barcode || '', NamaProduk: meta.name || '',
+      Flag: meta.flag || 'Promo', RSP: meta.rsp || '',
+      JenisHarga: 'Unilever', NamaKompetitor: '', UkuranKemasanKompetitor: '',
+      Harga: it.unileverPrice
+    });
+  }
+  const compPrices = it.competitorPrices || {};
+  for (const [cid, price] of Object.entries(compPrices)) {
+    if (price === '' || price === undefined || price === null) continue;
+    const c = (competitors[pcode] || {})[cid] || {};
+    rows.push({
+      Toko: store.name, Area: store.area, Bulan: periodKey,
+      PCCode: pcode, Barcode: meta.barcode || '', NamaProduk: meta.name || '',
+      Flag: meta.flag || 'Promo', RSP: meta.rsp || '',
+      JenisHarga: 'Kompetitor', NamaKompetitor: c.brand ? `${c.brand} - ${c.productName || ''}` : '', UkuranKemasanKompetitor: c.packSize || '',
+      Harga: price
+    });
+  }
 }
 
 init();
