@@ -98,6 +98,24 @@
     <div class="progress-track"><div id="progBar" class="progress-fill" style="width:0%"></div></div>
   </div>
 
+  <div class="card">
+    <p class="section-title" style="margin:0 0 8px;">Upload SKU Promo (opsional, per Channel, berlaku 1 bulan berjalan)</p>
+    <p class="upload-status">SKU Promo tidak menjadi kewajiban SBA -- cuma tambahan info ketersediaan &amp; harga.</p>
+    <div class="row2" style="margin-top:8px;">
+      <div>
+        <label class="field-label">Channel</label>
+        <select id="promoChannelSel"></select>
+      </div>
+      <div>
+        <label class="field-label">File (kolom: SKU Code Mapping, SKU Description Current, RSP)</label>
+        <input id="promoFileInput" type="file" accept=".xlsx,.xls">
+      </div>
+    </div>
+    <p id="promoCurrentInfo" class="upload-status" style="margin-top:8px;"></p>
+    <p id="promoParsePreview" class="upload-status"></p>
+    <button id="promoSaveBtn" class="primary" style="margin-top:6px; width:100%;" disabled>Simpan SKU Promo</button>
+  </div>
+
   <div class="search-row">
     <input id="searchBox" type="text" placeholder="Cari nama produk atau barcode">
     <button id="scanBtn" type="button" title="Scan barcode">
@@ -126,6 +144,6 @@
   <div id="toast" class="toast"></div>
 
 </div>
-<script type="module" src="js/harga.js?v=4"></script>
+<script type="module" src="js/harga.js?v=5"></script>
 </body>
 </html>

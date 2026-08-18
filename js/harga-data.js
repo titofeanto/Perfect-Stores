@@ -75,3 +75,26 @@ export async function savePriceField(storeMeta, periodKey, pcode, kind, competit
     updatedAt: serverTimestamp()
   }, { merge: true });
 }
+
+// SKU Promo: berlaku per Channel (scopeSlug) per bulan (YYYY-MM), di-upload manual oleh
+// tim (bukan file statis) supaya bisa berubah tiap bulan tanpa perlu ubah kode.
+function promoDocId(scopeSlug, periodKey) {
+  return `${scopeSlug}__${periodKey}`;
+}
+
+export async function loadPromoSku(scopeSlug, periodKey) {
+  const ref = doc(db, 'promoSku', promoDocId(scopeSlug, periodKey));
+  const snap = await getDoc(ref);
+  return snap.exists() ? snap.data() : null; // {items:[...], sourceFileName, uploadedAt} atau null kalau belum ada
+}
+
+export async function savePromoSku(scopeSlug, periodKey, items, sourceFileName) {
+  const ref = doc(db, 'promoSku', promoDocId(scopeSlug, periodKey));
+  await setDoc(ref, {
+    scopeSlug,
+    periodKey,
+    items,
+    sourceFileName: sourceFileName || null,
+    uploadedAt: serverTimestamp()
+  });
+}

@@ -1,14 +1,17 @@
 import { authReady } from './firebase-init.js';
-import { loadStores, loadHargaProduk } from './store-data.js';
+import { loadStores, loadSkuList } from './store-data.js';
 import { MONTHS_ID } from './weeks.js';
-import { loadCompetitors, addCompetitor, updateCompetitor, loadPriceEntry, savePriceField } from './harga-data.js';
+import { loadCompetitors, addCompetitor, updateCompetitor, loadPriceEntry, savePriceField, loadPromoSku, savePromoSku } from './harga-data.js';
 import { supportsNativeBarcodeDetector, startNativeScan, stopNativeScan, startFallbackScan, stopFallbackScan } from './barcode-scan.js';
+import { parsePromoWorkbook } from './promo-upload.js';
 
 const TODAY = new Date();
 const el = (id) => document.getElementById(id);
 
 const FLAG_LABELS = { 'COTC': 'COTC', 'MARKET MAKING': 'Market making', 'NPD': 'NPD' };
 const FLAG_CLASS = { 'COTC': 'flag-cotc', 'MARKET MAKING': 'flag-market', 'NPD': 'flag-npd' };
+
+const CHANNEL_LABELS = { 'lmt-spm': 'LMT SPM', 'local-minis': 'LMT Local Minis', 'haba-dt': 'HABA' };
 
 let ecBigStores = [];
 let allProducts = [];
@@ -21,6 +24,7 @@ let flagFilter = 'all';
 let saveTimers = {};
 let openAddForm = null; // pcode yang sedang buka form tambah kompetitor
 let editingCompetitor = null; // {pcode, competitorId} yang sedang diedit
+let pendingPromoParse = null;
 
 function rp(n) {
   if (n === null || n === undefined || n === '') return '-';
@@ -37,11 +41,11 @@ async function init() {
   ecBigStores = allStores.filter(s =>
     s.subChannel === 'LOCAL SUPERMARKET EC BIG' || s.subChannel === 'COSMETIC EXPERT TRADITIONAL'
   );
-  allProducts = await loadHargaProduk();
   competitors = await loadCompetitors();
 
   populateStoreSelect();
   populateMonthSelect();
+  populateChannelSelect();
   renderFlagFilterChips();
 
   el('storeSel').addEventListener('change', onStoreOrMonthChange);
@@ -49,8 +53,16 @@ async function init() {
   el('searchBox').addEventListener('input', (e) => { searchText = e.target.value; renderProductList(); });
   el('scanBtn').addEventListener('click', openScanModal);
   el('scanCloseBtn').addEventListener('click', closeScanModal);
+  el('promoFileInput').addEventListener('change', onPromoFileSelected);
+  el('promoSaveBtn').addEventListener('click', onPromoSave);
+  el('promoChannelSel').addEventListener('change', refreshPromoUploadInfo);
 
   await onStoreOrMonthChange();
+}
+
+function populateChannelSelect() {
+  el('promoChannelSel').innerHTML = Object.entries(CHANNEL_LABELS)
+    .map(([slug, label]) => `<option value="${slug}">${label}</option>`).join('');
 }
 
 function populateStoreSelect() {
@@ -72,13 +84,114 @@ function populateMonthSelect() {
   el('monthSel').value = `${y}-${String(m + 1).padStart(2, '0')}`;
 }
 
+// Gabungkan SKU wajib scope toko itu (flag dipertahankan) dengan SKU Promo channel yang
+// sama untuk bulan yang dipilih (flag=null, ditandai "Promo"). SKU wajib SELALU jadi acuan
+// utama -- kalau ada tumpang tindih pcode, data SKU wajib yang menang, cuma RSP-nya
+// dilengkapi dari data promo kalau ada.
+function mergeProducts(wajibList, promoDoc) {
+  const merged = {};
+  for (const it of wajibList) {
+    if (!it.pcode) continue;
+    merged[it.pcode] = { pcode: it.pcode, barcode: it.barcode, name: it.name, flag: it.flag, isi: it.isi, rsp: null };
+  }
+  if (promoDoc && Array.isArray(promoDoc.items)) {
+    for (const it of promoDoc.items) {
+      if (merged[it.pcode]) {
+        merged[it.pcode].rsp = it.rsp;
+      } else {
+        merged[it.pcode] = { pcode: it.pcode, barcode: it.barcode, name: it.name, flag: null, isi: null, rsp: it.rsp };
+      }
+    }
+  }
+  return Object.values(merged).sort((a, b) => a.name.localeCompare(b.name));
+}
+
 async function onStoreOrMonthChange() {
   currentStore = ecBigStores.find(s => s.id === el('storeSel').value);
   currentPeriodKey = el('monthSel').value; // format YYYY-MM
   if (!currentStore) return;
-  currentEntry = await loadPriceEntry(currentStore.id, currentPeriodKey);
+
+  const [wajibList, promoDoc, entry] = await Promise.all([
+    loadSkuList(currentStore.scopeSlug),
+    loadPromoSku(currentStore.scopeSlug, currentPeriodKey),
+    loadPriceEntry(currentStore.id, currentPeriodKey)
+  ]);
+  allProducts = mergeProducts(wajibList, promoDoc);
+  currentEntry = entry;
+
+  el('promoChannelSel').value = currentStore.scopeSlug;
+  refreshPromoUploadInfo();
   renderProgress();
   renderProductList();
+}
+
+async function refreshPromoUploadInfo() {
+  const scopeSlug = el('promoChannelSel').value;
+  el('promoSaveBtn').disabled = true;
+  el('promoParsePreview').textContent = '';
+  pendingPromoParse = null;
+  el('promoCurrentInfo').textContent = 'Memuat...';
+  try {
+    const promoDoc = await loadPromoSku(scopeSlug, currentPeriodKey);
+    if (promoDoc) {
+      const ts = promoDoc.uploadedAt && promoDoc.uploadedAt.toDate ? promoDoc.uploadedAt.toDate().toLocaleString('id-ID') : '-';
+      el('promoCurrentInfo').textContent = `${CHANNEL_LABELS[scopeSlug]}: ${promoDoc.items.length} SKU promo untuk bulan ini. Terakhir upload: ${ts}.`;
+    } else {
+      el('promoCurrentInfo').textContent = `${CHANNEL_LABELS[scopeSlug]}: belum ada SKU Promo untuk bulan ini.`;
+    }
+  } catch (err) {
+    console.error('Gagal memuat info SKU Promo:', err);
+    el('promoCurrentInfo').textContent = 'Gagal memuat info SKU Promo.';
+  }
+}
+
+function onPromoFileSelected(e) {
+  const file = e.target.files[0];
+  if (!file) return;
+  el('promoParsePreview').textContent = 'Membaca file...';
+  el('promoSaveBtn').disabled = true;
+  const reader = new FileReader();
+  reader.onload = (ev) => {
+    try {
+      const { items, headerMissing } = parsePromoWorkbook(ev.target.result);
+      if (headerMissing || !items.length) {
+        el('promoParsePreview').textContent = 'Format file tidak dikenali. Pastikan ada kolom SKU Code Mapping, SKU Description Current, RSP.';
+        return;
+      }
+      pendingPromoParse = { items, fileName: file.name };
+      el('promoParsePreview').textContent = `${items.length} SKU promo terbaca, siap disimpan untuk channel ${CHANNEL_LABELS[el('promoChannelSel').value]}, ${MONTHS_ID[Number(currentPeriodKey.split('-')[1]) - 1]} ${currentPeriodKey.split('-')[0]}.`;
+      el('promoSaveBtn').disabled = false;
+    } catch (err) {
+      console.error(err);
+      el('promoParsePreview').textContent = 'Gagal membaca file.';
+    }
+  };
+  reader.readAsArrayBuffer(file);
+}
+
+async function onPromoSave() {
+  if (!pendingPromoParse) return;
+  const scopeSlug = el('promoChannelSel').value;
+  const btn = el('promoSaveBtn');
+  btn.disabled = true;
+  btn.textContent = 'Menyimpan...';
+  try {
+    await savePromoSku(scopeSlug, currentPeriodKey, pendingPromoParse.items, pendingPromoParse.fileName);
+    showToast(`SKU Promo ${CHANNEL_LABELS[scopeSlug]} tersimpan (${pendingPromoParse.items.length} SKU).`, 'success');
+    pendingPromoParse = null;
+    el('promoFileInput').value = '';
+    el('promoParsePreview').textContent = '';
+    await refreshPromoUploadInfo();
+    if (currentStore.scopeSlug === scopeSlug) {
+      await onStoreOrMonthChange();
+    }
+  } catch (err) {
+    console.error('Gagal menyimpan SKU Promo:', err);
+    showToast('Gagal menyimpan. Cek koneksi internet.', 'danger');
+  } finally {
+    btn.textContent = 'Simpan SKU Promo';
+    btn.disabled = false;
+  }
 }
 
 function renderProgress() {

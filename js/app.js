@@ -4,6 +4,7 @@ import { getWeeksForMonth, findWeekContaining, fmtShort, MONTHS_ID, addDays, iso
 import { loadDistributorStock, parseDistributorWorkbook, saveDistributorStock } from './stock-upload.js';
 import { supportsNativeBarcodeDetector, startNativeScan, stopNativeScan, startFallbackScan, stopFallbackScan } from './barcode-scan.js';
 import { parsePurchaseWorkbook } from './purchase-upload.js';
+import { loadPromoSku } from './harga-data.js';
 import { FIELDS, EDITABLE_FIELDS, fieldTotal, fieldIsEmpty, normalizeField, statusOf } from './entry-utils.js';
 
 const FIELD_LABELS = { stock: 'Stock', order: 'Order', masuk: 'Masuk', jual: 'Jual' };
@@ -238,20 +239,28 @@ function entryDocId(store, week) {
 }
 
 let previousWeekItems = {};
+let currentPromoList = []; // SKU Promo (bukan bagian SKU wajib) utk scope+bulan toko ini
+let currentPromoEntry = {}; // pcode -> stock string, tersimpan terpisah dari SKU wajib
 
 async function loadEntryForCurrentPeriod() {
   currentEntryDocId = entryDocId(currentStore, currentWeek);
   const ref = doc(db, 'entries', currentEntryDocId);
   const prevPeriodKey = isoDate(addDays(currentWeek.start, -7));
   const prevRef = doc(db, 'entries', `${currentStore.id}__${prevPeriodKey}`);
-  let snap, prevSnap;
+  const monthKey = `${currentWeek.start.getFullYear()}-${String(currentWeek.start.getMonth() + 1).padStart(2, '0')}`;
+  let snap, prevSnap, promoDoc;
   try {
-    [snap, prevSnap] = await Promise.all([getDoc(ref), getDoc(prevRef)]);
+    [snap, prevSnap, promoDoc] = await Promise.all([
+      getDoc(ref),
+      getDoc(prevRef),
+      loadPromoSku(currentStore.scopeSlug, monthKey)
+    ]);
   } catch (err) {
     console.error('Gagal memuat data minggu ini/minggu lalu:', err);
-    snap = null; prevSnap = null;
+    snap = null; prevSnap = null; promoDoc = null;
   }
   const saved = snap && snap.exists() ? (snap.data().items || {}) : {};
+  const savedPromo = snap && snap.exists() ? (snap.data().promoItems || {}) : {};
   previousWeekItems = prevSnap && prevSnap.exists() ? (prevSnap.data().items || {}) : {};
   currentEntry = {};
   for (const sku of currentSkuList) {
@@ -259,6 +268,18 @@ async function loadEntryForCurrentPeriod() {
     const entry = {};
     for (const f of FIELDS) entry[f] = normalizeField(savedItem[f]);
     currentEntry[sku.barcode] = entry;
+  }
+
+  // SKU Promo yang SUDAH termasuk SKU wajib tidak perlu ditampilkan dobel di section ini --
+  // sudah muncul (dengan flag-nya) di daftar SKU wajib di atas.
+  const wajibPcodes = new Set(currentSkuList.map(s => s.pcode).filter(Boolean));
+  currentPromoList = (promoDoc && Array.isArray(promoDoc.items))
+    ? promoDoc.items.filter(it => !wajibPcodes.has(it.pcode))
+    : [];
+  currentPromoEntry = {};
+  for (const it of currentPromoList) {
+    const raw = savedPromo[it.pcode];
+    currentPromoEntry[it.pcode] = raw && raw.stock !== undefined ? String(raw.stock) : '';
   }
 }
 
@@ -339,6 +360,7 @@ function renderAll() {
   renderProgress();
   renderFlagFilterChips();
   renderSkuList();
+  renderPromoSection();
   if (currentTab === 'recap') renderRecap();
 }
 
@@ -477,6 +499,66 @@ function renderSkuList() {
       }
     });
   });
+}
+
+// SKU Promo: opsional, TIDAK dihitung ke progress/lengkap SKU wajib sama sekali.
+// Cuma 1 kolom Stock sederhana (bukan karton/lusin/pcs) -- ini murni cek availability,
+// bukan pencatatan operasional selengkap SKU wajib.
+function promoBadgeHtml(val) {
+  const isAda = val !== '' && Number(val) > 0;
+  const isTidakAda = val !== '' && Number(val) === 0;
+  if (isAda) return '<span class="badge lengkap">Ada</span>';
+  if (isTidakAda) return '<span class="badge stockzero">Tidak ada</span>';
+  return '<span class="badge kosong">Belum dicek</span>';
+}
+
+function renderPromoSection() {
+  if (!currentPromoList.length) {
+    el('promoSection').style.display = 'none';
+    return;
+  }
+  el('promoSection').style.display = 'block';
+  el('promoList').innerHTML = currentPromoList.map(p => {
+    const val = currentPromoEntry[p.pcode] || '';
+    return `
+      <div class="sku-item">
+        <p class="sku-name">${p.name}</p>
+        <p class="sku-code">${p.barcode || ''}${p.pcode ? ' &middot; PC ' + p.pcode : ''}</p>
+        <div class="promo-badge" data-badge-for="${p.pcode}">${promoBadgeHtml(val)}</div>
+        ${p.rsp ? `<p class="upload-status">RSP: Rp${Number(p.rsp).toLocaleString('id-ID')}</p>` : ''}
+        <div style="margin-top:6px;">
+          <label class="field-label">Stock (pcs)</label>
+          <input type="number" min="0" data-promo-pcode="${p.pcode}" value="${val}" placeholder="-" style="max-width:120px;">
+        </div>
+      </div>
+    `;
+  }).join('');
+
+  el('promoList').querySelectorAll('input[type=number]').forEach(inp => {
+    inp.addEventListener('input', () => {
+      const pcode = inp.dataset.promoPcode;
+      currentPromoEntry[pcode] = inp.value;
+      clearTimeout(saveTimers['promo_' + pcode]);
+      saveTimers['promo_' + pcode] = setTimeout(() => savePromoStock(pcode, inp.value), 600);
+      const badgeEl = el('promoList').querySelector(`.promo-badge[data-badge-for="${pcode}"]`);
+      if (badgeEl) badgeEl.innerHTML = promoBadgeHtml(inp.value);
+    });
+  });
+}
+
+async function savePromoStock(pcode, value) {
+  const ref = doc(db, 'entries', currentEntryDocId);
+  try {
+    await setDoc(ref, {
+      storeId: currentStore.id,
+      periodKey: currentWeek.periodKey,
+      promoItems: { [pcode]: { stock: value === '' ? '' : Number(value) } },
+      updatedAt: serverTimestamp()
+    }, { merge: true });
+  } catch (err) {
+    console.error('Gagal menyimpan stock SKU Promo:', err);
+    showToast('Gagal menyimpan stock SKU Promo. Cek koneksi internet.', 'danger');
+  }
 }
 
 function renderRecap() {
