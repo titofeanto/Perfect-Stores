@@ -157,6 +157,13 @@ function attachStaticHandlers() {
   el('monthSel').addEventListener('change', onPeriodChange);
   el('weekSel').addEventListener('change', onPeriodChange);
   el('searchBox').addEventListener('input', (e) => { searchText = e.target.value; renderSkuList(); });
+  el('promoToggleBtn').addEventListener('click', () => {
+    promoExpanded = !promoExpanded;
+    el('promoBody').style.display = promoExpanded ? 'block' : 'none';
+    el('promoToggleIcon').classList.toggle('open', promoExpanded);
+    if (promoExpanded) renderPromoSection();
+  });
+  el('promoSearchBox').addEventListener('input', (e) => { promoSearchText = e.target.value; renderPromoSection(); });
 
   el('tabInput').addEventListener('click', () => switchTab('input'));
   el('tabRecap').addEventListener('click', () => switchTab('recap'));
@@ -241,6 +248,8 @@ function entryDocId(store, week) {
 let previousWeekItems = {};
 let currentPromoList = []; // SKU Promo (bukan bagian SKU wajib) utk scope+bulan toko ini
 let currentPromoEntry = {}; // pcode -> stock string, tersimpan terpisah dari SKU wajib
+let promoExpanded = false;
+let promoSearchText = '';
 
 async function loadEntryForCurrentPeriod() {
   currentEntryDocId = entryDocId(currentStore, currentWeek);
@@ -281,6 +290,12 @@ async function loadEntryForCurrentPeriod() {
     const raw = savedPromo[it.pcode];
     currentPromoEntry[it.pcode] = raw && raw.stock !== undefined ? String(raw.stock) : '';
   }
+  // Collapse ulang tiap ganti toko/minggu supaya tidak otomatis kepanjangan ke bawah.
+  promoExpanded = false;
+  promoSearchText = '';
+  if (el('promoBody')) el('promoBody').style.display = 'none';
+  if (el('promoToggleIcon')) el('promoToggleIcon').classList.remove('open');
+  if (el('promoSearchBox')) el('promoSearchBox').value = '';
 }
 
 function scheduleSaveField(barcode) {
@@ -518,21 +533,41 @@ function renderPromoSection() {
     return;
   }
   el('promoSection').style.display = 'block';
-  el('promoList').innerHTML = currentPromoList.map(p => {
+
+  const filledCount = currentPromoList.filter(p => currentPromoEntry[p.pcode] !== '' && currentPromoEntry[p.pcode] !== undefined).length;
+  el('promoToggleLabel').textContent = `SKU Promo (opsional) - ${filledCount}/${currentPromoList.length} dicek`;
+
+  // Konten (pencarian + daftar) cuma dirender kalau section-nya sedang dibuka --
+  // supaya daftar SKU wajib di atas tidak "kepanjangan" ke bawah begitu toko dibuka.
+  if (!promoExpanded) return;
+
+  const q = promoSearchText.trim().toLowerCase();
+  const filtered = currentPromoList.filter(p =>
+    !q || p.name.toLowerCase().includes(q) || (p.barcode || '').includes(q) || (p.pcode || '').includes(q)
+  );
+
+  const distStock = distributorCache[currentStore.area];
+  el('promoList').innerHTML = filtered.map(p => {
     const val = currentPromoEntry[p.pcode] || '';
+    let distHint = '';
+    if (distStock && p.pcode && distStock.items[p.pcode]) {
+      const d = distStock.items[p.pcode];
+      distHint = `<div class="sku-distributor">Stock distributor (${currentStore.area}): ${d.karton} karton, ${d.lusin} lusin, ${d.pcs} pcs</div>`;
+    }
     return `
       <div class="sku-item">
         <p class="sku-name">${p.name}</p>
         <p class="sku-code">${p.barcode || ''}${p.pcode ? ' &middot; PC ' + p.pcode : ''}</p>
         <div class="promo-badge" data-badge-for="${p.pcode}">${promoBadgeHtml(val)}</div>
         ${p.rsp ? `<p class="upload-status">RSP: Rp${Number(p.rsp).toLocaleString('id-ID')}</p>` : ''}
+        ${distHint}
         <div style="margin-top:6px;">
           <label class="field-label">Stock (pcs)</label>
           <input type="number" min="0" data-promo-pcode="${p.pcode}" value="${val}" placeholder="-" style="max-width:120px;">
         </div>
       </div>
     `;
-  }).join('');
+  }).join('') || '<p class="upload-status">Tidak ada SKU Promo yang cocok.</p>';
 
   el('promoList').querySelectorAll('input[type=number]').forEach(inp => {
     inp.addEventListener('input', () => {
@@ -542,6 +577,7 @@ function renderPromoSection() {
       saveTimers['promo_' + pcode] = setTimeout(() => savePromoStock(pcode, inp.value), 600);
       const badgeEl = el('promoList').querySelector(`.promo-badge[data-badge-for="${pcode}"]`);
       if (badgeEl) badgeEl.innerHTML = promoBadgeHtml(inp.value);
+      el('promoToggleLabel').textContent = `SKU Promo (opsional) - ${currentPromoList.filter(p => currentPromoEntry[p.pcode] !== '' && currentPromoEntry[p.pcode] !== undefined).length}/${currentPromoList.length} dicek`;
     });
   });
 }

@@ -80,8 +80,14 @@
     <div class="chip-row" id="flagFilterRow"></div>
     <div id="skuList"></div>
     <div id="promoSection" style="display:none; margin-top:16px;">
-      <p class="section-title">SKU Promo (opsional, di luar SKU wajib)</p>
-      <div id="promoList"></div>
+      <button type="button" id="promoToggleBtn" class="promo-toggle">
+        <span id="promoToggleLabel">SKU Promo (opsional)</span>
+        <span id="promoToggleIcon">&#9656;</span>
+      </button>
+      <div id="promoBody" style="display:none; margin-top:8px;">
+        <input id="promoSearchBox" type="text" placeholder="Cari nama produk atau barcode SKU Promo" style="margin-bottom:10px;">
+        <div id="promoList"></div>
+      </div>
     </div>
   </div>
 
@@ -153,6 +159,6 @@
 
 </div>
 <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
-<script type="module" src="js/app.js?v=14"></script>
+<script type="module" src="js/app.js?v=16"></script>
 </body>
 </html>
