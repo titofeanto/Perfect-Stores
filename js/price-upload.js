@@ -2,9 +2,14 @@
 // di halaman Survei Harga. Formatnya sengaja dibuat SAMA dengan hasil "Export toko ini" /
 // "Export semua toko", supaya bisa export -> edit di Excel -> upload balik (round-trip).
 // Header dicocokkan by NAMA kolom, bukan posisi tetap.
+//
+// Kunci utama pencocokan produk = BARCODE (bukan PC Code) -- data harga dari toko
+// biasanya per barcode/varian. PCCode tetap dibaca kalau ada, sebagai fallback untuk
+// baris yang tidak punya kolom Barcode.
 
 const HEADER_ALIASES = {
   toko: ['toko'],
+  barcode: ['barcode'],
   pcode: ['pccode', 'pc code', 'pcode'],
   jenis: ['jenisharga', 'jenis harga'],
   kompetitor: ['namakompetitor', 'nama kompetitor'],
@@ -31,12 +36,13 @@ export function parsePriceWorkbook(arrayBuffer) {
     const header = (rows[r] || []).map(h => (h == null ? '' : String(h).trim().toLowerCase()));
     const tryIdx = {
       toko: findColumn(header, HEADER_ALIASES.toko),
+      barcode: findColumn(header, HEADER_ALIASES.barcode),
       pcode: findColumn(header, HEADER_ALIASES.pcode),
       jenis: findColumn(header, HEADER_ALIASES.jenis),
       kompetitor: findColumn(header, HEADER_ALIASES.kompetitor),
       harga: findColumn(header, HEADER_ALIASES.harga)
     };
-    if (tryIdx.pcode !== -1 && tryIdx.harga !== -1) {
+    if ((tryIdx.barcode !== -1 || tryIdx.pcode !== -1) && tryIdx.harga !== -1) {
       headerRowIdx = r;
       idx = tryIdx;
       break;
@@ -47,15 +53,17 @@ export function parsePriceWorkbook(arrayBuffer) {
   const parsed = [];
   for (let r = headerRowIdx + 1; r < rows.length; r++) {
     const row = rows[r];
-    if (!row || row[idx.pcode] == null) continue;
-    const pcode = String(row[idx.pcode]).trim();
+    if (!row) continue;
+    const barcode = idx.barcode !== -1 && row[idx.barcode] != null ? String(row[idx.barcode]).trim() : null;
+    const pcode = idx.pcode !== -1 && row[idx.pcode] != null ? String(row[idx.pcode]).trim() : null;
+    if (!barcode && !pcode) continue;
     const harga = row[idx.harga] != null ? Number(row[idx.harga]) : null;
-    if (!pcode || harga === null || isNaN(harga)) continue;
+    if (harga === null || isNaN(harga)) continue;
     const jenisRaw = idx.jenis !== -1 && row[idx.jenis] != null ? String(row[idx.jenis]).trim().toLowerCase() : 'unilever';
     const jenis = jenisRaw.startsWith('komp') ? 'kompetitor' : 'unilever';
     const namaKompetitor = idx.kompetitor !== -1 && row[idx.kompetitor] != null ? String(row[idx.kompetitor]).trim() : '';
     const toko = idx.toko !== -1 && row[idx.toko] != null ? String(row[idx.toko]).trim() : null;
-    parsed.push({ toko, pcode, jenis, namaKompetitor, harga });
+    parsed.push({ toko, barcode, pcode, jenis, namaKompetitor, harga });
   }
   return { rows: parsed, headerMissing: false };
 }

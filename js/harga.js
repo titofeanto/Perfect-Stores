@@ -36,6 +36,14 @@ function rp(n) {
   return 'Rp' + num.toLocaleString('id-ID');
 }
 
+// Kunci penyimpanan harga: pakai BARCODE (bukan PC Code) -- data harga dari toko
+// biasanya per barcode/varian, sedangkan 1 PC Code kadang menaungi beberapa barcode
+// sekaligus, jadi kalau dipakai kunci harga bisa salah gabung 2 varian jadi 1 harga.
+// Fallback ke PC Code (dengan prefix) cuma untuk kasus langka produk tanpa barcode.
+function priceKey(p) {
+  return p.barcode || ('PC-' + p.pcode);
+}
+
 async function init() {
   await authReady;
   const allStores = await loadStores();
@@ -210,7 +218,7 @@ async function onPromoSave() {
 function renderProgress() {
   const total = allProducts.length;
   const filled = allProducts.filter(p => {
-    const e = currentEntry[p.pcode];
+    const e = currentEntry[priceKey(p)];
     return e && e.unileverPrice !== undefined && e.unileverPrice !== '' && e.unileverPrice !== null;
   }).length;
   const pct = total ? Math.round((filled / total) * 100) : 0;
@@ -250,19 +258,20 @@ function renderProductList() {
   });
 
   el('productList').innerHTML = filtered.map(p => {
-    const entry = currentEntry[p.pcode] || {};
+    const key = priceKey(p);
+    const entry = currentEntry[key] || {};
     const unileverPrice = entry.unileverPrice ?? '';
-    const compList = competitors[p.pcode] || {};
+    const compList = competitors[key] || {};
     const compIds = Object.keys(compList);
 
     const compHtml = compIds.map(cid => {
       const c = compList[cid];
       const price = (entry.competitorPrices || {})[cid] ?? '';
-      const isEditing = editingCompetitor && editingCompetitor.pcode === p.pcode && editingCompetitor.competitorId === cid;
+      const isEditing = editingCompetitor && editingCompetitor.key === key && editingCompetitor.competitorId === cid;
       if (isEditing) {
         return `
           <div class="competitor-item">
-            <div class="competitor-form" data-edit-form-for="${p.pcode}" data-edit-competitor-id="${cid}">
+            <div class="competitor-form" data-edit-form-for="${key}" data-edit-competitor-id="${cid}">
               <label class="field-label">Brand kompetitor</label>
               <input type="text" class="comp-brand" value="${c.brand || ''}">
               <label class="field-label">Nama produk</label>
@@ -281,20 +290,20 @@ function renderProductList() {
         <div class="competitor-item">
           <div class="competitor-name-row">
             <p class="competitor-name">${c.brand} - ${c.productName}${c.packSize ? ' (' + c.packSize + ')' : ''}</p>
-            <button type="button" class="competitor-edit-btn" data-edit-pcode="${p.pcode}" data-edit-cid="${cid}" title="Koreksi data kompetitor">Edit</button>
+            <button type="button" class="competitor-edit-btn" data-edit-key="${key}" data-edit-cid="${cid}" title="Koreksi data kompetitor">Edit</button>
           </div>
           <div class="price-input-wrap">
             <span>Rp</span>
-            <input type="number" min="0" data-pcode="${p.pcode}" data-kind="competitor" data-competitor-id="${cid}" value="${price}" placeholder="Harga di toko ini">
+            <input type="number" min="0" data-key="${key}" data-kind="competitor" data-competitor-id="${cid}" value="${price}" placeholder="Harga di toko ini">
           </div>
         </div>
       `;
     }).join('');
 
-    const formOpen = openAddForm === p.pcode;
+    const formOpen = openAddForm === key;
 
     return `
-      <div class="sku-item" data-pcode="${p.pcode}">
+      <div class="sku-item" data-key="${key}">
         <p class="sku-name">${p.name}</p>
         <p class="sku-code">${p.barcode || ''}${p.pcode ? ' &middot; PC ' + p.pcode : ''}</p>
         <div>${productBadge(p)}</div>
@@ -303,13 +312,13 @@ function renderProductList() {
           <div class="price-row-head"><label>Harga di toko ini (produk Unilever)</label></div>
           <div class="price-input-wrap">
             <span>Rp</span>
-            <input type="number" min="0" data-pcode="${p.pcode}" data-kind="unilever" value="${unileverPrice}" placeholder="Harga jual di toko">
+            <input type="number" min="0" data-key="${key}" data-kind="unilever" value="${unileverPrice}" placeholder="Harga jual di toko">
           </div>
         </div>
         <div class="competitor-section">
           ${compHtml}
           ${formOpen ? `
-            <div class="competitor-form" data-form-for="${p.pcode}">
+            <div class="competitor-form" data-form-for="${key}">
               <label class="field-label">Brand kompetitor</label>
               <input type="text" class="comp-brand" placeholder="Misal: Wardah, Formula, Daia">
               <label class="field-label">Nama produk</label>
@@ -321,7 +330,7 @@ function renderProductList() {
                 <button type="button" class="comp-save primary" style="flex:1;">Simpan kompetitor</button>
               </div>
             </div>
-          ` : `<button type="button" class="add-competitor-btn" data-open-for="${p.pcode}">+ Tambah kompetitor</button>`}
+          ` : `<button type="button" class="add-competitor-btn" data-open-for="${key}">+ Tambah kompetitor</button>`}
         </div>
       </div>
     `;
@@ -333,17 +342,17 @@ function renderProductList() {
 function wireProductListEvents() {
   el('productList').querySelectorAll('input[type=number]').forEach(inp => {
     inp.addEventListener('input', () => {
-      const pcode = inp.dataset.pcode;
+      const key = inp.dataset.key;
       const kind = inp.dataset.kind;
-      if (!currentEntry[pcode]) currentEntry[pcode] = {};
+      if (!currentEntry[key]) currentEntry[key] = {};
       if (kind === 'unilever') {
-        currentEntry[pcode].unileverPrice = inp.value;
-        scheduleSave(pcode, 'unilever', null, inp.value);
+        currentEntry[key].unileverPrice = inp.value;
+        scheduleSave(key, 'unilever', null, inp.value);
       } else {
         const cid = inp.dataset.competitorId;
-        if (!currentEntry[pcode].competitorPrices) currentEntry[pcode].competitorPrices = {};
-        currentEntry[pcode].competitorPrices[cid] = inp.value;
-        scheduleSave(pcode, 'competitor', cid, inp.value);
+        if (!currentEntry[key].competitorPrices) currentEntry[key].competitorPrices = {};
+        currentEntry[key].competitorPrices[cid] = inp.value;
+        scheduleSave(key, 'competitor', cid, inp.value);
       }
       renderProgress();
     });
@@ -358,7 +367,7 @@ function wireProductListEvents() {
   el('productList').querySelectorAll('.comp-save').forEach(btn => {
     btn.addEventListener('click', async () => {
       const form = btn.closest('.competitor-form');
-      const pcode = form.dataset.formFor;
+      const key = form.dataset.formFor;
       const brand = form.querySelector('.comp-brand').value.trim();
       const productName = form.querySelector('.comp-name').value.trim();
       const packSize = form.querySelector('.comp-size').value.trim();
@@ -369,9 +378,9 @@ function wireProductListEvents() {
       btn.disabled = true;
       btn.textContent = 'Menyimpan...';
       try {
-        const cid = await addCompetitor(pcode, { brand, productName, packSize });
-        if (!competitors[pcode]) competitors[pcode] = {};
-        competitors[pcode][cid] = { brand, productName, packSize };
+        const cid = await addCompetitor(key, { brand, productName, packSize });
+        if (!competitors[key]) competitors[key] = {};
+        competitors[key][cid] = { brand, productName, packSize };
         openAddForm = null;
         showToast(`Kompetitor "${brand}" ditambahkan -- langsung terlihat di semua toko lain.`, 'success');
         renderProductList();
@@ -386,7 +395,7 @@ function wireProductListEvents() {
 
   el('productList').querySelectorAll('.competitor-edit-btn').forEach(btn => {
     btn.addEventListener('click', () => {
-      editingCompetitor = { pcode: btn.dataset.editPcode, competitorId: btn.dataset.editCid };
+      editingCompetitor = { key: btn.dataset.editKey, competitorId: btn.dataset.editCid };
       renderProductList();
     });
   });
@@ -396,7 +405,7 @@ function wireProductListEvents() {
   el('productList').querySelectorAll('.comp-edit-save').forEach(btn => {
     btn.addEventListener('click', async () => {
       const form = btn.closest('.competitor-form');
-      const pcode = form.dataset.editFormFor;
+      const key = form.dataset.editFormFor;
       const cid = form.dataset.editCompetitorId;
       const brand = form.querySelector('.comp-brand').value.trim();
       const productName = form.querySelector('.comp-name').value.trim();
@@ -408,8 +417,8 @@ function wireProductListEvents() {
       btn.disabled = true;
       btn.textContent = 'Menyimpan...';
       try {
-        await updateCompetitor(pcode, cid, { brand, productName, packSize });
-        competitors[pcode][cid] = { ...competitors[pcode][cid], brand, productName, packSize };
+        await updateCompetitor(key, cid, { brand, productName, packSize });
+        competitors[key][cid] = { ...competitors[key][cid], brand, productName, packSize };
         editingCompetitor = null;
         showToast(`Data kompetitor "${brand}" dikoreksi -- langsung berubah di semua toko.`, 'success');
         renderProductList();
@@ -423,12 +432,12 @@ function wireProductListEvents() {
   });
 }
 
-function scheduleSave(pcode, kind, competitorId, value) {
-  const key = `${pcode}__${kind}__${competitorId || ''}`;
-  clearTimeout(saveTimers[key]);
-  saveTimers[key] = setTimeout(async () => {
+function scheduleSave(key, kind, competitorId, value) {
+  const timerKey = `${key}__${kind}__${competitorId || ''}`;
+  clearTimeout(saveTimers[timerKey]);
+  saveTimers[timerKey] = setTimeout(async () => {
     try {
-      await savePriceField(currentStore, currentPeriodKey, pcode, kind, competitorId, value);
+      await savePriceField(currentStore, currentPeriodKey, key, kind, competitorId, value);
     } catch (err) {
       console.error('Gagal menyimpan harga:', err);
       showToast(`Gagal menyimpan (${err.code || err.message || 'error tidak diketahui'}).`, 'danger');
@@ -481,7 +490,7 @@ function onBarcodeDetected(rawValue) {
   el('searchBox').value = barcode;
   renderFlagFilterChips();
   renderProductList();
-  const card = document.querySelector(`.sku-item[data-pcode="${product.pcode}"]`);
+  const card = document.querySelector(`.sku-item[data-key="${priceKey(product)}"]`);
   if (card) {
     card.scrollIntoView({ behavior: 'smooth', block: 'center' });
     card.classList.add('flash-highlight');
@@ -501,7 +510,7 @@ function onPriceFileSelected(e) {
     try {
       const { rows, headerMissing } = parsePriceWorkbook(ev.target.result);
       if (headerMissing) {
-        el('priceParsePreview').textContent = 'Format file tidak dikenali. Pastikan ada kolom PCCode dan Harga.';
+        el('priceParsePreview').textContent = 'Format file tidak dikenali. Pastikan ada kolom Barcode dan Harga.';
         return;
       }
       const result = processPriceRows(rows);
@@ -509,7 +518,7 @@ function onPriceFileSelected(e) {
       el('priceParsePreview').textContent = `${rows.length} baris dibaca untuk ${currentStore.name}: ${result.unileverCount} harga Unilever, ${result.competitorCount} harga kompetitor siap disimpan.`;
       let detail = '';
       if (result.tokoFilteredOut > 0) detail += `<p class="upload-status">${result.tokoFilteredOut} baris diabaikan karena kolom Toko tidak cocok dengan toko yang sedang dipilih.</p>`;
-      if (result.unknownPcode > 0) detail += `<p class="upload-status">${result.unknownPcode} baris diabaikan, PC Code tidak ada di daftar produk toko ini.</p>`;
+      if (result.unknownKey > 0) detail += `<p class="upload-status">${result.unknownKey} baris diabaikan, Barcode (atau PC Code) tidak ada di daftar produk toko ini.</p>`;
       if (result.unmatchedCompetitor > 0) detail += `<p class="upload-status">${result.unmatchedCompetitor} baris kompetitor diabaikan, nama kompetitornya belum terdaftar untuk produk itu (tambah dulu lewat "+ Tambah kompetitor" di daftar produk).</p>`;
       el('priceParseDetail').innerHTML = detail;
       el('priceSaveBtn').disabled = (result.unileverCount + result.competitorCount) === 0;
@@ -521,40 +530,41 @@ function onPriceFileSelected(e) {
   reader.readAsArrayBuffer(file);
 }
 
-// Cocokkan baris mentah ke produk toko ini (by PCCode) dan ke kompetitor terdaftar
+// Cocokkan baris mentah ke produk toko ini (by Barcode) dan ke kompetitor terdaftar
 // (by nama "Brand - Nama Produk" persis). Kolom Toko (kalau ada di file) dipakai
 // menyaring baris supaya file hasil "Export semua toko" bisa langsung diupload lagi
 // tanpa perlu dipotong-potong dulu manual.
 function processPriceRows(rows) {
-  const lookup = Object.fromEntries(allProducts.map(p => [p.pcode, p]));
+  const lookup = Object.fromEntries(allProducts.map(p => [priceKey(p), p]));
   const itemsMap = {};
-  let unileverCount = 0, competitorCount = 0, unknownPcode = 0, unmatchedCompetitor = 0, tokoFilteredOut = 0;
+  let unileverCount = 0, competitorCount = 0, unknownKey = 0, unmatchedCompetitor = 0, tokoFilteredOut = 0;
 
   for (const row of rows) {
     if (row.toko) {
       const matches = row.toko.toLowerCase() === currentStore.name.toLowerCase() || row.toko === currentStore.id;
       if (!matches) { tokoFilteredOut++; continue; }
     }
-    if (!lookup[row.pcode]) { unknownPcode++; continue; }
-    if (!itemsMap[row.pcode]) itemsMap[row.pcode] = {};
+    const key = row.barcode || (row.pcode ? 'PC-' + row.pcode : null);
+    if (!key || !lookup[key]) { unknownKey++; continue; }
+    if (!itemsMap[key]) itemsMap[key] = {};
 
     if (row.jenis === 'unilever') {
-      itemsMap[row.pcode].unileverPrice = row.harga;
+      itemsMap[key].unileverPrice = row.harga;
       unileverCount++;
     } else {
-      const compList = competitors[row.pcode] || {};
+      const compList = competitors[key] || {};
       const targetName = row.namaKompetitor.toLowerCase();
       const cid = Object.keys(compList).find(id => {
         const c = compList[id];
         return `${c.brand} - ${c.productName}`.toLowerCase() === targetName || c.brand.toLowerCase() === targetName;
       });
       if (!cid) { unmatchedCompetitor++; continue; }
-      if (!itemsMap[row.pcode].competitorPrices) itemsMap[row.pcode].competitorPrices = {};
-      itemsMap[row.pcode].competitorPrices[cid] = row.harga;
+      if (!itemsMap[key].competitorPrices) itemsMap[key].competitorPrices = {};
+      itemsMap[key].competitorPrices[cid] = row.harga;
       competitorCount++;
     }
   }
-  return { itemsMap, unileverCount, competitorCount, unknownPcode, unmatchedCompetitor, tokoFilteredOut };
+  return { itemsMap, unileverCount, competitorCount, unknownKey, unmatchedCompetitor, tokoFilteredOut };
 }
 
 async function onPriceUploadSave() {
@@ -566,12 +576,12 @@ async function onPriceUploadSave() {
   try {
     await saveBulkPriceEntries(currentStore, currentPeriodKey, pendingPriceParse.itemsMap);
     // Update tampilan lokal supaya langsung kelihatan tanpa perlu reload
-    for (const [pcode, val] of Object.entries(pendingPriceParse.itemsMap)) {
-      if (!currentEntry[pcode]) currentEntry[pcode] = {};
-      if (val.unileverPrice !== undefined) currentEntry[pcode].unileverPrice = val.unileverPrice;
+    for (const [key, val] of Object.entries(pendingPriceParse.itemsMap)) {
+      if (!currentEntry[key]) currentEntry[key] = {};
+      if (val.unileverPrice !== undefined) currentEntry[key].unileverPrice = val.unileverPrice;
       if (val.competitorPrices) {
-        if (!currentEntry[pcode].competitorPrices) currentEntry[pcode].competitorPrices = {};
-        Object.assign(currentEntry[pcode].competitorPrices, val.competitorPrices);
+        if (!currentEntry[key].competitorPrices) currentEntry[key].competitorPrices = {};
+        Object.assign(currentEntry[key].competitorPrices, val.competitorPrices);
       }
     }
     showToast(`Harga dari file berhasil disimpan (${pendingPriceParse.unileverCount + pendingPriceParse.competitorCount} entri).`, 'success');
@@ -610,15 +620,15 @@ async function exportOneStorePrice() {
   btn.textContent = 'Menyiapkan...';
   btn.disabled = true;
   try {
-    const lookup = Object.fromEntries(allProducts.map(p => [p.pcode, p]));
+    const lookup = Object.fromEntries(allProducts.map(p => [priceKey(p), p]));
     const q = query(collection(db, 'priceEntries'), where('storeId', '==', currentStore.id));
     const snap = await getDocs(q);
     const rows = [];
     snap.forEach(d => {
       const data = d.data();
       const items = data.items || {};
-      for (const [pcode, it] of Object.entries(items)) {
-        appendPriceRows(rows, currentStore, data.periodKey, pcode, it, lookup[pcode]);
+      for (const [key, it] of Object.entries(items)) {
+        appendPriceRows(rows, currentStore, data.periodKey, key, it, lookup[key]);
       }
     });
     if (!rows.length) {
@@ -655,10 +665,10 @@ async function exportAllStoresPrice() {
         const promoDoc = await loadPromoSku(store.scopeSlug, currentPeriodKey);
         lookupCache[store.scopeSlug] = mergeProducts(wajib, promoDoc);
       }
-      const lookup = Object.fromEntries(lookupCache[store.scopeSlug].map(p => [p.pcode, p]));
+      const lookup = Object.fromEntries(lookupCache[store.scopeSlug].map(p => [priceKey(p), p]));
       const items = data.items || {};
-      for (const [pcode, it] of Object.entries(items)) {
-        appendPriceRows(rows, store, data.periodKey, pcode, it, lookup[pcode]);
+      for (const [key, it] of Object.entries(items)) {
+        appendPriceRows(rows, store, data.periodKey, key, it, lookup[key]);
       }
     }
     if (!rows.length) {
@@ -676,12 +686,12 @@ async function exportAllStoresPrice() {
 }
 
 // Tambahkan baris mentah (1 baris per harga -- Unilever atau tiap kompetitor) ke array rows.
-function appendPriceRows(rows, store, periodKey, pcode, it, meta) {
+function appendPriceRows(rows, store, periodKey, key, it, meta) {
   meta = meta || {};
   if (it.unileverPrice !== undefined && it.unileverPrice !== '' && it.unileverPrice !== null) {
     rows.push({
       Toko: store.name, Area: store.area, Bulan: periodKey,
-      PCCode: pcode, Barcode: meta.barcode || '', NamaProduk: meta.name || '',
+      Barcode: meta.barcode || key, PCCode: meta.pcode || '', NamaProduk: meta.name || '',
       Flag: meta.flag || 'Promo', RSP: meta.rsp || '',
       JenisHarga: 'Unilever', NamaKompetitor: '', UkuranKemasanKompetitor: '',
       Harga: it.unileverPrice
@@ -690,10 +700,10 @@ function appendPriceRows(rows, store, periodKey, pcode, it, meta) {
   const compPrices = it.competitorPrices || {};
   for (const [cid, price] of Object.entries(compPrices)) {
     if (price === '' || price === undefined || price === null) continue;
-    const c = (competitors[pcode] || {})[cid] || {};
+    const c = (competitors[key] || {})[cid] || {};
     rows.push({
       Toko: store.name, Area: store.area, Bulan: periodKey,
-      PCCode: pcode, Barcode: meta.barcode || '', NamaProduk: meta.name || '',
+      Barcode: meta.barcode || key, PCCode: meta.pcode || '', NamaProduk: meta.name || '',
       Flag: meta.flag || 'Promo', RSP: meta.rsp || '',
       JenisHarga: 'Kompetitor', NamaKompetitor: c.brand ? `${c.brand} - ${c.productName || ''}` : '', UkuranKemasanKompetitor: c.packSize || '',
       Harga: price

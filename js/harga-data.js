@@ -1,8 +1,10 @@
 import { db, doc, getDoc, setDoc, serverTimestamp } from './firebase-init.js';
 
 // Semua data kompetitor disimpan di SATU dokumen (bukan 1 dokumen per produk) supaya
-// cukup 1x baca untuk semua 502 produk sekaligus, bukan ratusan read terpisah.
-// Struktur: { items: { [pcode]: { [competitorId]: {brand, productName, packSize, addedAt} } } }
+// cukup 1x baca untuk semua produk sekaligus, bukan ratusan read terpisah.
+// Struktur: { items: { [barcode]: { [competitorId]: {brand, productName, packSize, addedAt} } } }
+// Kunci pakai BARCODE (bukan PC Code) -- data harga dari toko biasanya per barcode,
+// sedangkan 1 PC Code kadang menaungi beberapa barcode/varian sekaligus.
 const COMPETITORS_DOC = 'all';
 
 export async function loadCompetitors() {
@@ -13,12 +15,12 @@ export async function loadCompetitors() {
 
 // Begitu ditambahkan oleh siapa pun, langsung tersimpan global -- toko/user lain yang
 // buka survei harga produk yang sama akan langsung melihat kompetitor ini juga.
-export async function addCompetitor(pcode, competitor) {
+export async function addCompetitor(barcode, competitor) {
   const competitorId = 'c' + Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
   const ref = doc(db, 'competitors', COMPETITORS_DOC);
   await setDoc(ref, {
     items: {
-      [pcode]: {
+      [barcode]: {
         [competitorId]: {
           brand: competitor.brand,
           productName: competitor.productName,
@@ -33,11 +35,11 @@ export async function addCompetitor(pcode, competitor) {
 
 // Koreksi data kompetitor yang sudah ada (misal salah ketik nama brand) -- berlaku
 // global juga, langsung berubah untuk semua toko begitu disimpan.
-export async function updateCompetitor(pcode, competitorId, competitor) {
+export async function updateCompetitor(barcode, competitorId, competitor) {
   const ref = doc(db, 'competitors', COMPETITORS_DOC);
   await setDoc(ref, {
     items: {
-      [pcode]: {
+      [barcode]: {
         [competitorId]: {
           brand: competitor.brand,
           productName: competitor.productName,
@@ -61,7 +63,7 @@ export async function loadPriceEntry(storeId, periodKey) {
 
 // Simpan 1 field harga (harga produk Unilever ATAU harga salah satu kompetitornya)
 // untuk 1 produk, tanpa menimpa field harga produk/kompetitor lain di dokumen yang sama.
-export async function savePriceField(storeMeta, periodKey, pcode, kind, competitorId, price) {
+export async function savePriceField(storeMeta, periodKey, barcode, kind, competitorId, price) {
   const ref = doc(db, 'priceEntries', priceDocId(storeMeta.id, periodKey));
   const itemUpdate = kind === 'unilever'
     ? { unileverPrice: price }
@@ -71,14 +73,14 @@ export async function savePriceField(storeMeta, periodKey, pcode, kind, competit
     storeName: storeMeta.name,
     area: storeMeta.area,
     periodKey,
-    items: { [pcode]: itemUpdate },
+    items: { [barcode]: itemUpdate },
     updatedAt: serverTimestamp()
   }, { merge: true });
 }
 
 // Upload harga manual dari Excel: 1x setDoc merge untuk semua baris sekaligus (bukan
 // 1 tulis per baris) supaya cepat & tidak boros write meski filenya ratusan baris.
-// itemsMap: { [pcode]: { unileverPrice? , competitorPrices?: {competitorId: price} } }
+// itemsMap: { [barcode]: { unileverPrice? , competitorPrices?: {competitorId: price} } }
 export async function saveBulkPriceEntries(storeMeta, periodKey, itemsMap) {
   const ref = doc(db, 'priceEntries', priceDocId(storeMeta.id, periodKey));
   await setDoc(ref, {
