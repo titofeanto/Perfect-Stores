@@ -278,6 +278,16 @@ button:active { transform: scale(0.98); }
 #promoToggleIcon.open {
   transform: rotate(90deg);
 }
+.product-group {
+  margin-bottom: 8px;
+}
+.product-group-icon {
+  transition: transform .15s;
+  color: var(--text-secondary);
+}
+.product-group-icon.open {
+  transform: rotate(90deg);
+}
 
 .field-subheader {
   display: grid;

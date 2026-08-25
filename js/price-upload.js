@@ -11,6 +11,7 @@ const HEADER_ALIASES = {
   toko: ['toko'],
   barcode: ['barcode'],
   pcode: ['pccode', 'pc code', 'pcode'],
+  nama: ['namaproduk', 'nama produk'],
   jenis: ['jenisharga', 'jenis harga'],
   kompetitor: ['namakompetitor', 'nama kompetitor'],
   harga: ['harga']
@@ -38,6 +39,7 @@ export function parsePriceWorkbook(arrayBuffer) {
       toko: findColumn(header, HEADER_ALIASES.toko),
       barcode: findColumn(header, HEADER_ALIASES.barcode),
       pcode: findColumn(header, HEADER_ALIASES.pcode),
+      nama: findColumn(header, HEADER_ALIASES.nama),
       jenis: findColumn(header, HEADER_ALIASES.jenis),
       kompetitor: findColumn(header, HEADER_ALIASES.kompetitor),
       harga: findColumn(header, HEADER_ALIASES.harga)
@@ -62,8 +64,9 @@ export function parsePriceWorkbook(arrayBuffer) {
     const jenisRaw = idx.jenis !== -1 && row[idx.jenis] != null ? String(row[idx.jenis]).trim().toLowerCase() : 'unilever';
     const jenis = jenisRaw.startsWith('komp') ? 'kompetitor' : 'unilever';
     const namaKompetitor = idx.kompetitor !== -1 && row[idx.kompetitor] != null ? String(row[idx.kompetitor]).trim() : '';
+    const namaProduk = idx.nama !== -1 && row[idx.nama] != null ? String(row[idx.nama]).trim() : '';
     const toko = idx.toko !== -1 && row[idx.toko] != null ? String(row[idx.toko]).trim() : null;
-    parsed.push({ toko, barcode, pcode, jenis, namaKompetitor, harga });
+    parsed.push({ toko, barcode, pcode, namaProduk, jenis, namaKompetitor, harga });
   }
   return { rows: parsed, headerMissing: false };
 }
