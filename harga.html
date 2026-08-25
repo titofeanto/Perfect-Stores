@@ -107,6 +107,22 @@
   </div>
 
   <div class="card">
+    <p class="section-title" style="margin:0 0 8px;">Upload Harga Manual (Excel)</p>
+    <p class="upload-status">Isi harga di Excel (bisa mulai dari hasil Export di atas), lalu upload balik untuk toko &amp; bulan yang sedang dipilih (<strong id="priceUploadTargetLabel">-</strong>).</p>
+    <a href="assets/template_upload_harga_manual.xlsx" download class="template-link">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <path d="M12 3v12m0 0l-4-4m4 4l4-4M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+      Download contoh template
+    </a>
+    <label class="field-label" style="margin-top:10px;">File (kolom: PCCode, JenisHarga, NamaKompetitor, Harga)</label>
+    <input id="priceFileInput" type="file" accept=".xlsx,.xls">
+    <p id="priceParsePreview" class="upload-status"></p>
+    <div id="priceParseDetail"></div>
+    <button id="priceSaveBtn" class="primary" style="margin-top:6px; width:100%;" disabled>Simpan Harga dari File</button>
+  </div>
+
+  <div class="card">
     <p class="section-title" style="margin:0 0 8px;">Upload SKU Promo (opsional, per Channel, berlaku 1 bulan berjalan)</p>
     <p class="upload-status">SKU Promo tidak menjadi kewajiban SBA -- cuma tambahan info ketersediaan &amp; harga.</p>
     <a href="assets/template_upload_sku_promo.xlsx" download class="template-link">
@@ -159,6 +175,6 @@
 
 </div>
 <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
-<script type="module" src="js/harga.js?v=7"></script>
+<script type="module" src="js/harga.js?v=8"></script>
 </body>
 </html>

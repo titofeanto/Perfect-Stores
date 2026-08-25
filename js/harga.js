@@ -1,9 +1,10 @@
 import { db, collection, query, where, getDocs, authReady } from './firebase-init.js';
 import { loadStores, loadSkuList } from './store-data.js';
 import { MONTHS_ID } from './weeks.js';
-import { loadCompetitors, addCompetitor, updateCompetitor, loadPriceEntry, savePriceField, loadPromoSku, savePromoSku } from './harga-data.js';
+import { loadCompetitors, addCompetitor, updateCompetitor, loadPriceEntry, savePriceField, saveBulkPriceEntries, loadPromoSku, savePromoSku } from './harga-data.js';
 import { supportsNativeBarcodeDetector, startNativeScan, stopNativeScan, startFallbackScan, stopFallbackScan } from './barcode-scan.js';
 import { parsePromoWorkbook } from './promo-upload.js';
+import { parsePriceWorkbook } from './price-upload.js';
 import { downloadAsExcel } from './export-utils.js';
 
 const TODAY = new Date();
@@ -26,6 +27,7 @@ let saveTimers = {};
 let openAddForm = null; // pcode yang sedang buka form tambah kompetitor
 let editingCompetitor = null; // {pcode, competitorId} yang sedang diedit
 let pendingPromoParse = null;
+let pendingPriceParse = null;
 
 function rp(n) {
   if (n === null || n === undefined || n === '') return '-';
@@ -57,6 +59,8 @@ async function init() {
   el('promoFileInput').addEventListener('change', onPromoFileSelected);
   el('promoSaveBtn').addEventListener('click', onPromoSave);
   el('promoChannelSel').addEventListener('change', refreshPromoUploadInfo);
+  el('priceFileInput').addEventListener('change', onPriceFileSelected);
+  el('priceSaveBtn').addEventListener('click', onPriceUploadSave);
   el('exportStoreBtn').addEventListener('click', exportOneStorePrice);
   el('exportAllPriceBtn').addEventListener('click', exportAllStoresPrice);
 
@@ -124,6 +128,12 @@ async function onStoreOrMonthChange() {
 
   el('promoChannelSel').value = currentStore.scopeSlug;
   refreshPromoUploadInfo();
+  el('priceUploadTargetLabel').textContent = `${currentStore.name}, ${MONTHS_ID[Number(currentPeriodKey.split('-')[1]) - 1]} ${currentPeriodKey.split('-')[0]}`;
+  pendingPriceParse = null;
+  el('priceFileInput').value = '';
+  el('priceParsePreview').textContent = '';
+  el('priceParseDetail').innerHTML = '';
+  el('priceSaveBtn').disabled = true;
   renderProgress();
   renderProductList();
 }
@@ -478,6 +488,106 @@ function onBarcodeDetected(rawValue) {
     setTimeout(() => card.classList.remove('flash-highlight'), 1600);
   }
   showToast(`Ditemukan: ${product.name}`, 'success');
+}
+
+function onPriceFileSelected(e) {
+  const file = e.target.files[0];
+  if (!file) return;
+  el('priceParsePreview').textContent = 'Membaca file...';
+  el('priceParseDetail').innerHTML = '';
+  el('priceSaveBtn').disabled = true;
+  const reader = new FileReader();
+  reader.onload = (ev) => {
+    try {
+      const { rows, headerMissing } = parsePriceWorkbook(ev.target.result);
+      if (headerMissing) {
+        el('priceParsePreview').textContent = 'Format file tidak dikenali. Pastikan ada kolom PCCode dan Harga.';
+        return;
+      }
+      const result = processPriceRows(rows);
+      pendingPriceParse = result;
+      el('priceParsePreview').textContent = `${rows.length} baris dibaca untuk ${currentStore.name}: ${result.unileverCount} harga Unilever, ${result.competitorCount} harga kompetitor siap disimpan.`;
+      let detail = '';
+      if (result.tokoFilteredOut > 0) detail += `<p class="upload-status">${result.tokoFilteredOut} baris diabaikan karena kolom Toko tidak cocok dengan toko yang sedang dipilih.</p>`;
+      if (result.unknownPcode > 0) detail += `<p class="upload-status">${result.unknownPcode} baris diabaikan, PC Code tidak ada di daftar produk toko ini.</p>`;
+      if (result.unmatchedCompetitor > 0) detail += `<p class="upload-status">${result.unmatchedCompetitor} baris kompetitor diabaikan, nama kompetitornya belum terdaftar untuk produk itu (tambah dulu lewat "+ Tambah kompetitor" di daftar produk).</p>`;
+      el('priceParseDetail').innerHTML = detail;
+      el('priceSaveBtn').disabled = (result.unileverCount + result.competitorCount) === 0;
+    } catch (err) {
+      console.error(err);
+      el('priceParsePreview').textContent = 'Gagal membaca file.';
+    }
+  };
+  reader.readAsArrayBuffer(file);
+}
+
+// Cocokkan baris mentah ke produk toko ini (by PCCode) dan ke kompetitor terdaftar
+// (by nama "Brand - Nama Produk" persis). Kolom Toko (kalau ada di file) dipakai
+// menyaring baris supaya file hasil "Export semua toko" bisa langsung diupload lagi
+// tanpa perlu dipotong-potong dulu manual.
+function processPriceRows(rows) {
+  const lookup = Object.fromEntries(allProducts.map(p => [p.pcode, p]));
+  const itemsMap = {};
+  let unileverCount = 0, competitorCount = 0, unknownPcode = 0, unmatchedCompetitor = 0, tokoFilteredOut = 0;
+
+  for (const row of rows) {
+    if (row.toko) {
+      const matches = row.toko.toLowerCase() === currentStore.name.toLowerCase() || row.toko === currentStore.id;
+      if (!matches) { tokoFilteredOut++; continue; }
+    }
+    if (!lookup[row.pcode]) { unknownPcode++; continue; }
+    if (!itemsMap[row.pcode]) itemsMap[row.pcode] = {};
+
+    if (row.jenis === 'unilever') {
+      itemsMap[row.pcode].unileverPrice = row.harga;
+      unileverCount++;
+    } else {
+      const compList = competitors[row.pcode] || {};
+      const targetName = row.namaKompetitor.toLowerCase();
+      const cid = Object.keys(compList).find(id => {
+        const c = compList[id];
+        return `${c.brand} - ${c.productName}`.toLowerCase() === targetName || c.brand.toLowerCase() === targetName;
+      });
+      if (!cid) { unmatchedCompetitor++; continue; }
+      if (!itemsMap[row.pcode].competitorPrices) itemsMap[row.pcode].competitorPrices = {};
+      itemsMap[row.pcode].competitorPrices[cid] = row.harga;
+      competitorCount++;
+    }
+  }
+  return { itemsMap, unileverCount, competitorCount, unknownPcode, unmatchedCompetitor, tokoFilteredOut };
+}
+
+async function onPriceUploadSave() {
+  if (!pendingPriceParse) return;
+  const btn = el('priceSaveBtn');
+  const original = btn.textContent;
+  btn.textContent = 'Menyimpan...';
+  btn.disabled = true;
+  try {
+    await saveBulkPriceEntries(currentStore, currentPeriodKey, pendingPriceParse.itemsMap);
+    // Update tampilan lokal supaya langsung kelihatan tanpa perlu reload
+    for (const [pcode, val] of Object.entries(pendingPriceParse.itemsMap)) {
+      if (!currentEntry[pcode]) currentEntry[pcode] = {};
+      if (val.unileverPrice !== undefined) currentEntry[pcode].unileverPrice = val.unileverPrice;
+      if (val.competitorPrices) {
+        if (!currentEntry[pcode].competitorPrices) currentEntry[pcode].competitorPrices = {};
+        Object.assign(currentEntry[pcode].competitorPrices, val.competitorPrices);
+      }
+    }
+    showToast(`Harga dari file berhasil disimpan (${pendingPriceParse.unileverCount + pendingPriceParse.competitorCount} entri).`, 'success');
+    pendingPriceParse = null;
+    el('priceFileInput').value = '';
+    el('priceParsePreview').textContent = '';
+    el('priceParseDetail').innerHTML = '';
+    renderProgress();
+    renderProductList();
+  } catch (err) {
+    console.error('Gagal menyimpan harga dari file:', err);
+    showToast(`Gagal menyimpan (${err.code || err.message || 'error tidak diketahui'}).`, 'danger');
+  } finally {
+    btn.textContent = original;
+    btn.disabled = false;
+  }
 }
 
 let toastTimer;

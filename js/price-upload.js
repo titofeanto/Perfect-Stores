@@ -1,0 +1,61 @@
+// Parsing file upload harga manual (Excel) untuk 1 toko + 1 bulan yang sedang dipilih
+// di halaman Survei Harga. Formatnya sengaja dibuat SAMA dengan hasil "Export toko ini" /
+// "Export semua toko", supaya bisa export -> edit di Excel -> upload balik (round-trip).
+// Header dicocokkan by NAMA kolom, bukan posisi tetap.
+
+const HEADER_ALIASES = {
+  toko: ['toko'],
+  pcode: ['pccode', 'pc code', 'pcode'],
+  jenis: ['jenisharga', 'jenis harga'],
+  kompetitor: ['namakompetitor', 'nama kompetitor'],
+  harga: ['harga']
+};
+
+function findColumn(header, aliases) {
+  for (const alias of aliases) {
+    const idx = header.indexOf(alias);
+    if (idx !== -1) return idx;
+  }
+  return -1;
+}
+
+export function parsePriceWorkbook(arrayBuffer) {
+  const wb = window.XLSX.read(arrayBuffer, { type: 'array' });
+  const ws = wb.Sheets[wb.SheetNames[0]];
+  const rows = window.XLSX.utils.sheet_to_json(ws, { header: 1, defval: null });
+  if (!rows.length) return { rows: [], headerMissing: true };
+
+  let headerRowIdx = -1;
+  let idx = {};
+  for (let r = 0; r < Math.min(rows.length, 5); r++) {
+    const header = (rows[r] || []).map(h => (h == null ? '' : String(h).trim().toLowerCase()));
+    const tryIdx = {
+      toko: findColumn(header, HEADER_ALIASES.toko),
+      pcode: findColumn(header, HEADER_ALIASES.pcode),
+      jenis: findColumn(header, HEADER_ALIASES.jenis),
+      kompetitor: findColumn(header, HEADER_ALIASES.kompetitor),
+      harga: findColumn(header, HEADER_ALIASES.harga)
+    };
+    if (tryIdx.pcode !== -1 && tryIdx.harga !== -1) {
+      headerRowIdx = r;
+      idx = tryIdx;
+      break;
+    }
+  }
+  if (headerRowIdx === -1) return { rows: [], headerMissing: true };
+
+  const parsed = [];
+  for (let r = headerRowIdx + 1; r < rows.length; r++) {
+    const row = rows[r];
+    if (!row || row[idx.pcode] == null) continue;
+    const pcode = String(row[idx.pcode]).trim();
+    const harga = row[idx.harga] != null ? Number(row[idx.harga]) : null;
+    if (!pcode || harga === null || isNaN(harga)) continue;
+    const jenisRaw = idx.jenis !== -1 && row[idx.jenis] != null ? String(row[idx.jenis]).trim().toLowerCase() : 'unilever';
+    const jenis = jenisRaw.startsWith('komp') ? 'kompetitor' : 'unilever';
+    const namaKompetitor = idx.kompetitor !== -1 && row[idx.kompetitor] != null ? String(row[idx.kompetitor]).trim() : '';
+    const toko = idx.toko !== -1 && row[idx.toko] != null ? String(row[idx.toko]).trim() : null;
+    parsed.push({ toko, pcode, jenis, namaKompetitor, harga });
+  }
+  return { rows: parsed, headerMissing: false };
+}

@@ -76,6 +76,21 @@ export async function savePriceField(storeMeta, periodKey, pcode, kind, competit
   }, { merge: true });
 }
 
+// Upload harga manual dari Excel: 1x setDoc merge untuk semua baris sekaligus (bukan
+// 1 tulis per baris) supaya cepat & tidak boros write meski filenya ratusan baris.
+// itemsMap: { [pcode]: { unileverPrice? , competitorPrices?: {competitorId: price} } }
+export async function saveBulkPriceEntries(storeMeta, periodKey, itemsMap) {
+  const ref = doc(db, 'priceEntries', priceDocId(storeMeta.id, periodKey));
+  await setDoc(ref, {
+    storeId: storeMeta.id,
+    storeName: storeMeta.name,
+    area: storeMeta.area,
+    periodKey,
+    items: itemsMap,
+    updatedAt: serverTimestamp()
+  }, { merge: true });
+}
+
 // SKU Promo: berlaku per Channel (scopeSlug) per bulan (YYYY-MM), di-upload manual oleh
 // tim (bukan file statis) supaya bisa berubah tiap bulan tanpa perlu ubah kode.
 function promoDocId(scopeSlug, periodKey) {
