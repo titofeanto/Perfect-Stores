@@ -154,8 +154,8 @@ function populateWeekSelect(preferPeriodKey) {
 function attachStaticHandlers() {
   el('areaSel').addEventListener('change', onAreaChange);
   el('storeSel').addEventListener('change', () => onStoreChange());
-  el('monthSel').addEventListener('change', onPeriodChange);
-  el('weekSel').addEventListener('change', onPeriodChange);
+  el('monthSel').addEventListener('change', onMonthChange);
+  el('weekSel').addEventListener('change', onWeekChange);
   el('searchBox').addEventListener('input', (e) => { searchText = e.target.value; renderSkuList(); });
   el('promoToggleBtn').addEventListener('click', () => {
     promoExpanded = !promoExpanded;
@@ -218,8 +218,22 @@ async function ensureDistributorStockLoaded(area) {
   }
 }
 
-async function onPeriodChange() {
+async function onMonthChange() {
   populateWeekSelect();
+  await afterPeriodDataChange();
+}
+
+async function onWeekChange() {
+  // PENTING: jangan panggil populateWeekSelect() di sini. Fungsi itu membangun ulang
+  // seluruh daftar <option> dan (kalau tidak dikasih preferPeriodKey) otomatis balik
+  // ke minggu yang mengandung tanggal HARI INI -- efeknya pilihan manual user di
+  // dropdown Minggu langsung ketimpa detik itu juga. Cukup baca index yang baru dipilih.
+  const idx = Number(el('weekSel').value);
+  if (currentWeeks[idx]) currentWeek = currentWeeks[idx];
+  await afterPeriodDataChange();
+}
+
+async function afterPeriodDataChange() {
   await loadEntryForCurrentPeriod();
   renderAll();
   // Kalau sedang di tab Stock distributor / Barang Masuk, refresh juga -- dulu cuma
