@@ -23,6 +23,10 @@ let currentStore = null;
 let currentPeriodKey = null;
 let searchText = '';
 let flagFilter = 'all';
+let hgSortOrder = 'asc';
+let hgBuFilter = 'all';
+let hgCategoryFilter = 'all';
+let hgBrandFilter = 'all';
 let saveTimers = {};
 let openAddForm = null; // pcode yang sedang buka form tambah kompetitor
 let editingCompetitor = null; // {pcode, competitorId} yang sedang diedit
@@ -62,6 +66,16 @@ async function init() {
   el('storeSel').addEventListener('change', onStoreOrMonthChange);
   el('monthSel').addEventListener('change', onStoreOrMonthChange);
   el('searchBox').addEventListener('input', (e) => { searchText = e.target.value; renderProductList(); });
+  el('hgSortToggleBtn').addEventListener('click', () => {
+    hgSortOrder = hgSortOrder === 'asc' ? 'desc' : 'asc';
+    el('hgSortToggleBtn').innerHTML = hgSortOrder === 'asc'
+      ? 'A-Z <span id="hgSortIcon">&#8595;</span>'
+      : 'Z-A <span id="hgSortIcon">&#8593;</span>';
+    renderProductList();
+  });
+  el('hgBuFilterSel').addEventListener('change', (e) => { hgBuFilter = e.target.value; renderProductList(); });
+  el('hgCategoryFilterSel').addEventListener('change', (e) => { hgCategoryFilter = e.target.value; renderProductList(); });
+  el('hgBrandFilterSel').addEventListener('change', (e) => { hgBrandFilter = e.target.value; renderProductList(); });
   el('scanBtn').addEventListener('click', openScanModal);
   el('scanCloseBtn').addEventListener('click', closeScanModal);
   el('promoFileInput').addEventListener('change', onPromoFileSelected);
@@ -107,14 +121,14 @@ function mergeProducts(wajibList, promoDoc) {
   const merged = {};
   for (const it of wajibList) {
     if (!it.pcode) continue;
-    merged[it.pcode] = { pcode: it.pcode, barcode: it.barcode, name: it.name, flag: it.flag, isi: it.isi, rsp: null };
+    merged[it.pcode] = { pcode: it.pcode, barcode: it.barcode, name: it.name, flag: it.flag, isi: it.isi, rsp: null, brand: it.brand, bu: it.bu, category: it.category };
   }
   if (promoDoc && Array.isArray(promoDoc.items)) {
     for (const it of promoDoc.items) {
       if (merged[it.pcode]) {
         merged[it.pcode].rsp = it.rsp;
       } else {
-        merged[it.pcode] = { pcode: it.pcode, barcode: it.barcode, name: it.name, flag: null, isi: null, rsp: it.rsp };
+        merged[it.pcode] = { pcode: it.pcode, barcode: it.barcode, name: it.name, flag: null, isi: null, rsp: it.rsp, brand: null, bu: null, category: null };
       }
     }
   }
@@ -151,6 +165,10 @@ async function onStoreOrMonthChange() {
     knownKeys.add(key);
   }
   allProducts.sort((a, b) => a.name.localeCompare(b.name));
+  populateHargaFilterDropdowns();
+  hgBuFilter = 'all';
+  hgCategoryFilter = 'all';
+  hgBrandFilter = 'all';
 
   el('promoChannelSel').value = currentStore.scopeSlug;
   refreshPromoUploadInfo();
@@ -360,14 +378,27 @@ function filledCountOf(list) {
   }).length;
 }
 
+function populateHargaFilterDropdowns() {
+  const uniqueSorted = (key) => [...new Set(allProducts.map(p => p[key]).filter(Boolean))].sort();
+  const buildOptions = (values, allLabel) =>
+    `<option value="all">${allLabel}</option>` + values.map(v => `<option value="${v}">${v}</option>`).join('');
+  el('hgBuFilterSel').innerHTML = buildOptions(uniqueSorted('bu'), 'Semua BU');
+  el('hgCategoryFilterSel').innerHTML = buildOptions(uniqueSorted('category'), 'Semua Category');
+  el('hgBrandFilterSel').innerHTML = buildOptions(uniqueSorted('brand'), 'Semua Brand');
+}
+
 function renderProductList() {
   const q = searchText.trim().toLowerCase();
-  const filtered = allProducts.filter(p => {
+  let filtered = allProducts.filter(p => {
     if (flagFilter === 'PROMO' && p.flag) return false;
     if (flagFilter !== 'all' && flagFilter !== 'PROMO' && p.flag !== flagFilter) return false;
+    if (hgBuFilter !== 'all' && p.bu !== hgBuFilter) return false;
+    if (hgCategoryFilter !== 'all' && p.category !== hgCategoryFilter) return false;
+    if (hgBrandFilter !== 'all' && p.brand !== hgBrandFilter) return false;
     if (q && !p.name.toLowerCase().includes(q) && !(p.barcode || '').includes(q) && !(p.pcode || '').includes(q)) return false;
     return true;
   });
+  filtered = filtered.sort((a, b) => hgSortOrder === 'asc' ? a.name.localeCompare(b.name) : b.name.localeCompare(a.name));
 
   if (flagFilter !== 'all') {
     // Sudah tersaring ke 1 kategori lewat chip -- tampil flat, tidak perlu dikelompokkan lagi.

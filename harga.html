@@ -156,6 +156,12 @@
     </button>
   </div>
   <div class="chip-row" id="flagFilterRow"></div>
+  <div class="sku-filter-row">
+    <select id="hgBuFilterSel"><option value="all">Semua BU</option></select>
+    <select id="hgCategoryFilterSel"><option value="all">Semua Category</option></select>
+    <select id="hgBrandFilterSel"><option value="all">Semua Brand</option></select>
+    <button type="button" id="hgSortToggleBtn" title="Urutkan nama produk">A-Z <span id="hgSortIcon">&#8595;</span></button>
+  </div>
 
   <div id="productList"></div>
 
@@ -175,6 +181,6 @@
 
 </div>
 <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
-<script type="module" src="js/harga.js?v=10"></script>
+<script type="module" src="js/harga.js?v=11"></script>
 </body>
 </html>
