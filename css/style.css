@@ -1,22 +1,36 @@
 :root {
-  --bg: #f5f4f0;
+  --bg: #f5f4f1;
   --surface: #ffffff;
-  --surface-muted: #f0efe9;
-  --border: #e1dfd6;
-  --text: #1f1e1c;
-  --text-secondary: #6b6a63;
-  --text-muted: #9b9a92;
-  --accent: #1d5fa8;
-  --accent-bg: #e6f1fb;
-  --success: #1f7a4d;
-  --success-bg: #e4f3ea;
-  --warning: #8a5a10;
-  --warning-bg: #faf0da;
-  --danger: #a32d2d;
-  --danger-bg: #fbe8e8;
+  --surface-muted: #f1f0eb;
+  --border: #e2e0d6;
+  --text: #1d1d1f;
+  --text-secondary: #6e6d67;
+  --text-muted: #9c9b93;
+  --accent: #0066cc;
+  --accent-bg: #eaf2fc;
+  --border-accent: #0066cc;
+  --success: #1c7a4d;
+  --success-bg: #e4f5ec;
+  --warning: #92600a;
+  --warning-bg: #fbf1da;
+  --danger: #b3261e;
+  --danger-bg: #fceaea;
   --radius: 10px;
-  --radius-lg: 14px;
-  font-family: -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  --radius-lg: 16px;
+  --content-width: 480px;
+  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+}
+
+/* Layout melebar bertahap sesuai lebar layar -- iPhone tetap seperti biasa,
+   iPad/desktop dapat ruang lebih lega, bukan cuma kolom sempit di tengah. */
+@media (min-width: 700px) {
+  :root { --content-width: 660px; }
+}
+@media (min-width: 1024px) {
+  :root { --content-width: 920px; }
+}
+@media (min-width: 1360px) {
+  :root { --content-width: 1080px; }
 }
 
 * { box-sizing: border-box; }
@@ -26,71 +40,113 @@ body {
   background: var(--bg);
   color: var(--text);
   line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
 }
 
 .app {
-  max-width: 480px;
+  max-width: var(--content-width);
   margin: 0 auto;
-  padding: 12px 12px 48px;
+  padding: 16px 16px 56px;
+  transition: max-width .2s ease;
+}
+@media (min-width: 700px) {
+  .app { padding: 24px 28px 64px; }
+}
+@media (min-width: 1024px) {
+  .app { padding: 32px 36px 72px; }
 }
 
 header.appbar {
-  padding: 4px 0 14px;
+  padding: 4px 0 16px;
 }
 header.appbar h1 {
-  font-size: 17px;
-  font-weight: 600;
+  font-size: 19px;
+  font-weight: 650;
+  letter-spacing: -0.01em;
   margin: 0;
 }
 header.appbar p {
-  font-size: 12px;
+  font-size: 12.5px;
   color: var(--text-secondary);
-  margin: 2px 0 0;
+  margin: 3px 0 0;
+}
+@media (min-width: 700px) {
+  header.appbar h1 { font-size: 24px; letter-spacing: -0.015em; }
+  header.appbar p { font-size: 13.5px; }
+}
+
+/* Kartu berdampingan di layar lebar (mis. Area/Toko + Bulan/Minggu jadi 1 baris),
+   tetap ditumpuk vertikal di HP -- struktur HTML tidak berubah, cuma tampilan. */
+.card-row-desktop {
+  display: block;
+}
+@media (min-width: 700px) {
+  .card-row-desktop {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    align-items: start;
+  }
+  .card-row-desktop > .card { margin-bottom: 0; }
 }
 
 .card {
   background: var(--surface);
   border: 1px solid var(--border);
   border-radius: var(--radius-lg);
-  padding: 12px 14px;
-  margin-bottom: 10px;
+  padding: 14px 16px;
+  margin-bottom: 12px;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.03);
+}
+@media (min-width: 700px) {
+  .card { padding: 18px 20px; }
 }
 
 .row2 {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 8px;
+  gap: 10px;
 }
 
 label.field-label {
   display: block;
   font-size: 11px;
   color: var(--text-muted);
-  margin-bottom: 3px;
+  margin-bottom: 4px;
+  letter-spacing: 0.01em;
 }
 
 select, input[type="text"], input[type="number"], input[type="file"] {
   width: 100%;
   font-size: 14px;
-  padding: 8px 10px;
+  padding: 9px 11px;
   border: 1px solid var(--border);
   border-radius: var(--radius);
   background: var(--surface);
   color: var(--text);
+  font-family: inherit;
 }
 select:focus, input:focus {
   outline: 2px solid var(--accent);
   outline-offset: 1px;
 }
+@media (min-width: 1024px) {
+  select, input[type="text"], input[type="number"] {
+    padding: 9px 12px;
+  }
+  select:hover, input:hover { border-color: #c9c7ba; }
+}
 
 button {
   font-size: 13px;
-  padding: 9px 12px;
+  font-weight: 500;
+  padding: 10px 14px;
   border-radius: var(--radius);
   border: 1px solid var(--border);
   background: var(--surface);
   color: var(--text);
   cursor: pointer;
+  font-family: inherit;
 }
 button.primary {
   border-color: var(--accent);
@@ -102,12 +158,17 @@ button.danger-outline {
   color: var(--danger);
 }
 button:active { transform: scale(0.98); }
+@media (min-width: 1024px) {
+  button { cursor: pointer; }
+  button:hover { border-color: #c9c7ba; }
+  button.primary:hover { background: #dfeafa; }
+}
 
 .tabs {
   display: grid;
   grid-template-columns: 1fr 1fr 1fr;
   gap: 6px;
-  margin-bottom: 10px;
+  margin-bottom: 12px;
 }
 .tabs.tabs-4 {
   grid-template-columns: 1fr 1fr 1fr 1fr;
@@ -115,16 +176,19 @@ button:active { transform: scale(0.98); }
 .tabs button {
   position: relative;
   font-size: 12px;
-  padding: 8px 4px;
+  padding: 9px 4px;
 }
 .tabs.tabs-4 button {
   font-size: 10.5px;
-  padding: 8px 2px;
+  padding: 9px 2px;
 }
 .tabs button.active {
   border-color: var(--accent);
   color: var(--accent);
   background: var(--accent-bg);
+}
+@media (min-width: 700px) {
+  .tabs button, .tabs.tabs-4 button { font-size: 13px; padding: 10px 8px; }
 }
 .tab-badge {
   position: absolute;
@@ -142,9 +206,9 @@ button:active { transform: scale(0.98); }
 
 .banner {
   border-radius: var(--radius);
-  padding: 9px 11px;
-  font-size: 12px;
-  margin-bottom: 10px;
+  padding: 10px 12px;
+  font-size: 12.5px;
+  margin-bottom: 12px;
 }
 .banner.info { background: var(--surface-muted); color: var(--text-secondary); }
 .banner.warning { background: var(--warning-bg); color: var(--warning); }
@@ -156,17 +220,17 @@ button:active { transform: scale(0.98); }
   background: var(--surface-muted);
   border-radius: 99px;
   overflow: hidden;
-  margin-top: 6px;
+  margin-top: 7px;
 }
 .progress-fill {
   height: 100%;
   background: var(--success);
-  transition: width .2s;
+  transition: width .25s ease;
 }
 .progress-label {
   display: flex;
   justify-content: space-between;
-  font-size: 12px;
+  font-size: 12.5px;
   color: var(--text-secondary);
 }
 
@@ -174,11 +238,11 @@ button:active { transform: scale(0.98); }
   display: flex;
   gap: 6px;
   flex-wrap: wrap;
-  margin-bottom: 10px;
+  margin-bottom: 12px;
 }
 .chip {
   font-size: 12px;
-  padding: 5px 10px;
+  padding: 6px 12px;
   border-radius: 99px;
   border: 1px solid var(--border);
   background: var(--surface);
@@ -193,7 +257,8 @@ button:active { transform: scale(0.98); }
 .badge {
   display: inline-block;
   font-size: 11px;
-  padding: 2px 8px;
+  font-weight: 500;
+  padding: 2.5px 9px;
   border-radius: 99px;
   margin-right: 4px;
 }
@@ -207,12 +272,12 @@ button:active { transform: scale(0.98); }
 
 .sku-item {
   border-top: 1px solid var(--border);
-  padding-top: 10px;
-  margin-top: 10px;
+  padding-top: 12px;
+  margin-top: 12px;
 }
 .sku-item:first-child { border-top: none; margin-top: 0; padding-top: 0; }
-.sku-name { font-size: 13px; margin: 0; }
-.sku-code { font-size: 11px; color: var(--text-muted); font-family: monospace; margin: 1px 0 6px; }
+.sku-name { font-size: 13.5px; font-weight: 500; margin: 0; letter-spacing: -0.003em; }
+.sku-code { font-size: 11px; color: var(--text-muted); font-family: ui-monospace, "SF Mono", Menlo, monospace; margin: 2px 0 7px; }
 .sku-warning {
   font-size: 11px;
   color: var(--warning);
@@ -265,7 +330,7 @@ button:active { transform: scale(0.98); }
   background: var(--surface-muted);
   border: 1px solid var(--border);
   border-radius: var(--radius);
-  padding: 10px 12px;
+  padding: 11px 13px;
   font-size: 13px;
   font-weight: 500;
   color: var(--text);
@@ -306,7 +371,7 @@ button:active { transform: scale(0.98); }
 .field-row {
   background: var(--surface-muted);
   border-radius: var(--radius);
-  padding: 6px 8px;
+  padding: 7px 9px;
 }
 .field-row-head {
   display: flex;
@@ -338,15 +403,18 @@ button:active { transform: scale(0.98); }
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 10px;
-  margin-bottom: 10px;
+  margin-bottom: 12px;
+}
+@media (min-width: 700px) {
+  .metric-grid { grid-template-columns: repeat(4, 1fr); gap: 12px; }
 }
 .metric-card {
   background: var(--surface-muted);
   border-radius: var(--radius);
-  padding: 10px;
+  padding: 12px;
 }
 .metric-card .label { font-size: 12px; color: var(--text-secondary); }
-.metric-card .value { font-size: 22px; font-weight: 600; }
+.metric-card .value { font-size: 23px; font-weight: 650; letter-spacing: -0.01em; }
 
 .modal-backdrop {
   display: none;
@@ -362,19 +430,22 @@ button:active { transform: scale(0.98); }
 .modal-box {
   background: var(--surface);
   border-radius: var(--radius-lg);
-  padding: 18px;
+  padding: 20px;
   width: 100%;
   max-width: 380px;
+  box-shadow: 0 12px 40px rgba(0,0,0,0.18);
 }
-.modal-box h3 { font-size: 15px; margin: 0 0 6px; }
+.modal-box h3 { font-size: 15.5px; font-weight: 650; margin: 0 0 6px; }
 .modal-box p { font-size: 13px; color: var(--text-secondary); margin: 0 0 14px; }
 .modal-actions { display: flex; gap: 8px; }
 .modal-actions button { flex: 1; }
 
 .section-title {
   font-size: 12px;
+  font-weight: 500;
   color: var(--text-secondary);
   margin: 6px 0;
+  letter-spacing: 0.01em;
 }
 
 .upload-status {
@@ -428,7 +499,7 @@ button:active { transform: scale(0.98); }
 .search-row input { flex: 1; }
 #scanBtn {
   flex: none;
-  width: 42px;
+  width: 44px;
   padding: 0;
   display: flex;
   align-items: center;

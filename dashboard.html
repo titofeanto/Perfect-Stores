@@ -4,10 +4,9 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Dashboard Rekap - SBA COTC</title>
-<link rel="stylesheet" href="css/style.css">
+<link rel="stylesheet" href="css/style.css?v=2">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tabler-icons/2.44.0/iconfont/tabler-icons.min.css">
 <style>
-  .app { max-width: 720px; }
   table.recap-table { width: 100%; border-collapse: collapse; font-size: 12.5px; }
   table.recap-table th, table.recap-table td { text-align: left; padding: 8px 6px; border-bottom: 1px solid var(--border); white-space: nowrap; }
   table.recap-table th { color: var(--text-secondary); font-weight: 500; font-size: 11px; }
@@ -91,6 +90,7 @@
       <p class="upload-status" style="margin-top:4px;">Barang yang ada di toko (stock &gt; 0) dibagi total target SKU wajib, lintas 36 toko.</p>
     </div>
 
+    <div class="card-row-desktop">
     <div class="card">
       <p class="section-title" style="margin:0 0 8px;">Per area</p>
       <div id="areaSummary"></div>
@@ -99,6 +99,7 @@
     <div class="card">
       <p class="section-title" style="margin:0 0 8px;">Ketersediaan barang per flag (semua toko)</p>
       <div id="flagAvailability"></div>
+    </div>
     </div>
 
     <div class="card">

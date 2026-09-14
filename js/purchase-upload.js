@@ -21,7 +21,11 @@ function parseInvDate(raw) {
 // dicocokkan ke toko/SKU wajib, itu dilakukan di app.js karena butuh akses ke
 // daftar toko & SKU wajib yang sudah dimuat.
 export function parsePurchaseWorkbook(arrayBuffer) {
-  const wb = window.XLSX.read(arrayBuffer, { type: 'array' });
+  // cellDates:true -- WAJIB, supaya kolom tanggal Excel asli (bukan teks) langsung
+  // jadi objek Date yang benar. Tanpa ini, SheetJS mengembalikan angka serial mentah
+  // yang gampang salah hitung kalau dikonversi manual (ini penyebab bug "semua baris
+  // dianggap di luar minggu manapun" yang pernah terjadi).
+  const wb = window.XLSX.read(arrayBuffer, { type: 'array', cellDates: true });
   const ws = wb.Sheets[wb.SheetNames[0]];
   const rows = window.XLSX.utils.sheet_to_json(ws, { header: 1, defval: null });
   if (!rows.length) return { rows: [], headerMissing: true };

@@ -200,6 +200,8 @@ async function onStoreChange(preferPeriodKey) {
     ensureDistributorStockLoaded(currentStore.area)
   ]);
   renderAll();
+  if (currentTab === 'stock') refreshStockTab();
+  if (currentTab === 'masuk') refreshMasukTab();
 }
 
 // Data stock distributor dimuat sekali per area lalu di-cache di memori.
@@ -220,6 +222,11 @@ async function onPeriodChange() {
   populateWeekSelect();
   await loadEntryForCurrentPeriod();
   renderAll();
+  // Kalau sedang di tab Stock distributor / Barang Masuk, refresh juga -- dulu cuma
+  // ke-refresh kalau pindah tab lalu balik lagi, jadi kelihatan seperti "Minggu tidak
+  // bisa diganti" waktu masih di tab yang sama.
+  if (currentTab === 'stock') refreshStockTab();
+  if (currentTab === 'masuk') refreshMasukTab();
 }
 
 function switchTab(tab) {
