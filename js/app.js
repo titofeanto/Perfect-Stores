@@ -159,7 +159,7 @@ function attachStaticHandlers() {
   el('searchBox').addEventListener('input', (e) => { searchText = e.target.value; renderSkuList(); });
   el('promoToggleBtn').addEventListener('click', () => {
     promoExpanded = !promoExpanded;
-    el('promoBody').style.display = promoExpanded ? 'block' : 'none';
+    el('promoBody').classList.toggle('expanded', promoExpanded);
     el('promoToggleIcon').classList.toggle('open', promoExpanded);
     if (promoExpanded) renderPromoSection();
   });
@@ -300,7 +300,7 @@ async function loadEntryForCurrentPeriod() {
   // Collapse ulang tiap ganti toko/minggu supaya tidak otomatis kepanjangan ke bawah.
   promoExpanded = false;
   promoSearchText = '';
-  if (el('promoBody')) el('promoBody').style.display = 'none';
+  if (el('promoBody')) el('promoBody').classList.remove('expanded');
   if (el('promoToggleIcon')) el('promoToggleIcon').classList.remove('open');
   if (el('promoSearchBox')) el('promoSearchBox').value = '';
 }
@@ -881,14 +881,21 @@ async function onStockSave() {
 // ---------- Barang Masuk (upload pembelian toko dari distributor, oleh Supervisor) ----------
 
 let pendingMasukResult = null;
+let lastMasukFile = null; // File terakhir yang dipilih -- dipakai untuk baca ulang otomatis kalau Minggu diganti
 
 function refreshMasukTab() {
   if (!currentWeek) return;
   el('masukPeriodInfo').textContent = `Periode target: ${currentWeek.label} (${fmtShort(currentWeek.start)} - ${fmtShort(currentWeek.end)})`;
-  el('masukParsePreview').textContent = '';
-  el('masukPreviewDetail').innerHTML = '';
-  el('masukSaveBtn').disabled = true;
-  pendingMasukResult = null;
+  if (lastMasukFile) {
+    // File sudah pernah dipilih sebelumnya -- baca ulang otomatis utk periode yang baru
+    // dipilih, supaya ganti Minggu tidak perlu klik "Choose File" lagi dari nol.
+    processMasukFile(lastMasukFile);
+  } else {
+    el('masukParsePreview').textContent = '';
+    el('masukPreviewDetail').innerHTML = '';
+    el('masukSaveBtn').disabled = true;
+    pendingMasukResult = null;
+  }
 }
 
 // Cocokkan baris mentah hasil parsing ke toko (by Outlet=storeId) & SKU wajib toko itu
@@ -932,6 +939,11 @@ async function processPurchaseRows(rows) {
 function onMasukFileSelected(e) {
   const file = e.target.files[0];
   if (!file) return;
+  lastMasukFile = file;
+  processMasukFile(file);
+}
+
+function processMasukFile(file) {
   el('masukParsePreview').textContent = 'Membaca file...';
   el('masukSaveBtn').disabled = true;
   const reader = new FileReader();
@@ -940,6 +952,7 @@ function onMasukFileSelected(e) {
       const { rows, headerMissing } = parsePurchaseWorkbook(ev.target.result);
       if (headerMissing) {
         el('masukParsePreview').textContent = 'Format file tidak dikenali. Pastikan ada kolom Outlet, SKUCode, TotalQuantity(PCS).';
+        showToast('Format file tidak dikenali. Cek kolomnya.', 'danger');
         return;
       }
       const result = await processPurchaseRows(rows);
@@ -957,9 +970,18 @@ function onMasukFileSelected(e) {
       if (result.matchedStoreNames.length) detail += `<p class="upload-status">Toko terdeteksi: ${result.matchedStoreNames.join(', ')}</p>`;
       el('masukPreviewDetail').innerHTML = detail;
       el('masukSaveBtn').disabled = result.matchedStoreNames.length === 0;
+
+      // Pop-up notifikasi juga (bukan cuma teks di bawah, supaya tidak kelewat) --
+      // warna beda tergantung ada data siap simpan atau tidak sama sekali.
+      if (skuCombos > 0) {
+        showToast(`${rows.length} baris dibaca untuk ${currentWeek.label}: ${skuCombos} kombinasi toko+SKU siap disimpan.`, 'success');
+      } else {
+        showToast(`${rows.length} baris dibaca, tapi 0 yang cocok dengan ${currentWeek.label}. Cek Minggu yang dipilih sudah benar?`, 'danger');
+      }
     } catch (err) {
       console.error(err);
       el('masukParsePreview').textContent = 'Gagal membaca file. Pastikan formatnya sesuai.';
+      showToast('Gagal membaca file. Pastikan formatnya sesuai.', 'danger');
     }
   };
   reader.readAsArrayBuffer(file);
@@ -1005,6 +1027,7 @@ async function onMasukSave() {
 
   showToast(`Barang masuk tersimpan untuk ${storeIds.length} toko, periode ${currentWeek.label}`, 'success');
   pendingMasukResult = null;
+  lastMasukFile = null;
   el('masukFileInput').value = '';
   el('masukParsePreview').textContent = '';
   el('masukPreviewDetail').innerHTML = '';
