@@ -541,6 +541,21 @@ button:disabled { opacity: 0.55; cursor: default; transform: none; }
   gap: 8px;
   margin-bottom: 10px;
 }
+.sku-filter-row {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr)) auto;
+  gap: 6px;
+  margin-bottom: 12px;
+}
+.sku-filter-row select { font-size: 12px; padding: 7px 8px; }
+.sku-filter-row button {
+  font-size: 12px;
+  padding: 7px 10px;
+  white-space: nowrap;
+}
+@media (max-width: 560px) {
+  .sku-filter-row { grid-template-columns: 1fr 1fr; }
+}
 .search-row input { flex: 1; }
 #scanBtn {
   flex: none;

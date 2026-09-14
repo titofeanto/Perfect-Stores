@@ -33,16 +33,20 @@ SHEET_TO_OUTPUT = {
 
 
 def build_barcode_to_pcode_lookup(master_path):
-    """Returns {barcode: {'pcode': str, 'isi': int|None}}.
-    'isi' = jumlah pcs per karton, dari kolom 'PC/CS' di PH_SKU_AUDIT.xlsx
-    (kolom ini ditambahkan belakangan oleh tim -- kalau file master Anda versi
-    lama belum punya kolom ini, 'isi' akan selalu None dan Karton tidak bisa
-    dikonversi otomatis untuk SKU itu)."""
+    """Returns {barcode: {'pcode': str, 'isi': int|None, 'brand': str|None,
+    'bu': str|None, 'category': str|None}}.
+    'isi' = jumlah pcs per karton, dari kolom 'PC/CS'.
+    'brand'/'bu'/'category' dari kolom BRAND / DIVISION / S&OP Category --
+    dipakai untuk filter & pengelompokan di app (kalau file master versi lama
+    belum punya kolom-kolom ini, nilainya akan selalu None)."""
     wb = openpyxl.load_workbook(master_path, data_only=True)
     ws = wb['Sheet1']
     lookup = {}
     for r in range(2, ws.max_row + 1):
         pc_cs = ws.cell(row=r, column=3).value          # kolom C: PC/CS (isi per karton)
+        brand = ws.cell(row=r, column=6).value           # kolom F: BRAND
+        bu = ws.cell(row=r, column=7).value               # kolom G: DIVISION (dipakai sbg "BU")
+        category = ws.cell(row=r, column=8).value         # kolom H: S&OP Category
         parent_sku = ws.cell(row=r, column=9).value      # kolom I: Parent SKU
         parent_barcode = ws.cell(row=r, column=11).value  # kolom K: Parent Product Barcode
         if parent_barcode is not None and parent_sku is not None:
@@ -50,7 +54,13 @@ def build_barcode_to_pcode_lookup(master_path):
                 isi = int(pc_cs) if pc_cs is not None else None
             except (ValueError, TypeError):
                 isi = None
-            lookup[str(parent_barcode).strip()] = {'pcode': str(parent_sku).strip(), 'isi': isi}
+            lookup[str(parent_barcode).strip()] = {
+                'pcode': str(parent_sku).strip(),
+                'isi': isi,
+                'brand': str(brand).strip() if brand else None,
+                'bu': str(bu).strip() if bu else None,
+                'category': str(category).strip() if category else None,
+            }
     return lookup
 
 
@@ -102,6 +112,9 @@ def build_sku_lists(group_path, barcode_to_info):
                 'barcode': bstr,
                 'pcode': info.get('pcode'),  # None kalau tidak ketemu di master data
                 'isi': info.get('isi'),      # jumlah pcs per karton, None kalau tidak tersedia
+                'brand': info.get('brand'),
+                'bu': info.get('bu'),
+                'category': info.get('category'),
                 'name': str(prod).strip() if prod else '',
                 'flag': str(ket).strip() if ket else 'COTC',
             })

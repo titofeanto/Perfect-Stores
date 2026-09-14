@@ -23,6 +23,11 @@ let currentWeeks = [];
 let currentWeek = null;
 let flagFilter = 'all';
 let searchText = '';
+let skuSortOrder = 'asc';
+let buFilter = 'all';
+let categoryFilter = 'all';
+let brandFilter = 'all';
+let expandedSkuGroups = {};
 let distributorCache = {}; // area -> { items: {pcode: {...}} }
 let saveTimers = {};
 let currentTab = 'input';
@@ -157,6 +162,16 @@ function attachStaticHandlers() {
   el('monthSel').addEventListener('change', onMonthChange);
   el('weekSel').addEventListener('change', onWeekChange);
   el('searchBox').addEventListener('input', (e) => { searchText = e.target.value; renderSkuList(); });
+  el('sortToggleBtn').addEventListener('click', () => {
+    skuSortOrder = skuSortOrder === 'asc' ? 'desc' : 'asc';
+    el('sortToggleBtn').innerHTML = skuSortOrder === 'asc'
+      ? 'A-Z <span id="sortIcon">&#8595;</span>'
+      : 'Z-A <span id="sortIcon">&#8593;</span>';
+    renderSkuList();
+  });
+  el('buFilterSel').addEventListener('change', (e) => { buFilter = e.target.value; renderSkuList(); });
+  el('categoryFilterSel').addEventListener('change', (e) => { categoryFilter = e.target.value; renderSkuList(); });
+  el('brandFilterSel').addEventListener('change', (e) => { brandFilter = e.target.value; renderSkuList(); });
   el('promoToggleBtn').addEventListener('click', () => {
     promoExpanded = !promoExpanded;
     el('promoBody').classList.toggle('expanded', promoExpanded);
@@ -194,6 +209,11 @@ async function onStoreChange(preferPeriodKey) {
   if (!currentStore) return;
   el('scopeInfo').textContent = `Scope channel: ${currentStore.scopeChannel} (${currentStore.subChannel})`;
   currentSkuList = await loadSkuList(currentStore.scopeSlug);
+  populateSkuFilterDropdowns();
+  buFilter = 'all';
+  categoryFilter = 'all';
+  brandFilter = 'all';
+  expandedSkuGroups = {};
   populateWeekSelect(preferPeriodKey);
   await Promise.all([
     loadEntryForCurrentPeriod(),
@@ -454,66 +474,131 @@ function renderFlagFilterChips() {
   });
 }
 
+function populateSkuFilterDropdowns() {
+  const uniqueSorted = (key) => [...new Set(currentSkuList.map(s => s[key]).filter(Boolean))].sort();
+  const buildOptions = (values, allLabel) =>
+    `<option value="all">${allLabel}</option>` + values.map(v => `<option value="${v}">${v}</option>`).join('');
+  el('buFilterSel').innerHTML = buildOptions(uniqueSorted('bu'), 'Semua BU');
+  el('categoryFilterSel').innerHTML = buildOptions(uniqueSorted('category'), 'Semua Category');
+  el('brandFilterSel').innerHTML = buildOptions(uniqueSorted('brand'), 'Semua Brand');
+}
+
+function skuCardHtml(sku, distStock) {
+  const item = currentEntry[sku.barcode];
+  let distHint = '';
+  if (distStock && sku.pcode && distStock.items[sku.pcode]) {
+    const d = distStock.items[sku.pcode];
+    distHint = `<div class="sku-distributor">Stock distributor (${currentStore.area}): ${d.karton} karton, ${d.lusin} lusin, ${d.pcs} pcs</div>`;
+  }
+  const isiNote = sku.isi
+    ? `<p class="sku-isi">1 karton = ${sku.isi} pcs &middot; 1 lusin = 12 pcs</p>`
+    : `<p class="sku-isi sku-isi-missing">Isi per karton tidak diketahui untuk SKU ini &mdash; gunakan Lusin/Pcs</p>`;
+  return `
+    <div class="sku-item" data-barcode="${sku.barcode}">
+      <p class="sku-name">${sku.name}</p>
+      <p class="sku-code">${sku.barcode}${sku.pcode ? ' &middot; PC ' + sku.pcode : ''}</p>
+      <div class="sku-badges">${badgeHtml(sku, item)}</div>
+      ${distHint}
+      ${isiNote}
+      <div class="field-subheader">
+        <span>Karton</span><span>Lusin</span><span>Pcs</span>
+      </div>
+      <div class="field-list" style="margin-top:2px;">
+        ${EDITABLE_FIELDS.map(f => {
+          const fo = item[f];
+          const total = fieldTotal(fo, sku.isi);
+          const kartonAttrs = sku.isi ? '' : 'disabled title="Isi per karton tidak diketahui untuk SKU ini"';
+          return `
+            ${f === 'order' ? `<div class="order-ref" data-order-ref-for="${sku.barcode}">${orderRefHtml(sku, item)}</div>` : ''}
+            <div class="field-row">
+              <div class="field-row-head">
+                <label class="field-label">${FIELD_LABELS[f]}</label>
+                <span class="field-total" data-total-for="${f}">= ${total} pcs</span>
+              </div>
+              <div class="field-subinputs">
+                <input type="number" min="0" data-barcode="${sku.barcode}" data-field="${f}" data-sub="karton" value="${fo.karton}" placeholder="Krtn" ${kartonAttrs}>
+                <input type="number" min="0" data-barcode="${sku.barcode}" data-field="${f}" data-sub="lusin" value="${fo.lusin}" placeholder="Lsn">
+                <input type="number" min="0" data-barcode="${sku.barcode}" data-field="${f}" data-sub="pcs" value="${fo.pcs}" placeholder="Pcs">
+              </div>
+            </div>
+          `;
+        }).join('')}
+      </div>
+      ${(() => {
+        if (!fieldIsEmpty(item.jual)) {
+          const jualQty = fieldTotal(item.jual, sku.isi);
+          return `<p class="sku-isi sku-jual-computed">Penjualan (dihitung otomatis): <strong>${jualQty} pcs</strong></p>`;
+        }
+        return '<p class="sku-isi" style="margin-top:6px;">Barang Masuk diisi Supervisor &middot; Penjualan dihitung otomatis setelah minggu depan diisi</p>';
+      })()}
+    </div>
+  `;
+}
+
+function skuGroupRecap(list) {
+  const total = list.length;
+  const lengkap = list.filter(sku => statusOf(currentEntry[sku.barcode]) === 'lengkap').length;
+  const tidakAda = list.filter(sku => {
+    const stockField = currentEntry[sku.barcode].stock;
+    return !fieldIsEmpty(stockField) && fieldTotal(stockField, sku.isi) === 0;
+  }).length;
+  return { total, lengkap, tidakAda };
+}
+
 function renderSkuList() {
   const q = searchText.toLowerCase();
   const distStock = distributorCache[currentStore.area];
-  const filtered = currentSkuList.filter(sku => {
+  let filtered = currentSkuList.filter(sku => {
     if (flagFilter !== 'all' && sku.flag !== flagFilter) return false;
+    if (buFilter !== 'all' && sku.bu !== buFilter) return false;
+    if (categoryFilter !== 'all' && sku.category !== categoryFilter) return false;
+    if (brandFilter !== 'all' && sku.brand !== brandFilter) return false;
     if (q && !sku.name.toLowerCase().includes(q) && !sku.barcode.includes(q)) return false;
     return true;
   });
+  filtered = filtered.sort((a, b) => skuSortOrder === 'asc' ? a.name.localeCompare(b.name) : b.name.localeCompare(a.name));
 
-  el('skuList').innerHTML = filtered.map(sku => {
-    const item = currentEntry[sku.barcode];
-    let distHint = '';
-    if (distStock && sku.pcode && distStock.items[sku.pcode]) {
-      const d = distStock.items[sku.pcode];
-      distHint = `<div class="sku-distributor">Stock distributor (${currentStore.area}): ${d.karton} karton, ${d.lusin} lusin, ${d.pcs} pcs</div>`;
-    }
-    const isiNote = sku.isi
-      ? `<p class="sku-isi">1 karton = ${sku.isi} pcs &middot; 1 lusin = 12 pcs</p>`
-      : `<p class="sku-isi sku-isi-missing">Isi per karton tidak diketahui untuk SKU ini &mdash; gunakan Lusin/Pcs</p>`;
+  if (!filtered.length) {
+    el('skuList').innerHTML = '<p class="upload-status">Tidak ada produk yang cocok.</p>';
+    return;
+  }
+
+  // Dikelompokkan per BU, collapsible, dengan ringkasan (lengkap/tidak ada) di tiap
+  // header grup -- supaya daftar SKU wajib yang panjang lebih rapi dan tidak perlu
+  // scroll semuanya cuma untuk lihat progress per kelompok.
+  const groups = {};
+  const groupOrderSeen = [];
+  for (const sku of filtered) {
+    const g = sku.bu || 'Lainnya';
+    if (!groups[g]) { groups[g] = []; groupOrderSeen.push(g); }
+    groups[g].push(sku);
+  }
+  groupOrderSeen.sort();
+
+  el('skuList').innerHTML = groupOrderSeen.map(g => {
+    const list = groups[g];
+    const recap = skuGroupRecap(list);
+    const isOpen = !!expandedSkuGroups[g];
     return `
-      <div class="sku-item" data-barcode="${sku.barcode}">
-        <p class="sku-name">${sku.name}</p>
-        <p class="sku-code">${sku.barcode}${sku.pcode ? ' &middot; PC ' + sku.pcode : ''}</p>
-        <div class="sku-badges">${badgeHtml(sku, item)}</div>
-        ${distHint}
-        ${isiNote}
-        <div class="field-subheader">
-          <span>Karton</span><span>Lusin</span><span>Pcs</span>
+      <div class="product-group">
+        <button type="button" class="promo-toggle sku-group-toggle" data-group="${g}">
+          <span>${g} &middot; ${recap.lengkap}/${recap.total} lengkap${recap.tidakAda ? ` &middot; ${recap.tidakAda} tidak ada` : ''}</span>
+          <span class="product-group-icon ${isOpen ? 'open' : ''}">&#9656;</span>
+        </button>
+        <div class="product-group-body" data-sku-group-body="${g}" style="display:${isOpen ? 'block' : 'none'}; margin-top:8px;">
+          ${isOpen ? list.map(sku => skuCardHtml(sku, distStock)).join('') : ''}
         </div>
-        <div class="field-list" style="margin-top:2px;">
-          ${EDITABLE_FIELDS.map(f => {
-            const fo = item[f];
-            const total = fieldTotal(fo, sku.isi);
-            const kartonAttrs = sku.isi ? '' : 'disabled title="Isi per karton tidak diketahui untuk SKU ini"';
-            return `
-              ${f === 'order' ? `<div class="order-ref" data-order-ref-for="${sku.barcode}">${orderRefHtml(sku, item)}</div>` : ''}
-              <div class="field-row">
-                <div class="field-row-head">
-                  <label class="field-label">${FIELD_LABELS[f]}</label>
-                  <span class="field-total" data-total-for="${f}">= ${total} pcs</span>
-                </div>
-                <div class="field-subinputs">
-                  <input type="number" min="0" data-barcode="${sku.barcode}" data-field="${f}" data-sub="karton" value="${fo.karton}" placeholder="Krtn" ${kartonAttrs}>
-                  <input type="number" min="0" data-barcode="${sku.barcode}" data-field="${f}" data-sub="lusin" value="${fo.lusin}" placeholder="Lsn">
-                  <input type="number" min="0" data-barcode="${sku.barcode}" data-field="${f}" data-sub="pcs" value="${fo.pcs}" placeholder="Pcs">
-                </div>
-              </div>
-            `;
-          }).join('')}
-        </div>
-        ${(() => {
-          if (!fieldIsEmpty(item.jual)) {
-            const jualQty = fieldTotal(item.jual, sku.isi);
-            return `<p class="sku-isi sku-jual-computed">Penjualan (dihitung otomatis): <strong>${jualQty} pcs</strong></p>`;
-          }
-          return '<p class="sku-isi" style="margin-top:6px;">Barang Masuk diisi Supervisor &middot; Penjualan dihitung otomatis setelah minggu depan diisi</p>';
-        })()}
       </div>
     `;
-  }).join('') || '<p class="upload-status">Tidak ada produk yang cocok.</p>';
+  }).join('');
+
+  el('skuList').querySelectorAll('.sku-group-toggle').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const g = btn.dataset.group;
+      expandedSkuGroups[g] = !expandedSkuGroups[g];
+      renderSkuList();
+    });
+  });
 
   el('skuList').querySelectorAll('.field-subinputs input[type=number]').forEach(inp => {
     inp.addEventListener('input', () => {
@@ -750,8 +835,15 @@ function jumpToSku(barcode, toastMessage) {
   if (!sku) return;
   switchTab('input');
   flagFilter = 'all';
+  buFilter = 'all';
+  categoryFilter = 'all';
+  brandFilter = 'all';
   searchText = barcode;
   el('searchBox').value = barcode;
+  el('buFilterSel').value = 'all';
+  el('categoryFilterSel').value = 'all';
+  el('brandFilterSel').value = 'all';
+  expandedSkuGroups[sku.bu || 'Lainnya'] = true;
   renderFlagFilterChips();
   renderSkuList();
   const card = document.querySelector(`.sku-item[data-barcode="${barcode}"]`);
