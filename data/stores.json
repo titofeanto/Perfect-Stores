@@ -1,15 +1,743 @@
 [
   {
-    "id": "910717000401263480",
-    "name": "SAGA AIMAS",
+    "id": "940905000600867533",
+    "name": "HADI, CV",
+    "area": "Biak",
+    "scopeChannel": "LMT SPM",
+    "scopeSlug": "lmt-spm",
+    "subChannel": ""
+  },
+  {
+    "id": "947102000801259114",
+    "name": "99 MART",
+    "area": "Jayapura",
+    "scopeChannel": "LOCAL MINIS",
+    "scopeSlug": "local-minis",
+    "subChannel": ""
+  },
+  {
+    "id": "940322100601136288",
+    "name": "ADI 2",
+    "area": "Jayapura",
+    "scopeChannel": "LOCAL MINIS",
+    "scopeSlug": "local-minis",
+    "subChannel": ""
+  },
+  {
+    "id": "947104000100866692",
+    "name": "ANEKA JAYA INDAH, CV",
+    "area": "Jayapura",
+    "scopeChannel": "LOCAL MINIS",
+    "scopeSlug": "local-minis",
+    "subChannel": ""
+  },
+  {
+    "id": "940323001200864886",
+    "name": "ANEKA MAS, TK",
+    "area": "Jayapura",
+    "scopeChannel": "LOCAL MINIS",
+    "scopeSlug": "local-minis",
+    "subChannel": ""
+  },
+  {
+    "id": "947103000200866707",
+    "name": "BINTANG MAS",
+    "area": "Jayapura",
+    "scopeChannel": "LOCAL MINIS",
+    "scopeSlug": "local-minis",
+    "subChannel": ""
+  },
+  {
+    "id": "947104000100866696",
+    "name": "CV SINAR TIMUR",
+    "area": "Jayapura",
+    "scopeChannel": "LOCAL MINIS",
+    "scopeSlug": "local-minis",
+    "subChannel": ""
+  },
+  {
+    "id": "940323001200864977",
+    "name": "CV. RIZQUNA",
+    "area": "Jayapura",
+    "scopeChannel": "LOCAL MINIS",
+    "scopeSlug": "local-minis",
+    "subChannel": ""
+  },
+  {
+    "id": "947101000101250069",
+    "name": "DARUSALAM MART",
+    "area": "Jayapura",
+    "scopeChannel": "LOCAL MINIS",
+    "scopeSlug": "local-minis",
+    "subChannel": ""
+  },
+  {
+    "id": "947101000100917695",
+    "name": "EKA SARI ,TK",
+    "area": "Jayapura",
+    "scopeChannel": "LOCAL MINIS",
+    "scopeSlug": "local-minis",
+    "subChannel": ""
+  },
+  {
+    "id": "947103000501070047",
+    "name": "EVAN JAYA II",
+    "area": "Jayapura",
+    "scopeChannel": "LOCAL MINIS",
+    "scopeSlug": "local-minis",
+    "subChannel": ""
+  },
+  {
+    "id": "947104000300866695",
+    "name": "EVAN JAYA TOKO",
+    "area": "Jayapura",
+    "scopeChannel": "LOCAL MINIS",
+    "scopeSlug": "local-minis",
+    "subChannel": ""
+  },
+  {
+    "id": "947104000600866704",
+    "name": "GELAEL",
+    "area": "Jayapura",
+    "scopeChannel": "LOCAL MINIS",
+    "scopeSlug": "local-minis",
+    "subChannel": ""
+  },
+  {
+    "id": "940323001400864891",
+    "name": "HIMALAYA, TK",
+    "area": "Jayapura",
+    "scopeChannel": "LOCAL MINIS",
+    "scopeSlug": "local-minis",
+    "subChannel": ""
+  },
+  {
+    "id": "947102100300867094",
+    "name": "HOLA MART",
+    "area": "Jayapura",
+    "scopeChannel": "LMT SPM",
+    "scopeSlug": "lmt-spm",
+    "subChannel": ""
+  },
+  {
+    "id": "947101000101324358",
+    "name": "HOLA MART KOYA",
+    "area": "Jayapura",
+    "scopeChannel": "LOCAL MINIS",
+    "scopeSlug": "local-minis",
+    "subChannel": ""
+  },
+  {
+    "id": "940323001401313755",
+    "name": "HOLLANDIA DELI",
+    "area": "Jayapura",
+    "scopeChannel": "LOCAL MINIS",
+    "scopeSlug": "local-minis",
+    "subChannel": ""
+  },
+  {
+    "id": "947101000101138496",
+    "name": "HR MART",
+    "area": "Jayapura",
+    "scopeChannel": "LOCAL MINIS",
+    "scopeSlug": "local-minis",
+    "subChannel": ""
+  },
+  {
+    "id": "947102100500867090",
+    "name": "JAYA PRATAMA TOKO",
+    "area": "Jayapura",
+    "scopeChannel": "LMT SPM",
+    "scopeSlug": "lmt-spm",
+    "subChannel": ""
+  },
+  {
+    "id": "947102001201255294",
+    "name": "JAYATAMA TOKO",
+    "area": "Jayapura",
+    "scopeChannel": "LOCAL MINIS",
+    "scopeSlug": "local-minis",
+    "subChannel": ""
+  },
+  {
+    "id": "940323001400864890",
+    "name": "KASCHA CELL",
+    "area": "Jayapura",
+    "scopeChannel": "LMT SPM",
+    "scopeSlug": "lmt-spm",
+    "subChannel": ""
+  },
+  {
+    "id": "947102000400924747",
+    "name": "KURNIA SARI TK",
+    "area": "Jayapura",
+    "scopeChannel": "LOCAL MINIS",
+    "scopeSlug": "local-minis",
+    "subChannel": ""
+  },
+  {
+    "id": "940323001400864774",
+    "name": "MAMA IYAN",
+    "area": "Jayapura",
+    "scopeChannel": "HABA DT",
+    "scopeSlug": "haba-dt",
+    "subChannel": ""
+  },
+  {
+    "id": "940323001400864888",
+    "name": "MARWAH, TK",
+    "area": "Jayapura",
+    "scopeChannel": "LOCAL MINIS",
+    "scopeSlug": "local-minis",
+    "subChannel": ""
+  },
+  {
+    "id": "947102001200867089",
+    "name": "MEGA ABEPURA",
+    "area": "Jayapura",
+    "scopeChannel": "LOCAL MINIS",
+    "scopeSlug": "local-minis",
+    "subChannel": ""
+  },
+  {
+    "id": "947102001500867099",
+    "name": "MEGA MART YOUTEFA",
+    "area": "Jayapura",
+    "scopeChannel": "LOCAL MINIS",
+    "scopeSlug": "local-minis",
+    "subChannel": ""
+  },
+  {
+    "id": "947102100500867093",
+    "name": "MEGA WAENA",
+    "area": "Jayapura",
+    "scopeChannel": "LMT SPM",
+    "scopeSlug": "lmt-spm",
+    "subChannel": ""
+  },
+  {
+    "id": "947103000200925337",
+    "name": "MEKAR SARI TOKO",
+    "area": "Jayapura",
+    "scopeChannel": "LOCAL MINIS",
+    "scopeSlug": "local-minis",
+    "subChannel": ""
+  },
+  {
+    "id": "947102000401281996",
+    "name": "MLUX BEAUTY TK",
+    "area": "Jayapura",
+    "scopeChannel": "HABA DT",
+    "scopeSlug": "haba-dt",
+    "subChannel": ""
+  },
+  {
+    "id": "940324000601231846",
+    "name": "PT. HOLAMART USAHA BERSAMA (HAWAI)",
+    "area": "Jayapura",
+    "scopeChannel": "LOCAL MINIS",
+    "scopeSlug": "local-minis",
+    "subChannel": ""
+  },
+  {
+    "id": "940323001400864883",
+    "name": "PT. MULTI ANUGERAH BERKAT",
+    "area": "Jayapura",
+    "scopeChannel": "LOCAL MINIS",
+    "scopeSlug": "local-minis",
+    "subChannel": ""
+  },
+  {
+    "id": "940323001401257719",
+    "name": "REJEKI MART",
+    "area": "Jayapura",
+    "scopeChannel": "LOCAL MINIS",
+    "scopeSlug": "local-minis",
+    "subChannel": ""
+  },
+  {
+    "id": "940323001400864893",
+    "name": "RIVENDA, TK",
+    "area": "Jayapura",
+    "scopeChannel": "LOCAL MINIS",
+    "scopeSlug": "local-minis",
+    "subChannel": ""
+  },
+  {
+    "id": "940323001400942022",
+    "name": "ROPAN MART",
+    "area": "Jayapura",
+    "scopeChannel": "LMT SPM",
+    "scopeSlug": "lmt-spm",
+    "subChannel": ""
+  },
+  {
+    "id": "947104000101235432",
+    "name": "SAGA APO",
+    "area": "Jayapura",
+    "scopeChannel": "LMT SPM",
+    "scopeSlug": "lmt-spm",
+    "subChannel": ""
+  },
+  {
+    "id": "942004001301261445",
+    "name": "SAGA ARSO",
+    "area": "Jayapura",
+    "scopeChannel": "LMT SPM",
+    "scopeSlug": "lmt-spm",
+    "subChannel": ""
+  },
+  {
+    "id": "947102001201382642",
+    "name": "SAGA BEAUTY ABEPURA",
+    "area": "Jayapura",
+    "scopeChannel": "HABA DT",
+    "scopeSlug": "haba-dt",
+    "subChannel": ""
+  },
+  {
+    "id": "947102001301297208",
+    "name": "SAGA CIGOMBONG",
+    "area": "Jayapura",
+    "scopeChannel": "LMT SPM",
+    "scopeSlug": "lmt-spm",
+    "subChannel": ""
+  },
+  {
+    "id": "947104000701109194",
+    "name": "SAGA DOK IX",
+    "area": "Jayapura",
+    "scopeChannel": "LMT SPM",
+    "scopeSlug": "lmt-spm",
+    "subChannel": ""
+  },
+  {
+    "id": "947104000300877718",
+    "name": "SAGA DOK V",
+    "area": "Jayapura",
+    "scopeChannel": "LMT SPM",
+    "scopeSlug": "lmt-spm",
+    "subChannel": ""
+  },
+  {
+    "id": "947102100501350927",
+    "name": "SAGA DOYO",
+    "area": "Jayapura",
+    "scopeChannel": "LMT SPM",
+    "scopeSlug": "lmt-spm",
+    "subChannel": ""
+  },
+  {
+    "id": "947103000201225833",
+    "name": "SAGA ENTROP",
+    "area": "Jayapura",
+    "scopeChannel": "LMT SPM",
+    "scopeSlug": "lmt-spm",
+    "subChannel": ""
+  },
+  {
+    "id": "947101000101285750",
+    "name": "SAGA FRESH KOYA",
+    "area": "Jayapura",
+    "scopeChannel": "LMT SPM",
+    "scopeSlug": "lmt-spm",
+    "subChannel": ""
+  },
+  {
+    "id": "947102100501294675",
+    "name": "SAGA FRESH SENTANI PASAR LAMA",
+    "area": "Jayapura",
+    "scopeChannel": "LOCAL MINIS",
+    "scopeSlug": "local-minis",
+    "subChannel": ""
+  },
+  {
+    "id": "947104000100866701",
+    "name": "SAGA JAYAPURA",
+    "area": "Jayapura",
+    "scopeChannel": "LMT SPM",
+    "scopeSlug": "lmt-spm",
+    "subChannel": ""
+  },
+  {
+    "id": "947102100501329541",
+    "name": "SAGA KEHIRAN",
+    "area": "Jayapura",
+    "scopeChannel": "LMT SPM",
+    "scopeSlug": "lmt-spm",
+    "subChannel": ""
+  },
+  {
+    "id": "947102001200867088",
+    "name": "SAGA MALL ABEPURA",
+    "area": "Jayapura",
+    "scopeChannel": "LMT SPM",
+    "scopeSlug": "lmt-spm",
+    "subChannel": ""
+  },
+  {
+    "id": "947103000500924744",
+    "name": "SAGA POLIMAK",
+    "area": "Jayapura",
+    "scopeChannel": "LMT SPM",
+    "scopeSlug": "lmt-spm",
+    "subChannel": ""
+  },
+  {
+    "id": "947102100500988858",
+    "name": "SAGA SENTANI  1",
+    "area": "Jayapura",
+    "scopeChannel": "LMT SPM",
+    "scopeSlug": "lmt-spm",
+    "subChannel": ""
+  },
+  {
+    "id": "947102100501119433",
+    "name": "SAGA SENTANI 2",
+    "area": "Jayapura",
+    "scopeChannel": "LMT SPM",
+    "scopeSlug": "lmt-spm",
+    "subChannel": ""
+  },
+  {
+    "id": "947102000401393999",
+    "name": "SAGA TANAH HITAM",
+    "area": "Jayapura",
+    "scopeChannel": "LMT SPM",
+    "scopeSlug": "lmt-spm",
+    "subChannel": ""
+  },
+  {
+    "id": "947102100501287071",
+    "name": "SAGA WAENA",
+    "area": "Jayapura",
+    "scopeChannel": "LMT SPM",
+    "scopeSlug": "lmt-spm",
+    "subChannel": ""
+  },
+  {
+    "id": "947102001401070257",
+    "name": "SAGA YOUTEFA",
+    "area": "Jayapura",
+    "scopeChannel": "LMT SPM",
+    "scopeSlug": "lmt-spm",
+    "subChannel": ""
+  },
+  {
+    "id": "947101000400917692",
+    "name": "SETIA ,TK",
+    "area": "Jayapura",
+    "scopeChannel": "LOCAL MINIS",
+    "scopeSlug": "local-minis",
+    "subChannel": ""
+  },
+  {
+    "id": "947103000401096864",
+    "name": "SIRBEEH TOKO",
+    "area": "Jayapura",
+    "scopeChannel": "LMT SPM",
+    "scopeSlug": "lmt-spm",
+    "subChannel": ""
+  },
+  {
+    "id": "947103000401096864-2",
+    "name": "SIRBEEH TOKO (PASAR IKAN)",
+    "area": "Jayapura",
+    "scopeChannel": "LOCAL MINIS",
+    "scopeSlug": "local-minis",
+    "subChannel": ""
+  },
+  {
+    "id": "947102100500867085",
+    "name": "SISWA JUNIOR /571172",
+    "area": "Jayapura",
+    "scopeChannel": "LOCAL MINIS",
+    "scopeSlug": "local-minis",
+    "subChannel": ""
+  },
+  {
+    "id": "947102001301285734",
+    "name": "SUKA CITA TOKO",
+    "area": "Jayapura",
+    "scopeChannel": "LOCAL MINIS",
+    "scopeSlug": "local-minis",
+    "subChannel": ""
+  },
+  {
+    "id": "947102100301314226",
+    "name": "SUKACITA TOKO",
+    "area": "Jayapura",
+    "scopeChannel": "LOCAL MINIS",
+    "scopeSlug": "local-minis",
+    "subChannel": ""
+  },
+  {
+    "id": "947102001200867083",
+    "name": "SUMBER MAKMUR TOKO",
+    "area": "Jayapura",
+    "scopeChannel": "LOCAL MINIS",
+    "scopeSlug": "local-minis",
+    "subChannel": ""
+  },
+  {
+    "id": "947102000801235656",
+    "name": "SUMBER SARI TOKO",
+    "area": "Jayapura",
+    "scopeChannel": "LOCAL MINIS",
+    "scopeSlug": "local-minis",
+    "subChannel": ""
+  },
+  {
+    "id": "947104000700866691",
+    "name": "SURYA JAYA TOKO",
+    "area": "Jayapura",
+    "scopeChannel": "LOCAL MINIS",
+    "scopeSlug": "local-minis",
+    "subChannel": ""
+  },
+  {
+    "id": "947102100500867084",
+    "name": "TOPAS SWALAYAN",
+    "area": "Jayapura",
+    "scopeChannel": "LMT SPM",
+    "scopeSlug": "lmt-spm",
+    "subChannel": ""
+  },
+  {
+    "id": "940323001400864884",
+    "name": "UBM MARKET",
+    "area": "Jayapura",
+    "scopeChannel": "LOCAL MINIS",
+    "scopeSlug": "local-minis",
+    "subChannel": ""
+  },
+  {
+    "id": "940323001400864880",
+    "name": "USAHA BARU",
+    "area": "Jayapura",
+    "scopeChannel": "LOCAL MINIS",
+    "scopeSlug": "local-minis",
+    "subChannel": ""
+  },
+  {
+    "id": "947102001401421688",
+    "name": "V MART",
+    "area": "Jayapura",
+    "scopeChannel": "HABA DT",
+    "scopeSlug": "haba-dt",
+    "subChannel": ""
+  },
+  {
+    "id": "947101000100917691",
+    "name": "WIJAYA SAKTI ,TK",
+    "area": "Jayapura",
+    "scopeChannel": "LOCAL MINIS",
+    "scopeSlug": "local-minis",
+    "subChannel": ""
+  },
+  {
+    "id": "940323001201245401",
+    "name": "WM COSMETIC,TK",
+    "area": "Jayapura",
+    "scopeChannel": "HABA DT",
+    "scopeSlug": "haba-dt",
+    "subChannel": ""
+  },
+  {
+    "id": "910512000500942083",
+    "name": "HADI SUPERMARKET",
+    "area": "Manokwari",
+    "scopeChannel": "LMT SPM",
+    "scopeSlug": "lmt-spm",
+    "subChannel": ""
+  },
+  {
+    "id": "910514100300872665",
+    "name": "ISMAIL KIOS.",
+    "area": "Manokwari",
+    "scopeChannel": "HABA DT",
+    "scopeSlug": "haba-dt",
+    "subChannel": ""
+  },
+  {
+    "id": "910514100600872649",
+    "name": "ORCHID,mm",
+    "area": "Manokwari",
+    "scopeChannel": "LMT SPM",
+    "scopeSlug": "lmt-spm",
+    "subChannel": ""
+  },
+  {
+    "id": "910514100301281428",
+    "name": "RAIN 2",
+    "area": "Manokwari",
+    "scopeChannel": "HABA DT",
+    "scopeSlug": "haba-dt",
+    "subChannel": ""
+  },
+  {
+    "id": "910514100300872596",
+    "name": "RAIN kota",
+    "area": "Manokwari",
+    "scopeChannel": "HABA DT",
+    "scopeSlug": "haba-dt",
+    "subChannel": ""
+  },
+  {
+    "id": "910514100101275938",
+    "name": "TATA MART",
+    "area": "Manokwari",
+    "scopeChannel": "LMT SPM",
+    "scopeSlug": "lmt-spm",
+    "subChannel": ""
+  },
+  {
+    "id": "940103200101172751",
+    "name": "B MART",
+    "area": "Merauke",
+    "scopeChannel": "LMT SPM",
+    "scopeSlug": "lmt-spm",
+    "subChannel": ""
+  },
+  {
+    "id": "940104001400873841",
+    "name": "CV.MARTABE SEJAHTERA",
+    "area": "Merauke",
+    "scopeChannel": "LMT SPM",
+    "scopeSlug": "lmt-spm",
+    "subChannel": ""
+  },
+  {
+    "id": "940104001500873838",
+    "name": "DUA TOKO",
+    "area": "Merauke",
+    "scopeChannel": "LMT SPM",
+    "scopeSlug": "lmt-spm",
+    "subChannel": ""
+  },
+  {
+    "id": "940103200101172752",
+    "name": "GS TOKO",
+    "area": "Merauke",
+    "scopeChannel": "LMT SPM",
+    "scopeSlug": "lmt-spm",
+    "subChannel": ""
+  },
+  {
+    "id": "940104001600873826",
+    "name": "KHARISMA UD TOKO",
+    "area": "Merauke",
+    "scopeChannel": "LMT SPM",
+    "scopeSlug": "lmt-spm",
+    "subChannel": ""
+  },
+  {
+    "id": "940104001600873817",
+    "name": "MATAHARI TOKO.",
+    "area": "Merauke",
+    "scopeChannel": "LMT SPM",
+    "scopeSlug": "lmt-spm",
+    "subChannel": ""
+  },
+  {
+    "id": "940104001800873832",
+    "name": "MITRA KITA TOKO",
+    "area": "Merauke",
+    "scopeChannel": "LMT SPM",
+    "scopeSlug": "lmt-spm",
+    "subChannel": ""
+  },
+  {
+    "id": "940104005700873881",
+    "name": "MUH.YAHYA ITUNG",
+    "area": "Merauke",
+    "scopeChannel": "LMT SPM",
+    "scopeSlug": "lmt-spm",
+    "subChannel": ""
+  },
+  {
+    "id": "940104005600873823",
+    "name": "ORANGE MART",
+    "area": "Merauke",
+    "scopeChannel": "LMT SPM",
+    "scopeSlug": "lmt-spm",
+    "subChannel": ""
+  },
+  {
+    "id": "940104001500873812",
+    "name": "SATU TOKO",
+    "area": "Merauke",
+    "scopeChannel": "LMT SPM",
+    "scopeSlug": "lmt-spm",
+    "subChannel": ""
+  },
+  {
+    "id": "940104005600873831",
+    "name": "WELCOME MART TOKO",
+    "area": "Merauke",
+    "scopeChannel": "LMT SPM",
+    "scopeSlug": "lmt-spm",
+    "subChannel": ""
+  },
+  {
+    "id": "940408000400873005",
+    "name": "CV. HADI NABIRE",
+    "area": "Nabire",
+    "scopeChannel": "LMT SPM",
+    "scopeSlug": "lmt-spm",
+    "subChannel": ""
+  },
+  {
+    "id": "940408000400873014",
+    "name": "CV. PANCA NIAGA",
+    "area": "Nabire",
+    "scopeChannel": "LMT SPM",
+    "scopeSlug": "lmt-spm",
+    "subChannel": ""
+  },
+  {
+    "id": "940408000701287059",
+    "name": "CV. SUMBER GUNA SEJAHTERA/KK MART",
+    "area": "Nabire",
+    "scopeChannel": "LMT SPM",
+    "scopeSlug": "lmt-spm",
+    "subChannel": ""
+  },
+  {
+    "id": "940806001400870363",
+    "name": "CV.SERUI MAKMUR",
+    "area": "Serui",
+    "scopeChannel": "LMT SPM",
+    "scopeSlug": "lmt-spm",
+    "subChannel": ""
+  },
+  {
+    "id": "940806001400870362",
+    "name": "INDAH PASAR RAYA",
+    "area": "Serui",
+    "scopeChannel": "LMT SPM",
+    "scopeSlug": "lmt-spm",
+    "subChannel": ""
+  },
+  {
+    "id": "940806001800870133",
+    "name": "PT. HADI RETAIL INDONESIA",
+    "area": "Serui",
+    "scopeChannel": "LMT SPM",
+    "scopeSlug": "lmt-spm",
+    "subChannel": ""
+  },
+  {
+    "id": "917102001100864622",
+    "name": "CV PAPUA SEJAHTERA",
     "area": "Sorong",
     "scopeChannel": "LMT SPM",
     "scopeSlug": "lmt-spm",
     "subChannel": "LOCAL SUPERMARKET EC BIG"
   },
   {
-    "id": "917102001100864622",
-    "name": "CV PAPUA SEJAHTERA",
+    "id": "917102300501328695",
+    "name": "DELLI MART",
     "area": "Sorong",
     "scopeChannel": "LMT SPM",
     "scopeSlug": "lmt-spm",
@@ -24,8 +752,8 @@
     "subChannel": "LOCAL SUPERMARKET EC BIG"
   },
   {
-    "id": "917102200200864624",
-    "name": "SAGA RETAILINDO, CV.",
+    "id": "910717000401263480",
+    "name": "SAGA AIMAS",
     "area": "Sorong",
     "scopeChannel": "LMT SPM",
     "scopeSlug": "lmt-spm",
@@ -48,8 +776,8 @@
     "subChannel": "LOCAL SUPERMARKET EC BIG"
   },
   {
-    "id": "917102300501328695",
-    "name": "DELLI MART",
+    "id": "917102200200864624",
+    "name": "SAGA RETAILINDO, CV.",
     "area": "Sorong",
     "scopeChannel": "LMT SPM",
     "scopeSlug": "lmt-spm",
@@ -64,28 +792,28 @@
     "subChannel": "LOCAL MINIS BIG"
   },
   {
-    "id": "941203000301350375",
-    "name": "PERINTIS, TOKO",
-    "area": "Timika",
-    "scopeChannel": "LOCAL MINIS",
-    "scopeSlug": "local-minis",
-    "subChannel": "LOCAL MINIS BIG"
-  },
-  {
-    "id": "941203000400865727",
-    "name": "SEJAHTERA",
-    "area": "Timika",
-    "scopeChannel": "LOCAL MINIS",
-    "scopeSlug": "local-minis",
-    "subChannel": "LOCAL MINIS BIG"
-  },
-  {
     "id": "941203000400865731",
     "name": "ABADI",
     "area": "Timika",
     "scopeChannel": "LOCAL MINIS",
     "scopeSlug": "local-minis",
     "subChannel": "LOCAL MINIS BIG"
+  },
+  {
+    "id": "941203000401030669",
+    "name": "ADITAMA BOUGENVILLE",
+    "area": "Timika",
+    "scopeChannel": "LMT SPM",
+    "scopeSlug": "lmt-spm",
+    "subChannel": "LOCAL SUPERMARKET EC MEDIUM"
+  },
+  {
+    "id": "941203001300865728",
+    "name": "ADITAMA SWALAYAN",
+    "area": "Timika",
+    "scopeChannel": "LMT SPM",
+    "scopeSlug": "lmt-spm",
+    "subChannel": "LOCAL SUPERMARKET EC BIG"
   },
   {
     "id": "941203000400976537",
@@ -96,8 +824,8 @@
     "subChannel": "LOCAL MINIS BIG"
   },
   {
-    "id": "941203000401030669",
-    "name": "ADITAMA BOUGENVILLE",
+    "id": "941203000900865732",
+    "name": "CV. KARUNIA PAPUA ABADI - SP 4",
     "area": "Timika",
     "scopeChannel": "LMT SPM",
     "scopeSlug": "lmt-spm",
@@ -120,8 +848,80 @@
     "subChannel": "LOCAL MINIS BIG"
   },
   {
-    "id": "941203000401320457",
-    "name": "ZAYN JAYA",
+    "id": "941203001201336710",
+    "name": "GC SUPERMARKET (SP 2)",
+    "area": "Timika",
+    "scopeChannel": "LMT SPM",
+    "scopeSlug": "lmt-spm",
+    "subChannel": "LOCAL SUPERMARKET EC MEDIUM"
+  },
+  {
+    "id": "941203001300865735",
+    "name": "GELAEL INDOTIM, PT",
+    "area": "Timika",
+    "scopeChannel": "LOCAL MINIS",
+    "scopeSlug": "local-minis",
+    "subChannel": "LOCAL MINIS BIG"
+  },
+  {
+    "id": "941203002101269958-5",
+    "name": "HADI BOGA INDONESIA EXPRESS (BELIBIS)",
+    "area": "Timika",
+    "scopeChannel": "LOCAL MINIS",
+    "scopeSlug": "local-minis",
+    "subChannel": ""
+  },
+  {
+    "id": "941203002101269958-7",
+    "name": "HADI BOGA INDONESIA EXPRESS (BUDI UTOMO)",
+    "area": "Timika",
+    "scopeChannel": "LOCAL MINIS",
+    "scopeSlug": "local-minis",
+    "subChannel": ""
+  },
+  {
+    "id": "941203002101269958-2",
+    "name": "HADI BOGA INDONESIA EXPRESS (YOSUDARSO POROS)",
+    "area": "Timika",
+    "scopeChannel": "LOCAL MINIS",
+    "scopeSlug": "local-minis",
+    "subChannel": ""
+  },
+  {
+    "id": "941203002101269958-3",
+    "name": "HADI BOGA INDONESIA EXPRESS (YOSUDARSO SAMSAT)",
+    "area": "Timika",
+    "scopeChannel": "LOCAL MINIS",
+    "scopeSlug": "local-minis",
+    "subChannel": ""
+  },
+  {
+    "id": "941203000501216897",
+    "name": "KOPERASI JAYA WIJAYA",
+    "area": "Timika",
+    "scopeChannel": "LOCAL MINIS",
+    "scopeSlug": "local-minis",
+    "subChannel": "LOCAL MINIS BIG"
+  },
+  {
+    "id": "941203000900976536",
+    "name": "LEO",
+    "area": "Timika",
+    "scopeChannel": "LOCAL MINIS",
+    "scopeSlug": "local-minis",
+    "subChannel": "LOCAL MINIS BIG"
+  },
+  {
+    "id": "941203000301350375",
+    "name": "PERINTIS, TOKO",
+    "area": "Timika",
+    "scopeChannel": "LOCAL MINIS",
+    "scopeSlug": "local-minis",
+    "subChannel": "LOCAL MINIS BIG"
+  },
+  {
+    "id": "941203002101269958",
+    "name": "PT. HADI RETAIL INDONESIA",
     "area": "Timika",
     "scopeChannel": "LMT SPM",
     "scopeSlug": "lmt-spm",
@@ -136,54 +936,6 @@
     "subChannel": "LOCAL SUPERMARKET EC MEDIUM"
   },
   {
-    "id": "941203000500984190",
-    "name": "TRANSABADI",
-    "area": "Timika",
-    "scopeChannel": "LOCAL MINIS",
-    "scopeSlug": "local-minis",
-    "subChannel": "LOCAL MINIS BIG"
-  },
-  {
-    "id": "941203000501056365",
-    "name": "SENJA INDAH",
-    "area": "Timika",
-    "scopeChannel": "LOCAL MINIS",
-    "scopeSlug": "local-minis",
-    "subChannel": "LOCAL MINIS BIG"
-  },
-  {
-    "id": "941203000501216897",
-    "name": "KOPERASI JAYA WIJAYA",
-    "area": "Timika",
-    "scopeChannel": "LOCAL MINIS",
-    "scopeSlug": "local-minis",
-    "subChannel": "LOCAL MINIS BIG"
-  },
-  {
-    "id": "941203000501295225",
-    "name": "TOKO SEMBAKO PUTRI MIMIKA",
-    "area": "Timika",
-    "scopeChannel": "LOCAL MINIS",
-    "scopeSlug": "local-minis",
-    "subChannel": "LOCAL MINIS BIG"
-  },
-  {
-    "id": "941203000900865732",
-    "name": "CV. KARUNIA PAPUA ABADI - SP 4",
-    "area": "Timika",
-    "scopeChannel": "LMT SPM",
-    "scopeSlug": "lmt-spm",
-    "subChannel": "LOCAL SUPERMARKET EC MEDIUM"
-  },
-  {
-    "id": "941203000900976536",
-    "name": "LEO",
-    "area": "Timika",
-    "scopeChannel": "LOCAL MINIS",
-    "scopeSlug": "local-minis",
-    "subChannel": "LOCAL MINIS BIG"
-  },
-  {
     "id": "941203000900983101",
     "name": "SAHABAT, TOKO",
     "area": "Timika",
@@ -192,24 +944,16 @@
     "subChannel": "LOCAL SUPERMARKET EC MEDIUM"
   },
   {
-    "id": "941203001201336710",
-    "name": "GC SUPERMARKET (SP 2)",
+    "id": "941203000400865727",
+    "name": "SEJAHTERA",
     "area": "Timika",
-    "scopeChannel": "LMT SPM",
-    "scopeSlug": "lmt-spm",
-    "subChannel": "LOCAL SUPERMARKET EC MEDIUM"
+    "scopeChannel": "LOCAL MINIS",
+    "scopeSlug": "local-minis",
+    "subChannel": "LOCAL MINIS BIG"
   },
   {
-    "id": "941203001300865728",
-    "name": "ADITAMA SWALAYAN",
-    "area": "Timika",
-    "scopeChannel": "LMT SPM",
-    "scopeSlug": "lmt-spm",
-    "subChannel": "LOCAL SUPERMARKET EC BIG"
-  },
-  {
-    "id": "941203001300865735",
-    "name": "GELAEL INDOTIM, PT",
+    "id": "941203000501056365",
+    "name": "SENJA INDAH",
     "area": "Timika",
     "scopeChannel": "LOCAL MINIS",
     "scopeSlug": "local-minis",
@@ -280,8 +1024,24 @@
     "subChannel": "LOCAL SUPERMARKET EC BIG"
   },
   {
-    "id": "941203002101269958",
-    "name": "PT. HADI RETAIL INDONESIA",
+    "id": "941203000501295225",
+    "name": "TOKO SEMBAKO PUTRI MIMIKA",
+    "area": "Timika",
+    "scopeChannel": "LOCAL MINIS",
+    "scopeSlug": "local-minis",
+    "subChannel": "LOCAL MINIS BIG"
+  },
+  {
+    "id": "941203000500984190",
+    "name": "TRANSABADI",
+    "area": "Timika",
+    "scopeChannel": "LOCAL MINIS",
+    "scopeSlug": "local-minis",
+    "subChannel": "LOCAL MINIS BIG"
+  },
+  {
+    "id": "941203000401320457",
+    "name": "ZAYN JAYA",
     "area": "Timika",
     "scopeChannel": "LMT SPM",
     "scopeSlug": "lmt-spm",

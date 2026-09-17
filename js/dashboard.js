@@ -86,7 +86,7 @@ function populateWeekSelect() {
 
 async function loadAndRender() {
   el('loadingNote').style.display = 'block';
-  el('loadingNote').textContent = 'Memuat data 36 toko...';
+  el('loadingNote').textContent = 'Memuat data toko...';
   el('dashboardContent').style.display = 'none';
 
   const week = currentWeeks[+el('weekSel').value];
@@ -162,7 +162,7 @@ function statusPillHtml(status) {
 const FLAG_LABELS = { 'COTC': 'COTC', 'MARKET MAKING': 'Market making', 'NPD': 'NPD' };
 const FLAG_ORDER = ['COTC', 'MARKET MAKING', 'NPD'];
 
-// Persentase SKU yang stock-nya > 0 (tersedia di toko), diagregasi lintas 36 toko, per flag.
+// Persentase SKU yang stock-nya > 0 (tersedia di toko), diagregasi lintas semua toko, per flag.
 // "Belum diisi" tidak dihitung sebagai tersedia maupun tidak tersedia -- cuma dikeluarkan
 // dari pembilang, supaya persentase tidak salah tafsir sebelum data lengkap semua.
 function renderFlagAvailability(rows) {

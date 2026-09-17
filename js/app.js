@@ -5,7 +5,7 @@ import { getWeeksForMonth, findWeekContaining, fmtShort, MONTHS_ID, addDays, iso
 import { loadDistributorStock, parseDistributorWorkbook, saveDistributorStock } from './stock-upload.js';
 import { supportsNativeBarcodeDetector, startNativeScan, stopNativeScan, startFallbackScan, stopFallbackScan } from './barcode-scan.js';
 import { parsePurchaseWorkbook } from './purchase-upload.js';
-import { loadPromoSku } from './harga-data.js';
+import { loadPromoSku, loadPriceEntry, savePriceField, loadCompetitors, addCompetitor, updateCompetitor } from './harga-data.js';
 import { FIELDS, EDITABLE_FIELDS, fieldTotal, fieldIsEmpty, normalizeField, statusOf } from './entry-utils.js';
 
 const FIELD_LABELS = { stock: 'Stock', order: 'Order', masuk: 'Masuk', jual: 'Jual' };
@@ -29,6 +29,13 @@ let buFilter = 'all';
 let categoryFilter = 'all';
 let brandFilter = 'all';
 let expandedSkuGroups = {};
+let priceEligible = false; // toko ini termasuk scope Survei Harga (LMT SPM EC BIG / Beauty)?
+let currentPriceEntry = {}; // barcode -> {unileverPrice, competitorPrices:{id:price}} -- data harga bulan ini
+let priceCompetitors = {}; // barcode -> {competitorId: {brand, productName, packSize}} -- master kompetitor global
+let expandedPriceCompetitor = {}; // barcode -> bool, collapsed by default
+let openPriceAddForm = null; // barcode yang sedang buka form "+ Tambah kompetitor"
+let editingPriceCompetitor = null; // {barcode, competitorId} yang sedang diedit
+let currentPriceMonthKey = null;
 let distributorCache = {}; // area -> { items: {pcode: {...}} }
 let saveTimers = {};
 let currentTab = 'input';
@@ -227,6 +234,14 @@ async function onStoreChange(preferPeriodKey) {
   categoryFilter = 'all';
   brandFilter = 'all';
   expandedSkuGroups = {};
+  // Harga jual (+ kompetitor) cuma tersedia utk toko yang sama dengan scope Survei
+  // Harga (LMT SPM "EC BIG" + Beauty) -- konsisten dgn halaman itu, tidak melebar
+  // ke SEMUA toko supaya tidak jadi beban isian yang tidak relevan.
+  priceEligible = currentStore.subChannel === 'LOCAL SUPERMARKET EC BIG' || currentStore.subChannel === 'COSMETIC EXPERT TRADITIONAL';
+  expandedPriceCompetitor = {};
+  if (priceEligible && !Object.keys(priceCompetitors).length) {
+    priceCompetitors = await loadCompetitors();
+  }
   populateWeekSelect(preferPeriodKey);
   await Promise.all([
     loadEntryForCurrentPeriod(),
@@ -311,6 +326,7 @@ async function loadEntryForCurrentPeriod() {
   const prevPeriodKey = isoDate(addDays(currentWeek.start, -7));
   const prevRef = doc(db, 'entries', `${currentStore.id}__${prevPeriodKey}`);
   const monthKey = `${currentWeek.start.getFullYear()}-${String(currentWeek.start.getMonth() + 1).padStart(2, '0')}`;
+  currentPriceMonthKey = monthKey;
   let snap, prevSnap, promoDoc;
   try {
     [snap, prevSnap, promoDoc] = await Promise.all([
@@ -322,6 +338,10 @@ async function loadEntryForCurrentPeriod() {
     console.error('Gagal memuat data minggu ini/minggu lalu:', err);
     snap = null; prevSnap = null; promoDoc = null;
   }
+  currentPriceEntry = priceEligible ? await loadPriceEntry(currentStore.id, monthKey).catch((err) => {
+    console.error('Gagal memuat data harga bulan ini:', err);
+    return {};
+  }) : {};
   const saved = snap && snap.exists() ? (snap.data().items || {}) : {};
   const savedPromo = snap && snap.exists() ? (snap.data().promoItems || {}) : {};
   previousWeekItems = prevSnap && prevSnap.exists() ? (prevSnap.data().items || {}) : {};
@@ -544,6 +564,92 @@ function skuCardHtml(sku, distStock) {
         }
         return '<p class="sku-isi" style="margin-top:6px;">Barang Masuk diisi Supervisor &middot; Penjualan dihitung otomatis setelah minggu depan diisi</p>';
       })()}
+      ${priceEligible ? priceSectionHtml(sku) : ''}
+    </div>
+  `;
+}
+
+// Harga jual (+ kompetitor) -- cuma utk toko yang termasuk scope Survei Harga.
+// Data harga ini SAMA dengan yang dipakai halaman Survei Harga (kunci barcode,
+// per bulan) -- isi dari sini atau dari sana, hasilnya nyambung, tidak dobel kerja.
+function priceSectionHtml(sku) {
+  const barcode = sku.barcode;
+  const priceItem = currentPriceEntry[barcode] || {};
+  const unileverPrice = priceItem.unileverPrice ?? '';
+  const compList = priceCompetitors[barcode] || {};
+  const compIds = Object.keys(compList);
+  const isOpen = !!expandedPriceCompetitor[barcode];
+  const filledCompCount = compIds.filter(cid => {
+    const p = (priceItem.competitorPrices || {})[cid];
+    return p !== undefined && p !== '' && p !== null;
+  }).length;
+
+  const compHtml = compIds.map(cid => {
+    const c = compList[cid];
+    const price = (priceItem.competitorPrices || {})[cid] ?? '';
+    const isEditing = editingPriceCompetitor && editingPriceCompetitor.barcode === barcode && editingPriceCompetitor.competitorId === cid;
+    if (isEditing) {
+      return `
+        <div class="competitor-item">
+          <div class="competitor-form" data-price-edit-form-for="${barcode}" data-price-edit-competitor-id="${cid}">
+            <label class="field-label">Brand kompetitor</label>
+            <input type="text" class="price-comp-brand" value="${c.brand || ''}">
+            <label class="field-label">Nama produk</label>
+            <input type="text" class="price-comp-name" value="${c.productName || ''}">
+            <label class="field-label">Ukuran kemasan (opsional)</label>
+            <input type="text" class="price-comp-size" value="${c.packSize || ''}">
+            <div style="display:flex; gap:6px;">
+              <button type="button" class="price-comp-edit-cancel" style="flex:1;">Batal</button>
+              <button type="button" class="price-comp-edit-save primary" style="flex:1;">Simpan koreksi</button>
+            </div>
+          </div>
+        </div>
+      `;
+    }
+    return `
+      <div class="competitor-item">
+        <div class="competitor-name-row">
+          <p class="competitor-name">${c.brand} - ${c.productName}${c.packSize ? ' (' + c.packSize + ')' : ''}</p>
+          <button type="button" class="price-competitor-edit-btn" data-price-edit-barcode="${barcode}" data-price-edit-cid="${cid}">Edit</button>
+        </div>
+        <div class="price-input-wrap">
+          <span>Rp</span>
+          <input type="number" min="0" data-price-barcode="${barcode}" data-price-kind="competitor" data-price-competitor-id="${cid}" value="${price}" placeholder="Harga di toko ini">
+        </div>
+      </div>
+    `;
+  }).join('');
+
+  const formOpen = openPriceAddForm === barcode;
+
+  return `
+    <div class="price-row" style="margin-top:10px;">
+      <div class="price-row-head"><label class="field-label">Harga jual di toko (Rp)</label></div>
+      <div class="price-input-wrap">
+        <span>Rp</span>
+        <input type="number" min="0" data-price-barcode="${barcode}" data-price-kind="unilever" value="${unileverPrice}" placeholder="Harga jual">
+      </div>
+    </div>
+    <button type="button" class="promo-toggle price-competitor-toggle" data-price-toggle="${barcode}" style="margin-top:8px;">
+      <span>Harga kompetitor${filledCompCount ? ` (${filledCompCount}/${compIds.length} terisi)` : compIds.length ? ` (0/${compIds.length} terisi)` : ''}</span>
+      <span class="product-group-icon ${isOpen ? 'open' : ''}">&#9656;</span>
+    </button>
+    <div class="product-group-body" data-price-competitor-body="${barcode}" style="display:${isOpen ? 'block' : 'none'}; margin-top:8px;">
+      ${compHtml}
+      ${formOpen ? `
+        <div class="competitor-form" data-price-form-for="${barcode}">
+          <label class="field-label">Brand kompetitor</label>
+          <input type="text" class="price-comp-brand" placeholder="Misal: Wardah, Formula, Daia">
+          <label class="field-label">Nama produk</label>
+          <input type="text" class="price-comp-name" placeholder="Nama produk kompetitor">
+          <label class="field-label">Ukuran kemasan (opsional)</label>
+          <input type="text" class="price-comp-size" placeholder="Misal: 190g">
+          <div style="display:flex; gap:6px;">
+            <button type="button" class="price-comp-cancel" style="flex:1;">Batal</button>
+            <button type="button" class="price-comp-save primary" style="flex:1;">Simpan kompetitor</button>
+          </div>
+        </div>
+      ` : `<button type="button" class="add-competitor-btn" data-price-open-for="${barcode}">+ Tambah kompetitor</button>`}
     </div>
   `;
 }
@@ -633,6 +739,121 @@ function renderSkuList() {
       }
     });
   });
+
+  if (priceEligible) wirePriceSectionEvents();
+}
+
+function wirePriceSectionEvents() {
+  el('skuList').querySelectorAll('input[data-price-barcode]').forEach(inp => {
+    inp.addEventListener('input', () => {
+      const barcode = inp.dataset.priceBarcode;
+      const kind = inp.dataset.priceKind;
+      if (!currentPriceEntry[barcode]) currentPriceEntry[barcode] = {};
+      if (kind === 'unilever') {
+        currentPriceEntry[barcode].unileverPrice = inp.value;
+        scheduleSavePriceField(barcode, 'unilever', null, inp.value);
+      } else {
+        const cid = inp.dataset.priceCompetitorId;
+        if (!currentPriceEntry[barcode].competitorPrices) currentPriceEntry[barcode].competitorPrices = {};
+        currentPriceEntry[barcode].competitorPrices[cid] = inp.value;
+        scheduleSavePriceField(barcode, 'competitor', cid, inp.value);
+      }
+    });
+  });
+
+  el('skuList').querySelectorAll('.price-competitor-toggle').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const barcode = btn.dataset.priceToggle;
+      expandedPriceCompetitor[barcode] = !expandedPriceCompetitor[barcode];
+      renderSkuList();
+    });
+  });
+
+  el('skuList').querySelectorAll('[data-price-open-for]').forEach(btn => {
+    btn.addEventListener('click', () => { openPriceAddForm = btn.dataset.priceOpenFor; renderSkuList(); });
+  });
+  el('skuList').querySelectorAll('.price-comp-cancel').forEach(btn => {
+    btn.addEventListener('click', () => { openPriceAddForm = null; renderSkuList(); });
+  });
+  el('skuList').querySelectorAll('.price-comp-save').forEach(btn => {
+    btn.addEventListener('click', async () => {
+      const form = btn.closest('.competitor-form');
+      const barcode = form.dataset.priceFormFor;
+      const brand = form.querySelector('.price-comp-brand').value.trim();
+      const productName = form.querySelector('.price-comp-name').value.trim();
+      const packSize = form.querySelector('.price-comp-size').value.trim();
+      if (!brand || !productName) {
+        showToast('Isi minimal brand dan nama produk kompetitor.', 'danger');
+        return;
+      }
+      btn.disabled = true;
+      btn.textContent = 'Menyimpan...';
+      try {
+        const cid = await addCompetitor(barcode, { brand, productName, packSize });
+        if (!priceCompetitors[barcode]) priceCompetitors[barcode] = {};
+        priceCompetitors[barcode][cid] = { brand, productName, packSize };
+        openPriceAddForm = null;
+        showToast(`Kompetitor "${brand}" ditambahkan.`, 'success');
+        renderSkuList();
+      } catch (err) {
+        console.error('Gagal menambah kompetitor:', err);
+        showToast(`Gagal menyimpan (${err.code || err.message || 'error tidak diketahui'}).`, 'danger');
+        btn.disabled = false;
+        btn.textContent = 'Simpan kompetitor';
+      }
+    });
+  });
+
+  el('skuList').querySelectorAll('.price-competitor-edit-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      editingPriceCompetitor = { barcode: btn.dataset.priceEditBarcode, competitorId: btn.dataset.priceEditCid };
+      renderSkuList();
+    });
+  });
+  el('skuList').querySelectorAll('.price-comp-edit-cancel').forEach(btn => {
+    btn.addEventListener('click', () => { editingPriceCompetitor = null; renderSkuList(); });
+  });
+  el('skuList').querySelectorAll('.price-comp-edit-save').forEach(btn => {
+    btn.addEventListener('click', async () => {
+      const form = btn.closest('.competitor-form');
+      const barcode = form.dataset.priceEditFormFor;
+      const cid = form.dataset.priceEditCompetitorId;
+      const brand = form.querySelector('.price-comp-brand').value.trim();
+      const productName = form.querySelector('.price-comp-name').value.trim();
+      const packSize = form.querySelector('.price-comp-size').value.trim();
+      if (!brand || !productName) {
+        showToast('Isi minimal brand dan nama produk kompetitor.', 'danger');
+        return;
+      }
+      btn.disabled = true;
+      btn.textContent = 'Menyimpan...';
+      try {
+        await updateCompetitor(barcode, cid, { brand, productName, packSize });
+        priceCompetitors[barcode][cid] = { ...priceCompetitors[barcode][cid], brand, productName, packSize };
+        editingPriceCompetitor = null;
+        showToast(`Data kompetitor "${brand}" dikoreksi.`, 'success');
+        renderSkuList();
+      } catch (err) {
+        console.error('Gagal mengoreksi kompetitor:', err);
+        showToast(`Gagal menyimpan (${err.code || err.message || 'error tidak diketahui'}).`, 'danger');
+        btn.disabled = false;
+        btn.textContent = 'Simpan koreksi';
+      }
+    });
+  });
+}
+
+function scheduleSavePriceField(barcode, kind, competitorId, value) {
+  const key = `price_${barcode}__${kind}__${competitorId || ''}`;
+  clearTimeout(saveTimers[key]);
+  saveTimers[key] = setTimeout(async () => {
+    try {
+      await savePriceField(currentStore, currentPriceMonthKey, barcode, kind, competitorId, value);
+    } catch (err) {
+      console.error('Gagal menyimpan harga:', err);
+      showToast(`Gagal menyimpan harga (${err.code || err.message || 'error tidak diketahui'}).`, 'danger');
+    }
+  }, 600);
 }
 
 // SKU Promo: opsional, TIDAK dihitung ke progress/lengkap SKU wajib sama sekali.
