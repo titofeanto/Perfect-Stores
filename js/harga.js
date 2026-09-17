@@ -1,4 +1,5 @@
 import { db, collection, query, where, getDocs, authReady } from './firebase-init.js';
+import { pickAccount, storeIsAllowed, switchAccount } from './store-filter.js?v=1';
 import { loadStores, loadSkuList } from './store-data.js';
 import { MONTHS_ID } from './weeks.js';
 import { loadCompetitors, addCompetitor, updateCompetitor, loadPriceEntry, savePriceField, saveBulkPriceEntries, loadPromoSku, savePromoSku } from './harga-data.js';
@@ -50,12 +51,23 @@ function priceKey(p) {
 
 async function init() {
   await authReady;
+  const { mapping } = await pickAccount();
   const allStores = await loadStores();
   // Survei harga: 8 toko LMT SPM "EC BIG" + 2 toko Beauty/Cosmetic Expert Traditional
-  // (SAGA BEAUTY, DEDE MAMA) -- keduanya scope HABA DT.
+  // (SAGA BEAUTY, DEDE MAMA) -- keduanya scope HABA DT. Lalu disaring lagi sesuai
+  // mapping akun yang dipilih (isMaster = lihat semua 10 toko itu).
   ecBigStores = allStores.filter(s =>
-    s.subChannel === 'LOCAL SUPERMARKET EC BIG' || s.subChannel === 'COSMETIC EXPERT TRADITIONAL'
+    (s.subChannel === 'LOCAL SUPERMARKET EC BIG' || s.subChannel === 'COSMETIC EXPERT TRADITIONAL')
+    && storeIsAllowed(s.id)
   );
+  const nameLabel = document.getElementById('loggedInAs');
+  if (nameLabel) nameLabel.textContent = mapping ? (mapping.name + (mapping.isMaster ? ' (semua toko)' : '')) : 'Semua toko';
+  const logoutBtn = document.getElementById('logoutBtn');
+  if (logoutBtn) logoutBtn.addEventListener('click', switchAccount);
+  if (!ecBigStores.length) {
+    document.querySelector('.app').innerHTML = '<div class="card" style="margin-top:40px;"><p>Akun ini belum ter-mapping ke toko survei harga mana pun. Hubungi admin.</p></div>';
+    return;
+  }
   competitors = await loadCompetitors();
 
   populateStoreSelect();

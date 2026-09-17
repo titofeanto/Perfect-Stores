@@ -1,4 +1,5 @@
 import { db, doc, getDoc, setDoc, serverTimestamp, authReady } from './firebase-init.js';
+import { pickAccount, storeIsAllowed, getCurrentMapping, switchAccount } from './store-filter.js?v=1';
 import { loadStores, loadSkuList, groupStoresByArea } from './store-data.js';
 import { getWeeksForMonth, findWeekContaining, fmtShort, MONTHS_ID, addDays, isoDate } from './weeks.js';
 import { loadDistributorStock, parseDistributorWorkbook, saveDistributorStock } from './stock-upload.js';
@@ -70,8 +71,20 @@ function badgeHtml(sku, item) {
 
 async function init() {
   await authReady;
-  stores = await loadStores();
+  const { mapping } = await pickAccount();
+  const allStores = await loadStores();
+  stores = allStores.filter(s => storeIsAllowed(s.id));
   storesByArea = groupStoresByArea(stores);
+
+  const nameLabel = document.getElementById('loggedInAs');
+  if (nameLabel) nameLabel.textContent = mapping ? (mapping.name + (mapping.isMaster ? ' (semua toko)' : '')) : 'Semua toko';
+  const logoutBtn = document.getElementById('logoutBtn');
+  if (logoutBtn) logoutBtn.addEventListener('click', switchAccount);
+
+  if (!stores.length) {
+    document.querySelector('.app').innerHTML = '<div class="card" style="margin-top:40px;"><p>Akun ini belum ter-mapping ke toko mana pun. Hubungi admin.</p></div>';
+    return;
+  }
 
   populateAreaSelect();
   populateMonthSelect();

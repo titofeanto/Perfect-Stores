@@ -1,4 +1,5 @@
 import { db, doc, getDoc, collection, query, where, getDocs, authReady } from './firebase-init.js';
+import { pickAccount, storeIsAllowed, switchAccount } from './store-filter.js?v=1';
 import { loadStores, loadSkuList } from './store-data.js';
 import { getWeeksForMonth, findWeekContaining, fmtShort, MONTHS_ID } from './weeks.js';
 import { summarizeEntry, buildOosDetail, normalizeField, fieldTotal, fieldIsEmpty } from './entry-utils.js';
@@ -15,7 +16,17 @@ let rowsByStoreId = {};
 
 async function init() {
   await authReady;
-  stores = await loadStores();
+  const { mapping } = await pickAccount();
+  const allStores = await loadStores();
+  stores = allStores.filter(s => storeIsAllowed(s.id));
+  const nameLabel = document.getElementById('loggedInAs');
+  if (nameLabel) nameLabel.textContent = mapping ? (mapping.name + (mapping.isMaster ? ' (semua toko)' : '')) : 'Semua toko';
+  const logoutBtn = document.getElementById('logoutBtn');
+  if (logoutBtn) logoutBtn.addEventListener('click', switchAccount);
+  if (!stores.length) {
+    document.querySelector('.app').innerHTML = '<div class="card" style="margin-top:40px;"><p>Akun ini belum ter-mapping ke toko mana pun. Hubungi admin.</p></div>';
+    return;
+  }
   // Preload semua daftar SKU wajib (cuma 3 file kecil) supaya perhitungan % per toko tidak perlu fetch berulang
   const uniqueSlugs = [...new Set(stores.map(s => s.scopeSlug))];
   await Promise.all(uniqueSlugs.map(async slug => { skuListCache[slug] = await loadSkuList(slug); }));

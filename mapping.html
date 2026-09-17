@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kelola Mapping - Perfect Stores</title>
+<link rel="stylesheet" href="css/style.css?v=4">
+</head>
+<body>
+<div class="app">
+
+  <header class="appbar">
+    <div style="display:flex; justify-content:space-between; align-items:center;">
+      <div>
+        <h1>Kelola Mapping Toko</h1>
+        <p>Bikin file data/user-mapping.json dari Excel -- untuk mempersempit tampilan toko per orang</p>
+      </div>
+      <div style="text-align:right;">
+        <a href="index.html" style="font-size:12px; color:var(--accent); text-decoration:none;">&larr; Input SKU</a>
+        <p style="font-size:11px; color:var(--text-muted); margin:6px 0 0;">
+          <span id="loggedInAs"></span> &middot; <button id="logoutBtn" type="button" style="font-size:11px; padding:2px 8px; border:none; background:none; color:var(--accent); text-decoration:underline; cursor:pointer;">Ganti akun</button>
+        </p>
+      </div>
+    </div>
+  </header>
+
+  <div class="card">
+    <p class="section-title" style="margin:0 0 8px;">Catatan penting</p>
+    <p class="upload-status">Ini BUKAN login/akses yang sungguhan -- cuma penyaring tampilan (siapa pun yang paham teknis tetap bisa lihat data toko lain kalau mau). Hasil dari halaman ini adalah 1 file <strong>user-mapping.json</strong> yang Anda upload MANUAL ke folder <code>data/</code> di GitHub (timpa yang lama). Tidak ada akun/password yang benar-benar dibuat di server mana pun.</p>
+  </div>
+
+  <div class="card">
+    <p class="section-title" style="margin:0 0 8px;">Buat file mapping dari Excel</p>
+    <p class="upload-status">Kolom: Username, Nama (opsional), Store Name (format "ID-NamaToko"), Scope Channel (opsional, info saja). 1 baris = 1 kombinasi Username+Toko, boleh banyak baris untuk Username yang sama. Isi "SEMUA" di kolom Store Name untuk akun yang boleh lihat semua toko.</p>
+    <a href="assets/template_upload_user_mapping.xlsx" download class="template-link">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <path d="M12 3v12m0 0l-4-4m4 4l4-4M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+      Download contoh template
+    </a>
+    <label class="field-label" style="margin-top:10px;">File Excel mapping</label>
+    <input id="mappingFileInput" type="file" accept=".xlsx,.xls">
+    <p id="mappingParsePreview" class="upload-status"></p>
+    <div id="mappingParseDetail"></div>
+    <button id="mappingDownloadBtn" class="primary" style="margin-top:8px; width:100%;" disabled>Download user-mapping.json</button>
+  </div>
+
+  <div id="toast" class="toast"></div>
+
+</div>
+<script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+<script type="module" src="js/mapping.js?v=4"></script>
+</body>
+</html>

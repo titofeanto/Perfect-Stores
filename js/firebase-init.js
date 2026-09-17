@@ -5,22 +5,14 @@ import { initializeApp } from 'https://www.gstatic.com/firebasejs/12.16.0/fireba
 import {
   getFirestore, doc, getDoc, setDoc, collection, serverTimestamp, query, where, getDocs
 } from 'https://www.gstatic.com/firebasejs/12.16.0/firebase-firestore.js';
-import {
-  getAuth, signInAnonymously, onAuthStateChanged
-} from 'https://www.gstatic.com/firebasejs/12.16.0/firebase-auth.js';
+import { getAuth, signInAnonymously } from 'https://www.gstatic.com/firebasejs/12.16.0/firebase-auth.js';
 
 const app = initializeApp(firebaseConfig);
 export const db = getFirestore(app);
 const auth = getAuth(app);
 
-export const authReady = new Promise((resolve, reject) => {
-  onAuthStateChanged(auth, (user) => {
-    if (user) resolve(user);
-  });
-  signInAnonymously(auth).catch((err) => {
-    console.error('Firebase anonymous sign-in failed:', err);
-    reject(err);
-  });
+export const authReady = signInAnonymously(auth).catch((err) => {
+  console.error('Gagal sign-in anonim:', err);
 });
 
 export { doc, getDoc, setDoc, collection, serverTimestamp, query, where, getDocs };
