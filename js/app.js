@@ -29,7 +29,7 @@ let buFilter = 'all';
 let categoryFilter = 'all';
 let brandFilter = 'all';
 let expandedSkuGroups = {};
-let priceEligible = false; // toko ini termasuk scope Survei Harga (LMT SPM EC BIG / Beauty)?
+let priceEligible = false; // sekarang selalu true (semua toko) setelah onStoreChange jalan
 let currentPriceEntry = {}; // barcode -> {unileverPrice, competitorPrices:{id:price}} -- data harga bulan ini
 let priceCompetitors = {}; // barcode -> {competitorId: {brand, productName, packSize}} -- master kompetitor global
 let expandedPriceCompetitor = {}; // barcode -> bool, collapsed by default
@@ -234,10 +234,9 @@ async function onStoreChange(preferPeriodKey) {
   categoryFilter = 'all';
   brandFilter = 'all';
   expandedSkuGroups = {};
-  // Harga jual (+ kompetitor) cuma tersedia utk toko yang sama dengan scope Survei
-  // Harga (LMT SPM "EC BIG" + Beauty) -- konsisten dgn halaman itu, tidak melebar
-  // ke SEMUA toko supaya tidak jadi beban isian yang tidak relevan.
-  priceEligible = currentStore.subChannel === 'LOCAL SUPERMARKET EC BIG' || currentStore.subChannel === 'COSMETIC EXPERT TRADITIONAL';
+  // Harga jual (+ kompetitor) sekarang tersedia utk SEMUA toko (sebelumnya cuma
+  // scope Survei Harga LMT SPM "EC BIG" + Beauty).
+  priceEligible = true;
   expandedPriceCompetitor = {};
   if (priceEligible && !Object.keys(priceCompetitors).length) {
     priceCompetitors = await loadCompetitors();
