@@ -59,8 +59,10 @@ export function buildOosDetail(items, skuList, distStockItems) {
     if (qty !== 0) continue;
     const dt = sku.pcode ? distStockItems[sku.pcode] : null;
     let dtQty = null;
+    let dtBreakdown = null;
     if (dt) {
-      dtQty = (Number(dt.karton) || 0) * (sku.isi || 0) + (Number(dt.lusin) || 0) * 12 + (Number(dt.pcs) || 0);
+      dtBreakdown = { karton: Number(dt.karton) || 0, lusin: Number(dt.lusin) || 0, pcs: Number(dt.pcs) || 0 };
+      dtQty = dtBreakdown.karton * (sku.isi || 0) + dtBreakdown.lusin * 12 + dtBreakdown.pcs;
     }
     result.push({
       barcode: sku.barcode,
@@ -68,6 +70,7 @@ export function buildOosDetail(items, skuList, distStockItems) {
       name: sku.name,
       flag: sku.flag,
       dtQty, // null = tidak ada data DT sama sekali, angka (termasuk 0) = ada datanya
+      dtBreakdown, // {karton, lusin, pcs} apa adanya dari file distributor, null kalau tidak ada data
     });
   }
   return result;

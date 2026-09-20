@@ -369,7 +369,7 @@ function openOosModal(storeId, week) {
         <p class="sku-name">${d.name}</p>
         <p class="sku-code">${d.barcode}${d.pcode ? ' &middot; PC ' + d.pcode : ''}</p>
         <div>${dtStatusBadge(d.dtQty)}</div>
-        ${d.dtQty !== null ? `<p class="upload-status">Stock distributor (${row.store.area}): ${d.dtQty} pcs</p>` : ''}
+        ${d.dtBreakdown ? `<p class="upload-status">Stock distributor (${row.store.area}): ${d.dtBreakdown.karton} karton, ${d.dtBreakdown.lusin} lusin, ${d.dtBreakdown.pcs} pcs</p>` : ''}
       </div>
     `).join('');
   }
