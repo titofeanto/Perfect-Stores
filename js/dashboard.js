@@ -3,9 +3,9 @@ import { pickAccount, storeIsAllowed, switchAccount } from './store-filter.js?v=
 import { loadStores, loadSkuList } from './store-data.js';
 import { getWeeksForMonth, findWeekContaining, fmtShort, MONTHS_ID } from './weeks.js';
 import { summarizeEntry, buildOosDetail, normalizeField, fieldTotal, fieldIsEmpty } from './entry-utils.js?v=3';
-import { esc, dtCodesHtml, fmtTotal } from './dt-stock.js?v=1';
-import { MAX_SKU_PER_IMAGE, paginateShareItems, renderShareImages, shareToWhatsApp } from './share-image.js?v=3';
+import { wireOosModal, showOosModal } from './oos-modal.js?v=2';
 import { downloadAsExcel } from './export-utils.js';
+import { esc } from './dt-stock.js?v=1';
 
 const TODAY = new Date();
 const el = (id) => document.getElementById(id);
@@ -15,6 +15,15 @@ let skuListCache = {}; // scopeSlug -> sku list
 let currentWeeks = [];
 let distStockByArea = {};
 let rowsByStoreId = {};
+let entriesByStore = null; // hasil fetch minggu terpilih; null = belum dimuat
+// Filter dashboard. Set berisi nilai yang DIPILIH; semua terpilih = tidak ada filter.
+const NO_BU = 'Lainnya';
+let allAreas = [];
+let allBus = [];
+let selectedAreas = new Set();
+let selectedBus = new Set();
+let selectedStoreIds = new Set();
+let storeQuery = '';
 
 async function init() {
   await authReady;
@@ -33,13 +42,13 @@ async function init() {
   const uniqueSlugs = [...new Set(stores.map(s => s.scopeSlug))];
   await Promise.all(uniqueSlugs.map(async slug => { skuListCache[slug] = await loadSkuList(slug); }));
   await loadDistributorStockAll();
+  initFilters();
 
   populateMonthSelect();
   populateWeekSelect();
   el('monthSel').addEventListener('change', () => { populateWeekSelect(); loadAndRender(); });
   el('weekSel').addEventListener('change', loadAndRender);
-  el('oosModalClose').addEventListener('click', () => el('oosModal').classList.remove('show'));
-  el('oosShareBtn').addEventListener('click', onShareOos);
+  wireOosModal();
   el('exportAllBtn').addEventListener('click', exportAllStores);
 
   await loadAndRender();
@@ -95,36 +104,147 @@ async function loadAndRender() {
   const week = currentWeeks[+el('weekSel').value];
   const periodKey = week.periodKey;
 
-  let entriesByStore = {};
+  const fetched = {};
   try {
     const q = query(collection(db, 'entries'), where('periodKey', '==', periodKey));
     const snap = await getDocs(q);
-    snap.forEach(d => { entriesByStore[d.data().storeId] = d.data(); });
+    snap.forEach(d => { fetched[d.data().storeId] = d.data(); });
   } catch (err) {
     console.error('Gagal memuat rekap:', err);
     el('loadingNote').textContent = 'Gagal memuat data. Cek koneksi internet lalu refresh halaman.';
     return;
   }
+  entriesByStore = fetched;
 
-  const rows = stores.map(store => {
+  renderDashboard();
+
+  el('loadingNote').style.display = 'none';
+  el('dashboardContent').style.display = 'block';
+}
+
+// Susun ulang rekap dari data minggu yang sudah di-fetch, sesuai filter Area / Bisnis Unit / Toko.
+// Filter Bisnis Unit menyaring SKU wajib (bukan toko), jadi Lengkap / OSA / Tidak ada ikut
+// dihitung ulang hanya dari SKU di BU terpilih. Toko tanpa SKU di BU terpilih tidak ditampilkan.
+function renderDashboard() {
+  if (!entriesByStore) return;
+  const week = currentWeeks[+el('weekSel').value];
+  const rows = [];
+  for (const store of activeStores()) {
+    const skuList = (skuListCache[store.scopeSlug] || []).filter(sku => selectedBus.has(sku.bu || NO_BU));
+    if (!skuList.length) continue;
     const entry = entriesByStore[store.id] || null;
-    const skuList = skuListCache[store.scopeSlug] || [];
     const summary = summarizeEntry(entry ? entry.items : null, skuList);
     const oosDetail = buildOosDetail(entry ? entry.items : null, skuList, distStockByArea[store.area] || {});
     let status = 'notstarted';
     if (entry && entry.submitted) status = 'submitted';
     else if (entry) status = 'progress';
-    return { store, entry, summary, status, oosDetail };
-  });
+    rows.push({ store, entry, summary, status, oosDetail });
+  }
   rowsByStoreId = Object.fromEntries(rows.map(r => [r.store.id, r]));
 
   renderMetrics(rows);
   renderAreaSummary(rows);
   renderFlagAvailability(rows);
   renderTable(rows, week);
+  renderFilterInfo(rows.length);
+}
 
-  el('loadingNote').style.display = 'none';
-  el('dashboardContent').style.display = 'block';
+// ---------- Filter (Area / Bisnis Unit / Toko) ----------
+
+function initFilters() {
+  allAreas = [...new Set(stores.map(s => s.area))].sort();
+  const buSet = new Set();
+  for (const list of Object.values(skuListCache)) for (const sku of list) buSet.add(sku.bu || NO_BU);
+  allBus = [...buSet].sort();
+  resetFilters(false);
+
+  el('storeQuery').addEventListener('input', (e) => { storeQuery = e.target.value; renderStoreChecklist(); renderDashboard(); });
+  el('storePickAll').addEventListener('click', () => { visibleStores().forEach(s => selectedStoreIds.add(s.id)); renderStoreChecklist(); renderDashboard(); });
+  el('storePickNone').addEventListener('click', () => { visibleStores().forEach(s => selectedStoreIds.delete(s.id)); renderStoreChecklist(); renderDashboard(); });
+  el('filterReset').addEventListener('click', () => resetFilters(true));
+}
+
+function resetFilters(rerender) {
+  selectedAreas = new Set(allAreas);
+  selectedBus = new Set(allBus);
+  selectedStoreIds = new Set(stores.map(s => s.id));
+  storeQuery = '';
+  el('storeQuery').value = '';
+  renderFilterChips();
+  renderStoreChecklist();
+  if (rerender) renderDashboard();
+}
+
+// Semua terpilih + klik satu chip = tampilkan hanya yang itu. Selain itu chip bekerja sebagai
+// toggle; kalau semua dicopot, kembali ke "semua". Chip "Semua" memilih semuanya lagi.
+function toggleChoice(set, all, value) {
+  if (set.size === all.length) { set.clear(); set.add(value); }
+  else if (set.has(value)) { set.delete(value); if (!set.size) all.forEach(v => set.add(v)); }
+  else set.add(value);
+}
+
+function chipRowHtml(all, set, dataAttr) {
+  const allActive = set.size === all.length;
+  return `<span class="chip ${allActive ? 'active' : ''}" ${dataAttr}="__all__">Semua</span>`
+    + all.map(v => `<span class="chip ${!allActive && set.has(v) ? 'active' : ''}" ${dataAttr}="${esc(v)}">${esc(v)}</span>`).join('');
+}
+
+function renderFilterChips() {
+  el('areaChips').innerHTML = chipRowHtml(allAreas, selectedAreas, 'data-area');
+  el('buChips').innerHTML = chipRowHtml(allBus, selectedBus, 'data-bu');
+  el('areaChips').querySelectorAll('.chip').forEach(chip => {
+    chip.addEventListener('click', () => {
+      const v = chip.dataset.area;
+      if (v === '__all__') selectedAreas = new Set(allAreas); else toggleChoice(selectedAreas, allAreas, v);
+      renderFilterChips();
+      renderStoreChecklist();
+      renderDashboard();
+    });
+  });
+  el('buChips').querySelectorAll('.chip').forEach(chip => {
+    chip.addEventListener('click', () => {
+      const v = chip.dataset.bu;
+      if (v === '__all__') selectedBus = new Set(allBus); else toggleChoice(selectedBus, allBus, v);
+      renderFilterChips();
+      renderDashboard();
+    });
+  });
+}
+
+// Toko yang lolos filter Area + kotak cari (dasar untuk daftar centang di bawah).
+function visibleStores() {
+  const q = storeQuery.trim().toLowerCase();
+  return stores.filter(s => selectedAreas.has(s.area) && (!q || s.name.toLowerCase().includes(q)));
+}
+
+// Toko yang benar-benar ditampilkan di dashboard: lolos filter Area + cari + dicentang.
+function activeStores() {
+  return visibleStores().filter(s => selectedStoreIds.has(s.id));
+}
+
+function renderStoreChecklist() {
+  const list = visibleStores().sort((a, b) => a.area.localeCompare(b.area) || a.name.localeCompare(b.name));
+  el('storeChecklist').innerHTML = list.length
+    ? list.map(s => `
+      <label class="store-check">
+        <input type="checkbox" data-store-id="${esc(s.id)}" ${selectedStoreIds.has(s.id) ? 'checked' : ''}>
+        <span>${esc(s.name)}</span>
+        <span class="store-check-area">${esc(s.area)}</span>
+      </label>`).join('')
+    : '<p class="upload-status" style="margin:8px 0;">Tidak ada toko yang cocok.</p>';
+  el('storeChecklist').querySelectorAll('input[type=checkbox]').forEach(cb => {
+    cb.addEventListener('change', () => {
+      if (cb.checked) selectedStoreIds.add(cb.dataset.storeId); else selectedStoreIds.delete(cb.dataset.storeId);
+      renderDashboard();
+    });
+  });
+}
+
+function renderFilterInfo(shownCount) {
+  const visible = visibleStores();
+  const checked = visible.filter(s => selectedStoreIds.has(s.id)).length;
+  el('storePickerSummary').textContent = `Pilih toko manual (${checked} dari ${visible.length} dicentang)`;
+  el('filterInfo').textContent = `Menampilkan ${shownCount} dari ${stores.length} toko.`;
 }
 
 function renderMetrics(rows) {
@@ -203,6 +323,11 @@ function renderTable(rows, week) {
     if (sp !== 0) return sp;
     return b.summary.pct - a.summary.pct;
   });
+
+  if (!sorted.length) {
+    el('recapTableBody').innerHTML = '<tr><td colspan="7" style="white-space:normal;">Tidak ada toko yang cocok dengan filter.</td></tr>';
+    return;
+  }
 
   el('recapTableBody').innerHTML = sorted.map(r => {
     const link = `index.html?store=${encodeURIComponent(r.store.id)}&period=${encodeURIComponent(week.periodKey)}`;
@@ -349,74 +474,10 @@ async function exportAllStores() {
   }
 }
 
-function dtStatusBadge(d) {
-  if (!d.hasDtData) {
-    return '<span class="status-pill notstarted">Data stock DT belum di-upload</span>';
-  }
-  if (d.dtQty > 0) {
-    return '<span class="status-pill submitted">Ada stock di DT - Salesman/SBA Nego Order ke Buyer</span>';
-  }
-  return '<span class="status-pill progress" style="background:var(--danger-bg); color:var(--danger);">Stock DT tidak ada / kosong - Request SPO / tanya kapan datang</span>';
-}
-
-let currentShare = null; // {row, week, picked} untuk popup SKU yang sedang dibuka (picked = hasil paginateShareItems)
-
 function openOosModal(storeId, week) {
   const row = rowsByStoreId[storeId];
   if (!row) return;
-  const picked = paginateShareItems(row.oosDetail);
-  currentShare = { row, week, picked };
-  const n = picked.pages.length;
-  el('oosShareBtn').disabled = n === 0;
-  el('oosShareBtn').textContent = n > 1 ? `Bagikan ke WhatsApp (${n} gambar)` : 'Bagikan ke WhatsApp (gambar)';
-  el('oosShareNote').textContent = n
-    ? `${picked.totalOos} SKU kosong dibagi ${MAX_SKU_PER_IMAGE} SKU per gambar = ${n} gambar (format HP 1080x1920), urut dari stock DT terbanyak.`
-    : 'Tidak ada SKU kosong di toko ini, jadi tidak ada yang perlu dibagikan.';
-  el('oosModalTitle').textContent = `SKU tidak ada di toko - ${row.store.name}`;
-  el('oosModalSubtitle').innerHTML = `${week.label} (${fmtShort(week.start)} - ${fmtShort(week.end)}) &middot; dicocokkan ke stock distributor ${row.store.area} terkini (bukan histori minggu itu)`;
-  if (!row.oosDetail.length) {
-    el('oosModalBody').innerHTML = '<p class="upload-status">Tidak ada SKU dengan stock 0 untuk toko ini.</p>';
-  } else {
-    el('oosModalBody').innerHTML = row.oosDetail.map(d => `
-      <div class="sku-item">
-        <p class="sku-name">${esc(d.name)}</p>
-        <p class="sku-code">${esc(d.barcode)}</p>
-        <div>${dtStatusBadge(d)}</div>
-        ${d.dtQty > 0 ? `<p class="upload-status">Total stock DT ${esc(row.store.area)}: ${fmtTotal(d.dtQty, d.isi)} (= ${d.dtQty} pcs)</p>` : ''}
-        ${dtCodesHtml(d)}
-      </div>
-    `).join('');
-  }
-  el('oosModal').classList.add('show');
-}
-
-async function onShareOos() {
-  if (!currentShare || !currentShare.picked.pages.length) return;
-  const { row, week, picked } = currentShare;
-  const btn = el('oosShareBtn');
-  const original = btn.textContent;
-  btn.disabled = true;
-  btn.textContent = 'Menyiapkan gambar...';
-  try {
-    const blobs = await renderShareImages({
-      storeName: row.store.name,
-      area: row.store.area,
-      weekLabel: week.label,
-      weekRange: `${fmtShort(week.start)} - ${fmtShort(week.end)}`,
-    }, picked);
-    const caption = `Halo, berikut ${picked.totalOos} SKU yang kosong di ${row.store.name} (${week.label}), ${blobs.length} gambar. `
-      + 'Yang ada stock di DT mohon dibantu order; yang kosong di DT mohon Request SPO / tanya kapan datang. Terima kasih.';
-    const result = await shareToWhatsApp(blobs, row.store.name, caption);
-    if (result === 'downloaded') {
-      el('oosShareNote').textContent = `${blobs.length} gambar sudah terunduh dan WhatsApp dibuka. Tempel/drag gambar ke chat salesman.`;
-    }
-  } catch (err) {
-    console.error('Gagal membagikan rekap:', err);
-    el('oosShareNote').textContent = 'Gagal membuat gambar: ' + (err.message || err);
-  } finally {
-    btn.textContent = original;
-    btn.disabled = false;
-  }
+  showOosModal({ store: row.store, week, oosDetail: row.oosDetail });
 }
 
 init();

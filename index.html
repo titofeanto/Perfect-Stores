@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="color-scheme" content="light dark">
 <title>Logbook Perfect Stores</title>
-<link rel="stylesheet" href="css/style.css?v=7">
+<link rel="stylesheet" href="css/style.css?v=8">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tabler-icons/2.44.0/iconfont/tabler-icons.min.css">
 </head>
 <body>
@@ -30,6 +30,9 @@
 
   <div class="card-row-desktop">
   <div class="card">
+    <label class="field-label">Cari toko (semua area)</label>
+    <input id="storeSearch" type="text" placeholder="Ketik nama toko" autocomplete="off" style="margin-bottom:10px;">
+    <div id="storeSearchResults" class="store-search-results" style="display:none;"></div>
     <div class="row2">
       <div>
         <label class="field-label">Area</label>
@@ -168,10 +171,29 @@
     </div>
   </div>
 
+  <div id="oosModal" class="modal-backdrop">
+    <div id="oosBox" class="modal-box oos-box">
+      <div class="oos-head">
+        <h3 id="oosModalTitle">SKU tidak ada di toko</h3>
+        <div class="oos-head-actions">
+          <button type="button" id="oosScrollBtn" title="Langsung ke bawah (tombol bagikan)">&#8595; Bawah</button>
+          <button type="button" id="oosCloseX" title="Tutup" aria-label="Tutup">&#10005;</button>
+        </div>
+      </div>
+      <div class="oos-content">
+        <p id="oosModalSubtitle" class="upload-status" style="margin-bottom:10px;"></p>
+        <div id="oosModalBody"></div>
+        <button id="oosShareBtn" class="primary" style="width:100%; margin-top:12px;">Bagikan ke WhatsApp (gambar)</button>
+        <p id="oosShareNote" class="upload-status" style="margin-top:6px;"></p>
+        <button id="oosModalClose" style="width:100%; margin-top:8px;">Tutup</button>
+      </div>
+    </div>
+  </div>
+
   <div id="toast" class="toast"></div>
 
 </div>
 <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
-<script type="module" src="js/app.js?v=26"></script>
+<script type="module" src="js/app.js?v=27"></script>
 </body>
 </html>

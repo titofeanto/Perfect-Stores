@@ -5,9 +5,10 @@ import { getWeeksForMonth, findWeekContaining, fmtShort, MONTHS_ID, addDays, iso
 import { loadDistributorStock, parseDistributorWorkbook, saveDistributorStock } from './stock-upload.js';
 import { supportsNativeBarcodeDetector, startNativeScan, stopNativeScan, startFallbackScan, stopFallbackScan } from './barcode-scan.js';
 import { parsePurchaseWorkbook } from './purchase-upload.js';
-import { computeDtStock, dtCodesHtml, fmtTotal, hasDistributorData } from './dt-stock.js?v=1';
+import { computeDtStock, dtCodesHtml, fmtTotal, hasDistributorData, esc } from './dt-stock.js?v=1';
+import { wireOosModal, showOosModal } from './oos-modal.js?v=2';
 import { loadPromoSku, loadPriceEntry, savePriceField, loadCompetitors, addCompetitor, updateCompetitor } from './harga-data.js';
-import { FIELDS, EDITABLE_FIELDS, fieldTotal, fieldIsEmpty, normalizeField, statusOf } from './entry-utils.js';
+import { FIELDS, EDITABLE_FIELDS, fieldTotal, fieldIsEmpty, normalizeField, statusOf, buildOosDetail } from './entry-utils.js?v=3';
 
 const FIELD_LABELS = { stock: 'Stock', order: 'Order', masuk: 'Masuk', jual: 'Jual' };
 const FLAG_LABELS = { 'COTC': 'COTC', 'MARKET MAKING': 'Market making', 'NPD': 'NPD' };
@@ -30,6 +31,14 @@ let buFilter = 'all';
 let categoryFilter = 'all';
 let brandFilter = 'all';
 let expandedSkuGroups = {};
+// Filter + collapse khusus tab Rekap (terpisah dari filter tab Input)
+let recapFlagFilter = 'all';
+let recapSearch = '';
+let recapSort = 'asc';
+let recapBu = 'all';
+let recapCategory = 'all';
+let recapBrand = 'all';
+let recapExpanded = {}; // kunci: 'oos' / 'belum' (section) atau 'oos|<BU>' / 'belum|<BU>' (grup BU)
 let priceEligible = false; // sekarang selalu true (semua toko) setelah onStoreChange jalan
 let currentPriceEntry = {}; // barcode -> {unileverPrice, competitorPrices:{id:price}}, data harga bulan ini
 let priceCompetitors = {}; // barcode -> {competitorId: {brand, productName, packSize}}, master kompetitor global
@@ -181,6 +190,12 @@ function populateWeekSelect(preferPeriodKey) {
 
 function attachStaticHandlers() {
   el('areaSel').addEventListener('change', onAreaChange);
+  el('storeSearch').addEventListener('input', renderStoreSearchResults);
+  el('storeSearch').addEventListener('keydown', (e) => {
+    if (e.key !== 'Enter') return;
+    const first = el('storeSearchResults').querySelector('.store-search-item');
+    if (first) { e.preventDefault(); pickStoreFromSearch(first.dataset.storeId); }
+  });
   el('storeSel').addEventListener('change', () => onStoreChange());
   el('monthSel').addEventListener('change', onMonthChange);
   el('weekSel').addEventListener('change', onWeekChange);
@@ -208,6 +223,7 @@ function attachStaticHandlers() {
   el('tabStock').addEventListener('click', () => switchTab('stock'));
   el('tabMasuk').addEventListener('click', () => switchTab('masuk'));
 
+  wireOosModal();
   el('modalReview').addEventListener('click', () => { hideModal(); switchTab('input'); });
   el('modalConfirm').addEventListener('click', onConfirmSubmit);
 
@@ -219,6 +235,36 @@ function attachStaticHandlers() {
 
   el('scanBtn').addEventListener('click', openScanModal);
   el('scanCloseBtn').addEventListener('click', closeScanModal);
+}
+
+// Cari toko by nama di SEMUA area (bukan cuma dropdown). Pilih hasilnya = area + toko
+// otomatis ikut berpindah.
+function renderStoreSearchResults() {
+  const q = el('storeSearch').value.trim().toLowerCase();
+  const box = el('storeSearchResults');
+  if (!q) { box.style.display = 'none'; box.innerHTML = ''; return; }
+  const matches = stores.filter(s => s.name.toLowerCase().includes(q))
+    .sort((a, b) => a.name.localeCompare(b.name));
+  const MAX = 30;
+  box.innerHTML = matches.length
+    ? matches.slice(0, MAX).map(s => `<button type="button" class="store-search-item" data-store-id="${esc(s.id)}"><span>${esc(s.name)}</span><small>${esc(s.area)}</small></button>`).join('')
+      + (matches.length > MAX ? `<div class="store-search-empty">+${matches.length - MAX} toko lain, persempit pencarian.</div>` : '')
+    : '<div class="store-search-empty">Toko tidak ditemukan.</div>';
+  box.style.display = 'block';
+  box.querySelectorAll('.store-search-item').forEach(btn => {
+    btn.addEventListener('click', () => pickStoreFromSearch(btn.dataset.storeId));
+  });
+}
+
+async function pickStoreFromSearch(storeId) {
+  const store = stores.find(s => s.id === storeId);
+  if (!store) return;
+  el('areaSel').value = store.area;
+  populateStoreSelect(store.area);
+  el('storeSel').value = store.id;
+  el('storeSearch').value = '';
+  renderStoreSearchResults();
+  await onStoreChange();
 }
 
 async function onAreaChange() {
@@ -237,6 +283,12 @@ async function onStoreChange(preferPeriodKey) {
   categoryFilter = 'all';
   brandFilter = 'all';
   expandedSkuGroups = {};
+  recapFlagFilter = 'all';
+  recapSearch = '';
+  recapBu = 'all';
+  recapCategory = 'all';
+  recapBrand = 'all';
+  recapExpanded = {};
   // Harga jual (+ kompetitor) tersedia untuk semua toko.
   priceEligible = true;
   expandedPriceCompetitor = {};
@@ -952,51 +1004,180 @@ async function savePromoStock(pcode, value) {
   }
 }
 
+const isStockZero = (sku) => {
+  const stockField = currentEntry[sku.barcode].stock;
+  return !fieldIsEmpty(stockField) && fieldTotal(stockField, sku.isi) === 0;
+};
+
+function recapSelectHtml(id, key, allLabel, current) {
+  const values = [...new Set(currentSkuList.map(s => s[key]).filter(Boolean))].sort();
+  return `<select id="${id}"><option value="all">${allLabel}</option>`
+    + values.map(v => `<option value="${esc(v)}"${v === current ? ' selected' : ''}>${esc(v)}</option>`).join('')
+    + '</select>';
+}
+
+// Tab Rekap: tombol kirim di atas (tidak perlu scroll ke bawah), daftar SKU dilipat per
+// section lalu per BU, dengan pencarian + filter yang sama seperti tab Input.
 function renderRecap() {
   const total = currentSkuList.length;
   const lengkap = currentSkuList.filter(sku => statusOf(currentEntry[sku.barcode]) === 'lengkap').length;
   const belum = total - lengkap;
-  const tidakAdaSkus = currentSkuList.filter(sku => {
-    const stockField = currentEntry[sku.barcode].stock;
-    return !fieldIsEmpty(stockField) && fieldTotal(stockField, sku.isi) === 0;
-  });
-  const tidakAda = tidakAdaSkus.length;
+  const tidakAda = currentSkuList.filter(isStockZero).length;
 
-  let html = `
+  el('viewRecap').innerHTML = `
     <div class="metric-grid">
       <div class="metric-card"><div class="label">Total SKU wajib</div><div class="value">${total}</div></div>
       <div class="metric-card"><div class="label">Lengkap</div><div class="value">${lengkap}</div></div>
       <div class="metric-card"><div class="label">Belum lengkap</div><div class="value">${belum}</div></div>
-      <div class="metric-card"><div class="label">Tidak ada di toko</div><div class="value">${tidakAda}</div></div>
+      <div class="metric-card${tidakAda ? ' metric-card-action' : ''}" id="recapOosCard"${tidakAda ? ' role="button" tabindex="0"' : ''}>
+        <div class="label">Tidak ada di toko</div>
+        <div class="value">${tidakAda}</div>
+        ${tidakAda ? '<div class="metric-hint">Ketuk untuk detail &amp; kirim WA</div>' : ''}
+      </div>
     </div>
+    <button id="submitBtn" class="primary" style="width:100%; margin-bottom:12px;">Konfirmasi dan kirim</button>
+    <div class="search-row">
+      <input id="recapSearchBox" type="text" placeholder="Cari nama produk atau barcode" value="${esc(recapSearch)}">
+    </div>
+    <div class="chip-row" id="recapFlagRow"></div>
+    <div class="sku-filter-row">
+      ${recapSelectHtml('recapBuSel', 'bu', 'Semua BU', recapBu)}
+      ${recapSelectHtml('recapCategorySel', 'category', 'Semua Category', recapCategory)}
+      ${recapSelectHtml('recapBrandSel', 'brand', 'Semua Brand', recapBrand)}
+      <button type="button" id="recapSortBtn" title="Urutkan nama produk">${recapSort === 'asc' ? 'A-Z <span>&#8595;</span>' : 'Z-A <span>&#8593;</span>'}</button>
+    </div>
+    <div id="recapLists"></div>
   `;
 
-  if (tidakAdaSkus.length) {
-    html += '<p class="section-title">SKU tidak ada di toko (perlu ditindaklanjuti restock)</p>';
-    html += tidakAdaSkus.map(sku => `
-      <div class="sku-item recap-jump" data-jump-barcode="${sku.barcode}">
-        <p class="sku-name">${sku.name}</p>
-        <p class="sku-code">${sku.barcode}${sku.pcode ? ' &middot; PC ' + sku.pcode : ''}</p>
-        <div>${badgeHtml(sku, currentEntry[sku.barcode])}</div>
-      </div>
-    `).join('');
-  }
-
-  const missing = currentSkuList.filter(sku => statusOf(currentEntry[sku.barcode]) !== 'lengkap');
-  if (missing.length) {
-    html += '<p class="section-title">Belum lengkap diisi</p>';
-    html += missing.map(sku => `
-      <div class="sku-item recap-jump" data-jump-barcode="${sku.barcode}">
-        <p class="sku-name">${sku.name}</p>
-        <div>${badgeHtml(sku, currentEntry[sku.barcode])}</div>
-      </div>
-    `).join('');
-  }
-
-  html += '<button id="submitBtn" class="primary" style="width:100%; margin-top:12px;">Konfirmasi dan kirim</button>';
-  el('viewRecap').innerHTML = html;
   el('submitBtn').addEventListener('click', onSubmitClick);
-  el('viewRecap').querySelectorAll('.recap-jump').forEach(elm => {
+  el('recapSearchBox').addEventListener('input', (e) => { recapSearch = e.target.value; renderRecapLists(); });
+  el('recapBuSel').addEventListener('change', (e) => { recapBu = e.target.value; renderRecapLists(); });
+  el('recapCategorySel').addEventListener('change', (e) => { recapCategory = e.target.value; renderRecapLists(); });
+  el('recapBrandSel').addEventListener('change', (e) => { recapBrand = e.target.value; renderRecapLists(); });
+  el('recapSortBtn').addEventListener('click', () => {
+    recapSort = recapSort === 'asc' ? 'desc' : 'asc';
+    el('recapSortBtn').innerHTML = recapSort === 'asc' ? 'A-Z <span>&#8595;</span>' : 'Z-A <span>&#8593;</span>';
+    renderRecapLists();
+  });
+  if (tidakAda) {
+    const card = el('recapOosCard');
+    card.addEventListener('click', openRecapOosModal);
+    card.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); openRecapOosModal(); }
+    });
+  }
+  renderRecapFlagChips();
+  renderRecapLists();
+}
+
+// Popup yang sama dengan dashboard: stock DT per SKU + tombol bagikan ke WhatsApp.
+async function openRecapOosModal() {
+  await ensureDistributorStockLoaded(currentStore.area);
+  const dist = distributorCache[currentStore.area];
+  const oosDetail = buildOosDetail(currentEntry, currentSkuList, (dist && dist.items) || {});
+  showOosModal({ store: currentStore, week: currentWeek, oosDetail });
+}
+
+function renderRecapFlagChips() {
+  const flags = ['all', 'COTC', 'MARKET MAKING', 'NPD'];
+  el('recapFlagRow').innerHTML = flags.map(f => {
+    const label = f === 'all' ? 'Semua' : (FLAG_LABELS[f] || f);
+    return `<span class="chip ${recapFlagFilter === f ? 'active' : ''}" data-flag="${f}">${label}</span>`;
+  }).join('');
+  el('recapFlagRow').querySelectorAll('.chip').forEach(chip => {
+    chip.addEventListener('click', () => {
+      recapFlagFilter = chip.dataset.flag;
+      renderRecapFlagChips();
+      renderRecapLists();
+    });
+  });
+}
+
+function recapFilterList(list) {
+  const q = recapSearch.trim().toLowerCase();
+  return list
+    .filter(sku => {
+      if (recapFlagFilter !== 'all' && sku.flag !== recapFlagFilter) return false;
+      if (recapBu !== 'all' && sku.bu !== recapBu) return false;
+      if (recapCategory !== 'all' && sku.category !== recapCategory) return false;
+      if (recapBrand !== 'all' && sku.brand !== recapBrand) return false;
+      if (q && !sku.name.toLowerCase().includes(q) && !sku.barcode.includes(q)) return false;
+      return true;
+    })
+    .sort((a, b) => recapSort === 'asc' ? a.name.localeCompare(b.name) : b.name.localeCompare(a.name));
+}
+
+function recapSkuItemHtml(sku, withCode) {
+  return `
+    <div class="sku-item recap-jump" data-jump-barcode="${sku.barcode}">
+      <p class="sku-name">${sku.name}</p>
+      ${withCode ? `<p class="sku-code">${sku.barcode}${sku.pcode ? ' &middot; PC ' + sku.pcode : ''}</p>` : ''}
+      <div>${badgeHtml(sku, currentEntry[sku.barcode])}</div>
+    </div>`;
+}
+
+function recapToggleHtml(key, label, count, isOpen) {
+  return `
+    <button type="button" class="promo-toggle recap-toggle" data-recap-key="${esc(key)}">
+      <span>${label} &middot; ${count}</span>
+      <span class="product-group-icon ${isOpen ? 'open' : ''}">&#9656;</span>
+    </button>`;
+}
+
+// Satu section (mis. "SKU tidak ada di toko"): dilipat, dan isinya dikelompokkan per BU (juga dilipat).
+function recapSectionHtml(key, title, list, withCode) {
+  if (!list.length) return '';
+  const isOpen = !!recapExpanded[key];
+  let body = '';
+  if (isOpen) {
+    const groups = {};
+    for (const sku of list) {
+      const g = sku.bu || 'Lainnya';
+      if (!groups[g]) groups[g] = [];
+      groups[g].push(sku);
+    }
+    body = Object.keys(groups).sort().map(g => {
+      const gKey = `${key}|${g}`;
+      const gOpen = !!recapExpanded[gKey];
+      return `
+        <div class="product-group">
+          ${recapToggleHtml(gKey, esc(g), groups[g].length, gOpen)}
+          <div class="product-group-body" style="display:${gOpen ? 'block' : 'none'}; margin-top:8px;">
+            ${gOpen ? groups[g].map(sku => recapSkuItemHtml(sku, withCode)).join('') : ''}
+          </div>
+        </div>`;
+    }).join('');
+  }
+  return `
+    <div class="product-group">
+      ${recapToggleHtml(key, title, list.length, isOpen)}
+      <div class="product-group-body" style="display:${isOpen ? 'block' : 'none'}; margin-top:8px;">${body}</div>
+    </div>`;
+}
+
+function renderRecapLists() {
+  const tidakAdaAll = currentSkuList.filter(isStockZero);
+  const belumAll = currentSkuList.filter(sku => statusOf(currentEntry[sku.barcode]) !== 'lengkap');
+  const oos = recapFilterList(tidakAdaAll);
+  const belum = recapFilterList(belumAll);
+
+  let html = recapSectionHtml('oos', 'SKU tidak ada di toko (perlu restock)', oos, true)
+    + recapSectionHtml('belum', 'Belum lengkap diisi', belum, false);
+  if (!html) {
+    html = (tidakAdaAll.length || belumAll.length)
+      ? '<p class="upload-status">Tidak ada produk yang cocok.</p>'
+      : '<p class="upload-status">Semua SKU sudah lengkap dan tersedia di toko.</p>';
+  }
+  el('recapLists').innerHTML = html;
+
+  el('recapLists').querySelectorAll('.recap-toggle').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const k = btn.dataset.recapKey;
+      recapExpanded[k] = !recapExpanded[k];
+      renderRecapLists();
+    });
+  });
+  el('recapLists').querySelectorAll('.recap-jump').forEach(elm => {
     elm.addEventListener('click', () => jumpToSku(elm.dataset.jumpBarcode));
   });
 }

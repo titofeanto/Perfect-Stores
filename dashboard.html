@@ -5,14 +5,25 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="color-scheme" content="light dark">
 <title>Dashboard Rekap - Logbook Perfect Stores</title>
-<link rel="stylesheet" href="css/style.css?v=7">
+<link rel="stylesheet" href="css/style.css?v=8">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tabler-icons/2.44.0/iconfont/tabler-icons.min.css">
 <style>
   table.recap-table { width: 100%; border-collapse: collapse; font-size: 12.5px; }
   table.recap-table th, table.recap-table td { text-align: left; padding: 8px 6px; border-bottom: 1px solid var(--border); white-space: nowrap; }
   table.recap-table th { color: var(--text-secondary); font-weight: 500; font-size: 11px; }
-  table.recap-table td.name-cell { white-space: normal; max-width: 160px; }
-  .table-wrap { overflow-x: auto; }
+  /* Kolom Toko + Area dibekukan (sticky) di kiri, header dibekukan di atas: tetap kelihatan saat scroll */
+  table.recap-table { --c1w: 112px; --c2w: 72px; }
+  table.recap-table td.name-cell { white-space: normal; }
+  .table-wrap { overflow: auto; max-height: 75vh; }
+  table.recap-table th { position: sticky; top: 0; z-index: 2; background: var(--surface); }
+  table.recap-table th:nth-child(1), table.recap-table td:nth-child(1) {
+    position: sticky; left: 0; width: var(--c1w); min-width: var(--c1w); max-width: var(--c1w); background: var(--surface); z-index: 1;
+  }
+  table.recap-table th:nth-child(2), table.recap-table td:nth-child(2) {
+    position: sticky; left: var(--c1w); width: var(--c2w); min-width: var(--c2w); max-width: var(--c2w); background: var(--surface); z-index: 1;
+    box-shadow: 2px 0 3px -1px rgb(var(--shadow-rgb) / 0.18);
+  }
+  table.recap-table th:nth-child(1), table.recap-table th:nth-child(2) { z-index: 3; }
   .status-pill { font-size: 11px; padding: 2px 8px; border-radius: 99px; white-space: nowrap; }
   .status-pill.submitted { background: var(--success-bg); color: var(--success); }
   .status-pill.progress { background: var(--warning-bg); color: var(--warning); }
@@ -62,6 +73,25 @@
       </div>
     </div>
   </header>
+
+  <div class="card" id="filterCard">
+    <span class="filter-label">Area</span>
+    <div class="chip-row" id="areaChips" style="margin-bottom:0;"></div>
+    <span class="filter-label">Bisnis Unit</span>
+    <div class="chip-row" id="buChips" style="margin-bottom:0;"></div>
+    <span class="filter-label">Toko</span>
+    <input id="storeQuery" type="text" placeholder="Cari nama toko">
+    <details id="storePicker" class="store-picker">
+      <summary id="storePickerSummary">Pilih toko manual</summary>
+      <div class="store-picker-actions">
+        <button type="button" id="storePickAll">Pilih semua</button>
+        <button type="button" id="storePickNone">Hapus pilihan</button>
+      </div>
+      <div id="storeChecklist" class="store-checklist"></div>
+    </details>
+    <p id="filterInfo" class="upload-status" style="margin-top:8px;"></p>
+    <button type="button" id="filterReset" style="font-size:12px; padding:5px 10px;">Reset filter</button>
+  </div>
 
   <div class="card">
     <div class="row2">
@@ -132,18 +162,26 @@
   </div>
 
   <div id="oosModal" class="modal-backdrop">
-    <div class="modal-box" style="max-width:420px; max-height:80vh; overflow-y:auto;">
-      <h3 id="oosModalTitle">SKU tidak ada di toko</h3>
-      <p id="oosModalSubtitle" class="upload-status" style="margin-bottom:10px;"></p>
-      <div id="oosModalBody"></div>
-      <button id="oosShareBtn" class="primary" style="width:100%; margin-top:12px;">Bagikan ke WhatsApp (gambar)</button>
-      <p id="oosShareNote" class="upload-status" style="margin-top:6px;"></p>
-      <button id="oosModalClose" style="width:100%; margin-top:8px;">Tutup</button>
+    <div id="oosBox" class="modal-box oos-box">
+      <div class="oos-head">
+        <h3 id="oosModalTitle">SKU tidak ada di toko</h3>
+        <div class="oos-head-actions">
+          <button type="button" id="oosScrollBtn" title="Langsung ke bawah (tombol bagikan)">&#8595; Bawah</button>
+          <button type="button" id="oosCloseX" title="Tutup" aria-label="Tutup">&#10005;</button>
+        </div>
+      </div>
+      <div class="oos-content">
+        <p id="oosModalSubtitle" class="upload-status" style="margin-bottom:10px;"></p>
+        <div id="oosModalBody"></div>
+        <button id="oosShareBtn" class="primary" style="width:100%; margin-top:12px;">Bagikan ke WhatsApp (gambar)</button>
+        <p id="oosShareNote" class="upload-status" style="margin-top:6px;"></p>
+        <button id="oosModalClose" style="width:100%; margin-top:8px;">Tutup</button>
+      </div>
     </div>
   </div>
 
 </div>
 <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
-<script type="module" src="js/dashboard.js?v=11"></script>
+<script type="module" src="js/dashboard.js?v=12"></script>
 </body>
 </html>

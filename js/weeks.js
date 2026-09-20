@@ -39,6 +39,10 @@ export function getWeeksForMonth(year, monthIndex0) {
   return weeks;
 }
 
+// w.start dan w.end jam 00:00, sedangkan `date` biasanya new Date() (ada jam). Dulu
+// dibandingkan langsung, jadi hari Minggu (w.end) setelah jam 00:00 tidak cocok
+// dengan minggu mana pun dan dropdown jatuh ke Minggu 1. Bandingkan per hari saja.
 export function findWeekContaining(weeks, date) {
-  return weeks.findIndex(w => date >= w.start && date <= w.end);
+  const day = new Date(date.getFullYear(), date.getMonth(), date.getDate());
+  return weeks.findIndex(w => day >= w.start && day <= w.end);
 }

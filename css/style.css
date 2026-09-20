@@ -537,6 +537,10 @@ button:disabled { opacity: 0.55; cursor: default; transform: none; }
 }
 .metric-card .label { font-size: 12px; color: var(--text-secondary); }
 .metric-card .value { font-size: 23px; font-weight: 650; letter-spacing: -0.01em; }
+.metric-card-action { cursor: pointer; border: 1px solid var(--border); transition: background-color .15s ease, transform .1s ease; }
+.metric-card-action:active { transform: scale(0.98); }
+.metric-card-action .value { color: var(--danger); }
+.metric-hint { font-size: 11px; color: var(--accent); margin-top: 2px; }
 
 .modal-backdrop {
   display: flex;
@@ -768,3 +772,41 @@ details.dt-codes summary { cursor: pointer; font-size: 12px; color: var(--accent
 .dt-code-qty { font-size: 12px; }
 .dt-code-row.has-stock .dt-code-qty { color: var(--success); font-weight: 600; }
 .dt-code-row.no-stock .dt-code-qty { color: var(--text-muted); }
+
+/* Popup "SKU tidak ada di toko": header menempel di atas supaya tombol tutup selalu terlihat */
+.oos-box { max-width: 420px; max-height: 80vh; overflow-y: auto; padding: 0; }
+.oos-head {
+  position: sticky;
+  top: 0;
+  z-index: 2;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 12px 14px;
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+}
+.oos-head h3 { margin: 0; font-size: 14px; flex: 1; min-width: 0; }
+.oos-head-actions { display: flex; gap: 6px; flex: none; }
+.oos-head-actions button { padding: 5px 10px; font-size: 12px; white-space: nowrap; }
+.oos-content { padding: 12px 14px 16px; }
+
+/* Filter dashboard */
+.filter-label { font-size: 12px; font-weight: 600; color: var(--text-secondary); margin: 10px 0 6px; display: block; }
+.filter-label:first-of-type { margin-top: 0; }
+.store-picker { margin-top: 8px; border: 1px solid var(--border); border-radius: var(--radius); padding: 6px 10px; }
+.store-picker summary { cursor: pointer; font-size: 12.5px; color: var(--accent); }
+.store-picker-actions { display: flex; gap: 6px; margin: 8px 0; }
+.store-picker-actions button { font-size: 12px; padding: 5px 10px; }
+.store-checklist { max-height: 240px; overflow-y: auto; border-top: 1px solid var(--border); }
+.store-check { display: flex; align-items: center; gap: 8px; padding: 7px 2px; border-bottom: 1px solid var(--border); font-size: 13px; cursor: pointer; }
+.store-check input { width: auto; flex: none; }
+.store-check .store-check-area { margin-left: auto; font-size: 11px; color: var(--text-muted); }
+
+/* Hasil cari toko di halaman input */
+.store-search-results { margin-top: 6px; border: 1px solid var(--border); border-radius: var(--radius); max-height: 220px; overflow-y: auto; background: var(--surface); }
+.store-search-item { display: flex; justify-content: space-between; gap: 8px; width: 100%; text-align: left; padding: 9px 11px; border: none; border-bottom: 1px solid var(--border); border-radius: 0; background: none; font-size: 13px; cursor: pointer; }
+.store-search-item:last-child { border-bottom: none; }
+.store-search-item small { color: var(--text-muted); font-size: 11px; white-space: nowrap; }
+.store-search-empty { padding: 9px 11px; font-size: 12.5px; color: var(--text-muted); }
