@@ -5,6 +5,7 @@ import { getWeeksForMonth, findWeekContaining, fmtShort, MONTHS_ID, addDays, iso
 import { loadDistributorStock, parseDistributorWorkbook, saveDistributorStock } from './stock-upload.js';
 import { supportsNativeBarcodeDetector, startNativeScan, stopNativeScan, startFallbackScan, stopFallbackScan } from './barcode-scan.js';
 import { parsePurchaseWorkbook } from './purchase-upload.js';
+import { computeDtStock, dtCodesHtml, fmtTotal, hasDistributorData } from './dt-stock.js?v=1';
 import { loadPromoSku, loadPriceEntry, savePriceField, loadCompetitors, addCompetitor, updateCompetitor } from './harga-data.js';
 import { FIELDS, EDITABLE_FIELDS, fieldTotal, fieldIsEmpty, normalizeField, statusOf } from './entry-utils.js';
 
@@ -136,6 +137,8 @@ async function applyUrlParamsAndLoad() {
 function populateAreaSelect() {
   const areas = Object.keys(storesByArea).sort();
   el('areaSel').innerHTML = areas.map(a => `<option value="${a}">${a}</option>`).join('');
+  // Upload stock distributor: 1 file per Area (semua area yang bisa dilihat akun ini)
+  el('stockAreaSel').innerHTML = areas.map(a => `<option value="${a}">${a}</option>`).join('');
 }
 
 function populateStoreSelect(area) {
@@ -517,10 +520,11 @@ function populateSkuFilterDropdowns() {
 
 function skuCardHtml(sku, distStock) {
   const item = currentEntry[sku.barcode];
+  // Stock DT = jumlah semua SKU Code dengan barcode yang sama; rincian per kode bisa dibuka.
   let distHint = '';
-  if (distStock && sku.pcode && distStock.items[sku.pcode]) {
-    const d = distStock.items[sku.pcode];
-    distHint = `<div class="sku-distributor">Stock distributor (${currentStore.area}): ${d.karton} karton, ${d.lusin} lusin, ${d.pcs} pcs</div>`;
+  if (distStock && hasDistributorData(distStock.items)) {
+    const dt = computeDtStock(sku, distStock.items);
+    distHint = `<div class="sku-distributor">Stock distributor (${currentStore.area}): ${dt.dtQty > 0 ? `${fmtTotal(dt.dtQty, sku.isi)} (= ${dt.dtQty} pcs)` : 'kosong'}</div>${dtCodesHtml(dt)}`;
   }
   const isiNote = sku.isi
     ? `<p class="sku-isi">1 karton = ${sku.isi} pcs &middot; 1 lusin = 12 pcs</p>`
@@ -1217,7 +1221,7 @@ async function onStockSave() {
   }
 }
 
-// ---------- Barang Masuk (upload pembelian toko dari distributor, oleh Supervisor) ----------
+// ---------- Upload Extract (data pembelian toko dari distributor -> Barang Masuk, oleh Supervisor) ----------
 
 let pendingMasukResult = null;
 let lastMasukFile = null; // File terakhir yang dipilih -- dipakai untuk baca ulang otomatis kalau Minggu diganti
@@ -1238,7 +1242,8 @@ function refreshMasukTab() {
 }
 
 // Cocokkan baris mentah hasil parsing ke toko (by Outlet=storeId) & SKU wajib toko itu
-// (by SKUCode=PC Code), sambil membuang baris yang tanggalnya di luar minggu yang sedang dipilih.
+// (by SKUCode -> BARCODE: semua SKU Code dengan barcode yang sama dihitung ke barcode itu),
+// sambil membuang baris yang tanggalnya di luar minggu yang sedang dipilih.
 async function processPurchaseRows(rows) {
   const weekStart = currentWeek.start;
   const weekEnd = currentWeek.end;
@@ -1246,7 +1251,7 @@ async function processPurchaseRows(rows) {
   const unmatchedStoreSet = new Set();
   let nonWajibCount = 0;
   const perStoreQty = {}; // storeId -> { barcode: totalQty }
-  const pcodeMapCache = {}; // scopeSlug -> Map(pcode -> barcode)
+  const codeMapCache = {}; // scopeSlug -> Map(skuCode -> barcode)
 
   for (const row of rows) {
     if (row.invDate && (row.invDate < weekStart || row.invDate > weekEnd)) {
@@ -1258,11 +1263,17 @@ async function processPurchaseRows(rows) {
       unmatchedStoreSet.add(row.outlet);
       continue;
     }
-    if (!pcodeMapCache[store.scopeSlug]) {
+    if (!codeMapCache[store.scopeSlug]) {
       const skuList = await loadSkuList(store.scopeSlug);
-      pcodeMapCache[store.scopeSlug] = new Map(skuList.filter(s => s.pcode).map(s => [s.pcode, s.barcode]));
+      const map = new Map();
+      for (const s of skuList) {
+        for (const c of (s.codes || [])) map.set(c.code, s.barcode);
+      }
+      // pcode selalu dipakai sebagai cadangan (data lama tanpa daftar codes)
+      for (const s of skuList) if (s.pcode && !map.has(s.pcode)) map.set(s.pcode, s.barcode);
+      codeMapCache[store.scopeSlug] = map;
     }
-    const barcode = pcodeMapCache[store.scopeSlug].get(row.skuCode);
+    const barcode = codeMapCache[store.scopeSlug].get(row.skuCode);
     if (!barcode) {
       nonWajibCount++;
       continue;

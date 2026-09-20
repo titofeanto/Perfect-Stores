@@ -47,6 +47,7 @@ data/
   sku-local-minis.json   - SKU wajib untuk scope channel Local Minis
   sku-haba-dt.json       - SKU wajib untuk scope channel Haba DT
 scripts/build_data.py    - script untuk regenerate file di /data dari Excel sumber
+scripts/build_sku_codes.py - tambah daftar semua SKU Code per barcode ke data/sku-*.json
 firebase-config.js       - config project Firebase Anda (isi sendiri, lihat di bawah)
 firestore.rules          - baseline security rules Firestore
 ```
@@ -129,6 +130,14 @@ python3 scripts/build_data.py
 ```
 
 Ini akan menimpa ulang semua file di `/data`.
+
+Lalu jalankan langkah kedua supaya tiap SKU punya daftar semua SKU Code-nya
+(1 barcode bisa punya beberapa SKU Code; stock distributor dicatat per SKU Code).
+Tanpa langkah ini, dashboard hanya mengecek 1 kode per barcode:
+
+```
+python3 scripts/build_sku_codes.py "/path/ke/20260825_Product Hierarchy.xlsx"
+```
 
 ## Model data di Firestore
 

@@ -1,6 +1,8 @@
 // Logic bersama untuk status kelengkapan SKU wajib -- dipakai oleh app.js (input per toko)
 // dan dashboard.js (rekap lintas toko), supaya definisi "lengkap/belum lengkap" selalu sama.
 
+import { computeDtStock } from './dt-stock.js?v=1';
+
 export const FIELDS = ['stock', 'order', 'masuk', 'jual'];
 
 // SBA hanya mengisi Stock & Order. Masuk (barang masuk) diisi lewat upload data
@@ -43,34 +45,25 @@ export function statusOf(item) {
 
 // Daftar SKU yang stock tokonya 0, dicocokkan dengan stock distributor (kalau ada
 // datanya) -- dipakai dashboard untuk drill-down "Tidak ada" per toko.
-// distStockItems: map {pcode: {karton,lusin,pcs}} dari koleksi distributorStock/{area}.
+// Stock DT dihitung per barcode (jumlah semua SKU Code-nya), lihat dt-stock.js.
 // CATATAN: distributorStock cuma menyimpan snapshot TERBARU (bukan histori per minggu),
 // jadi kalau minggu yang dilihat bukan minggu berjalan, angka DT ini adalah kondisi
 // TERKINI, bukan kondisi persis pada minggu itu.
 export function buildOosDetail(items, skuList, distStockItems) {
   items = items || {};
-  distStockItems = distStockItems || {};
   const result = [];
   for (const sku of skuList) {
     const raw = items[sku.barcode] || {};
     const stockField = normalizeField(raw.stock);
     if (fieldIsEmpty(stockField)) continue;
-    const qty = fieldTotal(stockField, sku.isi);
-    if (qty !== 0) continue;
-    const dt = sku.pcode ? distStockItems[sku.pcode] : null;
-    let dtQty = null;
-    let dtBreakdown = null;
-    if (dt) {
-      dtBreakdown = { karton: Number(dt.karton) || 0, lusin: Number(dt.lusin) || 0, pcs: Number(dt.pcs) || 0 };
-      dtQty = dtBreakdown.karton * (sku.isi || 0) + dtBreakdown.lusin * 12 + dtBreakdown.pcs;
-    }
+    if (fieldTotal(stockField, sku.isi) !== 0) continue;
     result.push({
       barcode: sku.barcode,
       pcode: sku.pcode,
       name: sku.name,
       flag: sku.flag,
-      dtQty, // null = tidak ada data DT sama sekali, angka (termasuk 0) = ada datanya
-      dtBreakdown, // {karton, lusin, pcs} apa adanya dari file distributor, null kalau tidak ada data
+      isi: sku.isi,
+      ...computeDtStock(sku, distStockItems), // hasDtData, dtQty, codes, hiddenDelisted
     });
   }
   return result;

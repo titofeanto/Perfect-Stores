@@ -2,7 +2,8 @@ import { db, doc, getDoc, collection, query, where, getDocs, authReady } from '.
 import { pickAccount, storeIsAllowed, switchAccount } from './store-filter.js?v=1';
 import { loadStores, loadSkuList } from './store-data.js';
 import { getWeeksForMonth, findWeekContaining, fmtShort, MONTHS_ID } from './weeks.js';
-import { summarizeEntry, buildOosDetail, normalizeField, fieldTotal, fieldIsEmpty } from './entry-utils.js';
+import { summarizeEntry, buildOosDetail, normalizeField, fieldTotal, fieldIsEmpty } from './entry-utils.js?v=3';
+import { esc, dtCodesHtml, fmtTotal } from './dt-stock.js?v=1';
 import { downloadAsExcel } from './export-utils.js';
 
 const TODAY = new Date();
@@ -45,7 +46,7 @@ async function init() {
 // distributorStock cuma menyimpan snapshot TERBARU (bukan histori per minggu) --
 // dimuat sekali saja, bukan tergantung minggu yang dipilih.
 async function loadDistributorStockAll() {
-  const areas = ['Sorong', 'Timika'];
+  const areas = [...new Set(stores.map(s => s.area))]; // semua area toko yang bisa dilihat akun ini
   const results = await Promise.all(areas.map(async area => {
     try {
       const snap = await getDoc(doc(db, 'distributorStock', area));
@@ -346,30 +347,31 @@ async function exportAllStores() {
   }
 }
 
-function dtStatusBadge(dtQty) {
-  if (dtQty === null || dtQty === undefined) {
-    return '<span class="status-pill notstarted">Data DT tidak ada</span>';
+function dtStatusBadge(d) {
+  if (!d.hasDtData) {
+    return '<span class="status-pill notstarted">Data stock DT belum di-upload</span>';
   }
-  if (dtQty > 0) {
-    return '<span class="status-pill submitted">Ada di DT &middot; push salesman</span>';
+  if (d.dtQty > 0) {
+    return '<span class="status-pill submitted">Ada stock di DT - Salesman/SBA Nego Order ke Buyer</span>';
   }
-  return '<span class="status-pill progress" style="background:var(--danger-bg); color:var(--danger);">OOS DT juga</span>';
+  return '<span class="status-pill progress" style="background:var(--danger-bg); color:var(--danger);">Stock DT tidak ada / kosong - Request SPO / tanya kapan datang</span>';
 }
 
 function openOosModal(storeId, week) {
   const row = rowsByStoreId[storeId];
   if (!row) return;
   el('oosModalTitle').textContent = `SKU tidak ada di toko - ${row.store.name}`;
-  el('oosModalSubtitle').textContent = `${week.label} (${fmtShort(week.start)} - ${fmtShort(week.end)}) &middot; dicocokkan ke stock distributor TERKINI (bukan histori minggu itu)`;
+  el('oosModalSubtitle').innerHTML = `${week.label} (${fmtShort(week.start)} - ${fmtShort(week.end)}) &middot; dicocokkan ke stock distributor ${row.store.area} TERKINI (bukan histori minggu itu)`;
   if (!row.oosDetail.length) {
     el('oosModalBody').innerHTML = '<p class="upload-status">Tidak ada SKU dengan stock 0 untuk toko ini.</p>';
   } else {
     el('oosModalBody').innerHTML = row.oosDetail.map(d => `
       <div class="sku-item">
-        <p class="sku-name">${d.name}</p>
-        <p class="sku-code">${d.barcode}${d.pcode ? ' &middot; PC ' + d.pcode : ''}</p>
-        <div>${dtStatusBadge(d.dtQty)}</div>
-        ${d.dtBreakdown ? `<p class="upload-status">Stock distributor (${row.store.area}): ${d.dtBreakdown.karton} karton, ${d.dtBreakdown.lusin} lusin, ${d.dtBreakdown.pcs} pcs</p>` : ''}
+        <p class="sku-name">${esc(d.name)}</p>
+        <p class="sku-code">${esc(d.barcode)}</p>
+        <div>${dtStatusBadge(d)}</div>
+        ${d.dtQty > 0 ? `<p class="upload-status">Total stock DT ${esc(row.store.area)}: ${fmtTotal(d.dtQty, d.isi)} (= ${d.dtQty} pcs)</p>` : ''}
+        ${dtCodesHtml(d)}
       </div>
     `).join('');
   }

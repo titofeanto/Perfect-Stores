@@ -7,7 +7,93 @@
     "flag": "MARKET MAKING",
     "brand": "DOVE",
     "bu": "PERSONAL CARE",
-    "category": "SKIN CLEANSING"
+    "category": "SKIN CLEANSING",
+    "codes": [
+      {
+        "code": "64806761",
+        "name": "DOVE MOISTURE RENEW PCH 24X400ML",
+        "isi": 24,
+        "status": "Active"
+      },
+      {
+        "code": "65646943",
+        "name": "DOVE SR MOISTURE RENEW PCH 24X380G",
+        "isi": 24,
+        "status": "Active"
+      },
+      {
+        "code": "69586668",
+        "name": "DOVE BW DEEPLY NOURISH K1 REFF 24X400ML",
+        "isi": 24,
+        "status": "Active"
+      },
+      {
+        "code": "69598281",
+        "name": "DOVE BW DEEPLY NOURISH K1 REFF 24X450ML",
+        "isi": 24,
+        "status": "Active"
+      },
+      {
+        "code": "20247066",
+        "name": "DOVE CS BTY MOIS REF PROMO 24X400ML",
+        "isi": 24,
+        "status": "Delisted"
+      },
+      {
+        "code": "20289324",
+        "name": "DOVE DEEPLY NOURISHING REFF 24X400ML",
+        "isi": 24,
+        "status": "Delisted"
+      },
+      {
+        "code": "62071331",
+        "name": "DOVE BW SOFTENING 450ML/24 REF",
+        "isi": 24,
+        "status": "Inactive"
+      },
+      {
+        "code": "62071732",
+        "name": "DOVE CS BTY MOIST REF 24X400ML",
+        "isi": 24,
+        "status": "Inactive"
+      },
+      {
+        "code": "67001981",
+        "name": "DOVE DEEPLY NOURISH REFF RL 24X400ML",
+        "isi": 24,
+        "status": "Delisted"
+      },
+      {
+        "code": "67067774",
+        "name": "DOVE BW DEEPLY NOURISH PROMO 24X400ML",
+        "isi": 24,
+        "status": "Delisted"
+      },
+      {
+        "code": "67528493",
+        "name": "DOVE DEEPLY NOURISH RF PRM 24X(400+15ML)",
+        "isi": 24,
+        "status": "Delisted"
+      },
+      {
+        "code": "67930252",
+        "name": "DOVE BW DEEPLY NOURISH LD REFF 24X400ML",
+        "isi": 24,
+        "status": "Delisted"
+      },
+      {
+        "code": "68670331",
+        "name": "DOVE BW DEEPLY NOURISH KR REFF 24X400ML",
+        "isi": 24,
+        "status": "Delisted"
+      },
+      {
+        "code": "68755065",
+        "name": "DOVE BW DEEPLY NOURISH BND 24X(400+85)ML",
+        "isi": 24,
+        "status": "Delisted"
+      }
+    ]
   },
   {
     "barcode": "8999999596422",
@@ -17,7 +103,27 @@
     "flag": "MARKET MAKING",
     "brand": "VASELINE",
     "bu": "BEAUTY & WELLBEING",
-    "category": "HAND & BODY CARE"
+    "category": "HAND & BODY CARE",
+    "codes": [
+      {
+        "code": "64398232",
+        "name": "VASELINE GH FLAWLESS VCT SERUM 4X6X100ML",
+        "isi": 24,
+        "status": "Active"
+      },
+      {
+        "code": "65486826",
+        "name": "VASELINE GH FLAWLESS SRM VLTR 4X6X100ML",
+        "isi": 24,
+        "status": "Active"
+      },
+      {
+        "code": "69994214",
+        "name": "VASELINE GL HYA FLAWLESS SERUM 8X3X100ML",
+        "isi": 24,
+        "status": "Delisted"
+      }
+    ]
   },
   {
     "barcode": "8999999600303",
@@ -27,7 +133,21 @@
     "flag": "MARKET MAKING",
     "brand": "SUNSILK",
     "bu": "BEAUTY & WELLBEING",
-    "category": "HAIR CARE"
+    "category": "HAIR CARE",
+    "codes": [
+      {
+        "code": "65280470",
+        "name": "SUNSILK MULTI VIT HAIR PERF W2 24X50ML",
+        "isi": 24,
+        "status": "Active"
+      },
+      {
+        "code": "62769449",
+        "name": "SUNSILK MULTIVTMN HAIR PERFUME 24X50ML",
+        "isi": 24,
+        "status": "Active No Production"
+      }
+    ]
   },
   {
     "barcode": "8999999601454",
@@ -37,7 +157,21 @@
     "flag": "MARKET MAKING",
     "brand": "DOVE",
     "bu": "PERSONAL CARE",
-    "category": "DEODORANTS & FRAGRANCES"
+    "category": "DEODORANTS & FRAGRANCES",
+    "codes": [
+      {
+        "code": "64314038",
+        "name": "DOVE DEO RO ORANGE NIA+VITC&E 8X3X45ML",
+        "isi": 24,
+        "status": "Active"
+      },
+      {
+        "code": "65630019",
+        "name": "DOVE DEO RO ORNGE NI+VITC&E RL 8X3X45ML",
+        "isi": 24,
+        "status": "Active"
+      }
+    ]
   },
   {
     "barcode": "8999999604851",
@@ -47,7 +181,15 @@
     "flag": "MARKET MAKING",
     "brand": "TRESEMME",
     "bu": "BEAUTY & WELLBEING",
-    "category": "HAIR CARE"
+    "category": "HAIR CARE",
+    "codes": [
+      {
+        "code": "64399221",
+        "name": "TRESEMME KS KERATIN SMOOTH MASK 48X30GR",
+        "isi": 48,
+        "status": "Active"
+      }
+    ]
   },
   {
     "barcode": "8999999605865",
@@ -57,7 +199,21 @@
     "flag": "MARKET MAKING",
     "brand": "POND'S",
     "bu": "BEAUTY & WELLBEING",
-    "category": "FACE"
+    "category": "FACE",
+    "codes": [
+      {
+        "code": "64766549",
+        "name": "PONDS UV MIRACLE BRIGHT SPF 35 12X25G",
+        "isi": 12,
+        "status": "Active"
+      },
+      {
+        "code": "69611521",
+        "name": "PONDS UV PROTECT SUN SERUM SPF35 2X6X30G",
+        "isi": 12,
+        "status": "Active"
+      }
+    ]
   },
   {
     "barcode": "8999999606824",
@@ -67,7 +223,21 @@
     "flag": "MARKET MAKING",
     "brand": "DOVE",
     "bu": "PERSONAL CARE",
-    "category": "SKIN CLEANSING"
+    "category": "SKIN CLEANSING",
+    "codes": [
+      {
+        "code": "64807525",
+        "name": "DOVE SENSITIVE PCH 24X400ML",
+        "isi": 24,
+        "status": "Active"
+      },
+      {
+        "code": "65646948",
+        "name": "DOVE SR SENSITIVE PCH DR 24X380G",
+        "isi": 24,
+        "status": "Active"
+      }
+    ]
   },
   {
     "barcode": "8999999606831",
@@ -77,7 +247,21 @@
     "flag": "MARKET MAKING",
     "brand": "DOVE",
     "bu": "PERSONAL CARE",
-    "category": "SKIN CLEANSING"
+    "category": "SKIN CLEANSING",
+    "codes": [
+      {
+        "code": "64807527",
+        "name": "DOVE PAMPERING CARE PCH 24X400ML",
+        "isi": 24,
+        "status": "Active"
+      },
+      {
+        "code": "65646938",
+        "name": "DOVE SR PAMPERING PCH DR 24X380G",
+        "isi": 24,
+        "status": "Active"
+      }
+    ]
   },
   {
     "barcode": "8999999608217",
@@ -87,7 +271,21 @@
     "flag": "MARKET MAKING",
     "brand": "VASELINE",
     "bu": "BEAUTY & WELLBEING",
-    "category": "HAND & BODY CARE"
+    "category": "HAND & BODY CARE",
+    "codes": [
+      {
+        "code": "64843038",
+        "name": "VASELINE GH SPF 50 VCT SERUM 4X6X50ML",
+        "isi": 24,
+        "status": "Active"
+      },
+      {
+        "code": "65491680",
+        "name": "VASELINE GH LUMI SPF50 SRM VLC 4X6X50ML",
+        "isi": 24,
+        "status": "Active"
+      }
+    ]
   },
   {
     "barcode": "8999999608460",
@@ -97,7 +295,21 @@
     "flag": "MARKET MAKING",
     "brand": "POND'S",
     "bu": "BEAUTY & WELLBEING",
-    "category": "FACE"
+    "category": "FACE",
+    "codes": [
+      {
+        "code": "64851741",
+        "name": "PONDS HYDRA MIR ULGEL FM 4X3X20G",
+        "isi": 12,
+        "status": "Active"
+      },
+      {
+        "code": "64962813",
+        "name": "PONDS HYDRA MIR ULGEL FM NEW 4X3X20G",
+        "isi": 12,
+        "status": "Active"
+      }
+    ]
   },
   {
     "barcode": "8999999608484",
@@ -107,7 +319,21 @@
     "flag": "MARKET MAKING",
     "brand": "POND'S",
     "bu": "BEAUTY & WELLBEING",
-    "category": "FACE"
+    "category": "FACE",
+    "codes": [
+      {
+        "code": "64851737",
+        "name": "PONDS BRIGHT MIR ULGEL FM 4X3X20G",
+        "isi": 12,
+        "status": "Active"
+      },
+      {
+        "code": "64962821",
+        "name": "PONDS BRIGHT MIR ULGEL FM NEW 4X3X20G",
+        "isi": 12,
+        "status": "Active"
+      }
+    ]
   },
   {
     "barcode": "8999999608903",
@@ -117,7 +343,15 @@
     "flag": "MARKET MAKING",
     "brand": "GLOW & LOVELY",
     "bu": "BEAUTY & WELLBEING",
-    "category": "FACE"
+    "category": "FACE",
+    "codes": [
+      {
+        "code": "64866730",
+        "name": "GLOW & LOVELY SUN UV DUO SPF50 24X30G",
+        "isi": 24,
+        "status": "Active"
+      }
+    ]
   },
   {
     "barcode": "8999999608910",
@@ -127,7 +361,15 @@
     "flag": "MARKET MAKING",
     "brand": "GLOW & LOVELY",
     "bu": "BEAUTY & WELLBEING",
-    "category": "FACE"
+    "category": "FACE",
+    "codes": [
+      {
+        "code": "64866732",
+        "name": "GLOW & LOVELY SUN UV DUO SPF50 48X15G",
+        "isi": 48,
+        "status": "Active"
+      }
+    ]
   },
   {
     "barcode": "8999999609467",
@@ -137,7 +379,15 @@
     "flag": "MARKET MAKING",
     "brand": "CLOSE UP",
     "bu": "PERSONAL CARE",
-    "category": "ORAL CARE"
+    "category": "ORAL CARE",
+    "codes": [
+      {
+        "code": "64872226",
+        "name": "CLOSE UP WHITE NOW PURPLE 36X95G",
+        "isi": 36,
+        "status": "Active"
+      }
+    ]
   },
   {
     "barcode": "8999999609474",
@@ -147,7 +397,15 @@
     "flag": "MARKET MAKING",
     "brand": "CLOSE UP",
     "bu": "PERSONAL CARE",
-    "category": "ORAL CARE"
+    "category": "ORAL CARE",
+    "codes": [
+      {
+        "code": "64872228",
+        "name": "CLOSE UP WHITE NOW KAOLIN 36X95G",
+        "isi": 36,
+        "status": "Active"
+      }
+    ]
   },
   {
     "barcode": "8999999609559",
@@ -157,7 +415,15 @@
     "flag": "MARKET MAKING",
     "brand": "POND'S",
     "bu": "BEAUTY & WELLBEING",
-    "category": "FACE"
+    "category": "FACE",
+    "codes": [
+      {
+        "code": "64875134",
+        "name": "POND'S HYDRA MIR ULGEL FC 4X6X90G",
+        "isi": 24,
+        "status": "Active"
+      }
+    ]
   },
   {
     "barcode": "8999999609566",
@@ -167,7 +433,15 @@
     "flag": "MARKET MAKING",
     "brand": "POND'S",
     "bu": "BEAUTY & WELLBEING",
-    "category": "FACE"
+    "category": "FACE",
+    "codes": [
+      {
+        "code": "64875136",
+        "name": "POND'S BRIGHT MIR ULGEL FC 4X6X90G",
+        "isi": 24,
+        "status": "Active"
+      }
+    ]
   },
   {
     "barcode": "8999999610005",
@@ -177,7 +451,15 @@
     "flag": "MARKET MAKING",
     "brand": "TRESEMME",
     "bu": "BEAUTY & WELLBEING",
-    "category": "HAIR CARE"
+    "category": "HAIR CARE",
+    "codes": [
+      {
+        "code": "64888811",
+        "name": "TRESEMME KERATIN SMOOTH SERUM 12X30ML",
+        "isi": 12,
+        "status": "Active"
+      }
+    ]
   },
   {
     "barcode": "8999999611330",
@@ -187,7 +469,21 @@
     "flag": "MARKET MAKING",
     "brand": "SUNSILK",
     "bu": "BEAUTY & WELLBEING",
-    "category": "HAIR CARE"
+    "category": "HAIR CARE",
+    "codes": [
+      {
+        "code": "64875013",
+        "name": "SUNSILK MULTIVITAMIN SILKY VLM 24X50ML",
+        "isi": 24,
+        "status": "Active"
+      },
+      {
+        "code": "65280469",
+        "name": "SUNSILK MULTI VIT SILKY VLM W2 24X50ML",
+        "isi": 24,
+        "status": "Active"
+      }
+    ]
   },
   {
     "barcode": "8999999611347",
@@ -197,7 +493,21 @@
     "flag": "MARKET MAKING",
     "brand": "SUNSILK",
     "bu": "BEAUTY & WELLBEING",
-    "category": "HAIR CARE"
+    "category": "HAIR CARE",
+    "codes": [
+      {
+        "code": "64875011",
+        "name": "SUNSILK MULTIVITAMIN SILKY GLS 24X50ML",
+        "isi": 24,
+        "status": "Active"
+      },
+      {
+        "code": "65280468",
+        "name": "SUNSILK MULTI VIT SILKY GLS W2 24X50ML",
+        "isi": 24,
+        "status": "Active"
+      }
+    ]
   },
   {
     "barcode": "8999999611408",
@@ -207,7 +517,21 @@
     "flag": "MARKET MAKING",
     "brand": "SUNSILK",
     "bu": "BEAUTY & WELLBEING",
-    "category": "HAIR CARE"
+    "category": "HAIR CARE",
+    "codes": [
+      {
+        "code": "65592132",
+        "name": "SUNSILK HAIRMASK SILKY SMOOTH 48X30G",
+        "isi": 48,
+        "status": "Active"
+      },
+      {
+        "code": "64887602",
+        "name": "SUNSILK CREAMBATH SILKY SMOOTH 48X30G",
+        "isi": 48,
+        "status": "Active No Production"
+      }
+    ]
   },
   {
     "barcode": "8999999611415",
@@ -217,7 +541,21 @@
     "flag": "MARKET MAKING",
     "brand": "SUNSILK",
     "bu": "BEAUTY & WELLBEING",
-    "category": "HAIR CARE"
+    "category": "HAIR CARE",
+    "codes": [
+      {
+        "code": "65592125",
+        "name": "SUNSILK HAIRMASK GLOSSY BLACK 48X30G",
+        "isi": 48,
+        "status": "Active"
+      },
+      {
+        "code": "64887609",
+        "name": "SUNSILK CREAMBATH SILKY GLOSS 48X30G",
+        "isi": 48,
+        "status": "Active No Production"
+      }
+    ]
   },
   {
     "barcode": "8999999612580",
@@ -227,7 +565,27 @@
     "flag": "MARKET MAKING",
     "brand": "DOVE",
     "bu": "BEAUTY & WELLBEING",
-    "category": "HAIR CARE"
+    "category": "HAIR CARE",
+    "codes": [
+      {
+        "code": "64864946",
+        "name": "DOVE HAIR TONIC INTENSIVE TREAT 6X75ML",
+        "isi": 6,
+        "status": "Active"
+      },
+      {
+        "code": "64954018",
+        "name": "DOVE TONIC BIOTIN AHL KERINGSEHAT 6X75ML",
+        "isi": 6,
+        "status": "Active"
+      },
+      {
+        "code": "69793203",
+        "name": "DOVE HAIR TONIC INTENSIVE TMT 6X75ML",
+        "isi": 6,
+        "status": "Delisted"
+      }
+    ]
   },
   {
     "barcode": "8999999612696",
@@ -237,7 +595,45 @@
     "flag": "MARKET MAKING",
     "brand": "CITRA",
     "bu": "BEAUTY & WELLBEING",
-    "category": "HAND & BODY CARE"
+    "category": "HAND & BODY CARE",
+    "codes": [
+      {
+        "code": "64955932",
+        "name": "CITRA FACE&BODY SRM FRESH GLOW 2X6X180ML",
+        "isi": 12,
+        "status": "Active"
+      },
+      {
+        "code": "69986826",
+        "name": "CITRA HBL SERUM FRESH GLOW 2X6X180ML",
+        "isi": 12,
+        "status": "Active No Production"
+      },
+      {
+        "code": "67813306",
+        "name": "CITRA ALOE BRIGHT UV 2X6X180ML",
+        "isi": 12,
+        "status": "Delisted"
+      },
+      {
+        "code": "68622239",
+        "name": "CITRA ALOE+CITRA SHTMASK 12X(180ML+25G)",
+        "isi": 12,
+        "status": "Delisted"
+      },
+      {
+        "code": "68926848",
+        "name": "CITRA ALOE BRIGHT UV 3X4X170ML.",
+        "isi": 12,
+        "status": "Delisted"
+      },
+      {
+        "code": "68926966",
+        "name": "CITRA ALOE BRIGHT UV 3X4X170ML.",
+        "isi": 12,
+        "status": "Delisted"
+      }
+    ]
   },
   {
     "barcode": "8999999612726",
@@ -247,7 +643,15 @@
     "flag": "MARKET MAKING",
     "brand": "CITRA",
     "bu": "BEAUTY & WELLBEING",
-    "category": "HAND & BODY CARE"
+    "category": "HAND & BODY CARE",
+    "codes": [
+      {
+        "code": "64955944",
+        "name": "CITRA UV BODY SRM BOUNCY GLOW 2X6X180ML",
+        "isi": 12,
+        "status": "Active"
+      }
+    ]
   },
   {
     "barcode": "8999999613617",
@@ -257,7 +661,15 @@
     "flag": "MARKET MAKING",
     "brand": "GLOW & LOVELY",
     "bu": "BEAUTY & WELLBEING",
-    "category": "FACE"
+    "category": "FACE",
+    "codes": [
+      {
+        "code": "64985526",
+        "name": "GLOW & LOVELY GLASSBRIGHT CREAM 12X30G",
+        "isi": 12,
+        "status": "Active"
+      }
+    ]
   },
   {
     "barcode": "8999999613648",
@@ -267,7 +679,15 @@
     "flag": "MARKET MAKING",
     "brand": "GLOW & LOVELY",
     "bu": "BEAUTY & WELLBEING",
-    "category": "FACE"
+    "category": "FACE",
+    "codes": [
+      {
+        "code": "64985530",
+        "name": "GLOW & LOVELY GLASSBRIGHT CREAM 12X50G",
+        "isi": 12,
+        "status": "Active"
+      }
+    ]
   },
   {
     "barcode": "8999999613815",
@@ -277,7 +697,21 @@
     "flag": "MARKET MAKING",
     "brand": "DOVE",
     "bu": "BEAUTY & WELLBEING",
-    "category": "HAIR CARE"
+    "category": "HAIR CARE",
+    "codes": [
+      {
+        "code": "64987261",
+        "name": "DOVE CRMBTH BIOTIN AHL KRGSHT 4X12X30G",
+        "isi": 48,
+        "status": "Active"
+      },
+      {
+        "code": "67598074",
+        "name": "DOVE CREAMBATH SACHET 48X30G",
+        "isi": 48,
+        "status": "Delisted"
+      }
+    ]
   },
   {
     "barcode": "8999999614294",
@@ -287,7 +721,21 @@
     "flag": "MARKET MAKING",
     "brand": "PEPSODENT",
     "bu": "PERSONAL CARE",
-    "category": "ORAL CARE"
+    "category": "ORAL CARE",
+    "codes": [
+      {
+        "code": "65073502",
+        "name": "PEPSODENT ULTRA WHITE FRESH 36X90G",
+        "isi": 36,
+        "status": "Active"
+      },
+      {
+        "code": "65770060",
+        "name": "PEPSODENT ULTRA WHITE FRESH RL 36X90G",
+        "isi": 36,
+        "status": "Active"
+      }
+    ]
   },
   {
     "barcode": "8999999614300",
@@ -297,7 +745,21 @@
     "flag": "MARKET MAKING",
     "brand": "PEPSODENT",
     "bu": "PERSONAL CARE",
-    "category": "ORAL CARE"
+    "category": "ORAL CARE",
+    "codes": [
+      {
+        "code": "65073495",
+        "name": "PEPSODENT ULTRA WHITE ULTIMATE 36X90G",
+        "isi": 36,
+        "status": "Active"
+      },
+      {
+        "code": "65770054",
+        "name": "PEPSODENT ULTRA WHITE ULTIMATE RL 36X90G",
+        "isi": 36,
+        "status": "Active"
+      }
+    ]
   },
   {
     "barcode": "8851932417464",
@@ -307,7 +769,39 @@
     "flag": "COTC",
     "brand": "VASELINE",
     "bu": "BEAUTY & WELLBEING",
-    "category": "HAND & BODY CARE"
+    "category": "HAND & BODY CARE",
+    "codes": [
+      {
+        "code": "65431736",
+        "name": "VASELINE DS REFRESHNG SERUM 4X3X170ML",
+        "isi": 12,
+        "status": "Active"
+      },
+      {
+        "code": "65491686",
+        "name": "VASELINE 5D COOL SPF50 SRM VLC 4X3X170ML",
+        "isi": 12,
+        "status": "Active"
+      },
+      {
+        "code": "68933759",
+        "name": "VASELINE HB SPF50 DAILY REFRESH4X3X170ML",
+        "isi": 12,
+        "status": "Active"
+      },
+      {
+        "code": "69739799",
+        "name": "VASELINE HB DS RFRESHNG SERUM 4X3X170ML",
+        "isi": 12,
+        "status": "Active"
+      },
+      {
+        "code": "69988624",
+        "name": "VASELINE HB SPF50 DAILY REF N 4X3X170ML",
+        "isi": 12,
+        "status": "Active"
+      }
+    ]
   },
   {
     "barcode": "8999999003043",
@@ -317,7 +811,63 @@
     "flag": "COTC",
     "brand": "VASELINE",
     "bu": "BEAUTY & WELLBEING",
-    "category": "HAND & BODY CARE"
+    "category": "HAND & BODY CARE",
+    "codes": [
+      {
+        "code": "65482386",
+        "name": "VASELINE CERAMIDE DEFENSE SPF30 3X6X200M",
+        "isi": 18,
+        "status": "Active"
+      },
+      {
+        "code": "68487732",
+        "name": "VASELINE HEALTHY BRIGHT SPF24 18X200ML",
+        "isi": 18,
+        "status": "Active"
+      },
+      {
+        "code": "68826565",
+        "name": "VASELINE HBRIGHT SPF24 VNC 18X200ML",
+        "isi": 18,
+        "status": "Active"
+      },
+      {
+        "code": "21186113",
+        "name": "VASELINE HW SPF24 PJ 18X200ML",
+        "isi": 18,
+        "status": "Active No Production"
+      },
+      {
+        "code": "20067933",
+        "name": "VASELINE HBL HLT WHT SPF24 BTL 18X200ML",
+        "isi": 18,
+        "status": "Inactive"
+      },
+      {
+        "code": "20246710",
+        "name": "VASELINE HW SPF24+DOVESHP 18X(200+50)ML",
+        "isi": 18,
+        "status": "Inactive"
+      },
+      {
+        "code": "20263143",
+        "name": "VASELINE HW TRIPLE PRTECT SPF24 18X200ML",
+        "isi": 18,
+        "status": "Delisted"
+      },
+      {
+        "code": "67204752",
+        "name": "VASELINE SPF24+DOVE RO ORI 18X(200+15)ML",
+        "isi": 18,
+        "status": "Delisted"
+      },
+      {
+        "code": "67253578",
+        "name": "VASELINE HW SPF 24 BANDED POUCH 18X200ML",
+        "isi": 18,
+        "status": "Delisted"
+      }
+    ]
   },
   {
     "barcode": "8999999003067",
@@ -327,7 +877,45 @@
     "flag": "COTC",
     "brand": "VASELINE",
     "bu": "BEAUTY & WELLBEING",
-    "category": "HAND & BODY CARE"
+    "category": "HAND & BODY CARE",
+    "codes": [
+      {
+        "code": "65482098",
+        "name": "VASELINE CERAMIDE DEFENSE SPF30 6X6X100M",
+        "isi": 36,
+        "status": "Active"
+      },
+      {
+        "code": "68487737",
+        "name": "VASELINE HEALTHY BRIGHT SPF24 36X100ML",
+        "isi": 36,
+        "status": "Active"
+      },
+      {
+        "code": "68826564",
+        "name": "VASELINE HBRIGHT SPF24 VNC 36X100ML",
+        "isi": 36,
+        "status": "Active"
+      },
+      {
+        "code": "21185704",
+        "name": "VASELINE HW SPF24 PJ 36X100ML",
+        "isi": 36,
+        "status": "Active No Production"
+      },
+      {
+        "code": "20067946",
+        "name": "VASELINE HBL HLT WHT SPF24 BTL 36X100ML",
+        "isi": 36,
+        "status": "Inactive"
+      },
+      {
+        "code": "20263142",
+        "name": "VASELINE HW TRIPLE PRTECT SPF24 36X100ML",
+        "isi": 36,
+        "status": "Delisted"
+      }
+    ]
   },
   {
     "barcode": "8999999003890",
@@ -337,7 +925,63 @@
     "flag": "COTC",
     "brand": "CITRA",
     "bu": "BEAUTY & WELLBEING",
-    "category": "FACE"
+    "category": "FACE",
+    "codes": [
+      {
+        "code": "67016300",
+        "name": "CITRA PEARLY WHITE UV FM 24X40G",
+        "isi": 24,
+        "status": "Active"
+      },
+      {
+        "code": "68483853",
+        "name": "CITRA PEARLY GLOW UV FM 24X40G",
+        "isi": 24,
+        "status": "Active"
+      },
+      {
+        "code": "20069837",
+        "name": "CITRA HAZ PEARL WHT UV CRM 4X6X40G",
+        "isi": 24,
+        "status": "Delisted"
+      },
+      {
+        "code": "20229970",
+        "name": "CITRA HAZ PEARL WHT CRM 4X6X(40G+PEARL)",
+        "isi": 24,
+        "status": "Inactive"
+      },
+      {
+        "code": "21140656",
+        "name": "CITRA HAZ PEARL WHT FM + FF 24X(40+10)G",
+        "isi": 24,
+        "status": "Delisted"
+      },
+      {
+        "code": "62071811",
+        "name": "CITRA HAZ LST WHT CRM 40GR/24",
+        "isi": 24,
+        "status": "Inactive"
+      },
+      {
+        "code": "68489370",
+        "name": "CITRA PEARLY FM + GREENTEA FF 24X(40+9)G",
+        "isi": 24,
+        "status": "Delisted"
+      },
+      {
+        "code": "68639036",
+        "name": "CITRA PEARLY FM + FF 24X(40+9)G",
+        "isi": 24,
+        "status": "Inactive"
+      },
+      {
+        "code": "68759634",
+        "name": "CITRA PEARLY FM+CLEAR ICM 24X(40G+55ML)",
+        "isi": 24,
+        "status": "Delisted"
+      }
+    ]
   },
   {
     "barcode": "8999999007768",
@@ -347,7 +991,51 @@
     "flag": "COTC",
     "brand": "GLOW & LOVELY",
     "bu": "BEAUTY & WELLBEING",
-    "category": "FACE"
+    "category": "FACE",
+    "codes": [
+      {
+        "code": "20095361",
+        "name": "FAIR & LOVELY MULTIVITAMIN CREAM 144X9G",
+        "isi": 144,
+        "status": "Active"
+      },
+      {
+        "code": "62760401",
+        "name": "GLOW & LOVELY MVIT DERMA CRM 12X12X7.5G",
+        "isi": 144,
+        "status": "Active"
+      },
+      {
+        "code": "65650046",
+        "name": "GLOW & LOVELY RENEW BRGHT CRM 12X12X7.5G",
+        "isi": 144,
+        "status": "Active"
+      },
+      {
+        "code": "68493636",
+        "name": "FAIR & LOVELY G&L MVIT CREAM 12X12X9G",
+        "isi": 144,
+        "status": "Active"
+      },
+      {
+        "code": "68854832",
+        "name": "FAIR & LOVELY G&L MVIT CREAM 12X12X7.5G",
+        "isi": 144,
+        "status": "Active No Production"
+      },
+      {
+        "code": "20236868",
+        "name": "FAIR&LOVELY MV CRM HANGER 144X9G",
+        "isi": 144,
+        "status": "Delisted"
+      },
+      {
+        "code": "67754827",
+        "name": "FAIR & LOVELY MLTIVTMN CREAM MM 144X9G",
+        "isi": 144,
+        "status": "Delisted"
+      }
+    ]
   },
   {
     "barcode": "8999999007782",
@@ -357,7 +1045,105 @@
     "flag": "COTC",
     "brand": "GLOW & LOVELY",
     "bu": "BEAUTY & WELLBEING",
-    "category": "FACE"
+    "category": "FACE",
+    "codes": [
+      {
+        "code": "20095385",
+        "name": "FAIR & LOVELY MULTIVITAMIN CREAM 48X25G",
+        "isi": 48,
+        "status": "Active"
+      },
+      {
+        "code": "62759351",
+        "name": "GLOW & LOVELY MVIT DERMA CREAM 48X23G",
+        "isi": 48,
+        "status": "Active"
+      },
+      {
+        "code": "65650032",
+        "name": "GLOW & LOVELY RENEW BRGHT CREAM 48X23G",
+        "isi": 48,
+        "status": "Active"
+      },
+      {
+        "code": "65726676",
+        "name": "GLOW&LOVELY MV CREAM+SPF35 48(23G+7G)",
+        "isi": 48,
+        "status": "Active"
+      },
+      {
+        "code": "68493635",
+        "name": "FAIR & LOVELY G&L MVIT CREAM 48X25G",
+        "isi": 48,
+        "status": "Active"
+      },
+      {
+        "code": "68637893",
+        "name": "FAIR & LOVELY G&L FM+GLOW FF 48X(25+9)G",
+        "isi": 48,
+        "status": "Active"
+      },
+      {
+        "code": "62724735",
+        "name": "FAIR & LOVELY G&L FM+CITRA 48X(23G+10ML)",
+        "isi": 48,
+        "status": "Active No Production"
+      },
+      {
+        "code": "68846914",
+        "name": "FAIR & LOVELY G&L MVIT CREAM 48X23G",
+        "isi": 48,
+        "status": "Active No Production"
+      },
+      {
+        "code": "67419111",
+        "name": "FAIR & LOVELY FM + FF 24X(25+50)G",
+        "isi": 24,
+        "status": "Delisted"
+      },
+      {
+        "code": "67644134",
+        "name": "FAIR & LOVELY FM LIMITED 48X25G",
+        "isi": 48,
+        "status": "Delisted"
+      },
+      {
+        "code": "67992520",
+        "name": "FAIR & LOVELY MVIT FM+FF 48X(25+9)G",
+        "isi": 48,
+        "status": "Delisted"
+      },
+      {
+        "code": "68168238",
+        "name": "FAIR & LOVELY FM+BB CREAM 48X(25+4)G",
+        "isi": 48,
+        "status": "Delisted"
+      },
+      {
+        "code": "68873830",
+        "name": "FAIR & LOVELY G&L FM+GLOW FF 48X(23+9)G",
+        "isi": 48,
+        "status": "Delisted"
+      },
+      {
+        "code": "68914303",
+        "name": "FAIR & LOVELY G&L FM+MSKVITC 48X(23+20)G",
+        "isi": 48,
+        "status": "Delisted"
+      },
+      {
+        "code": "69605353",
+        "name": "FAIR & LOVELY FM+CITRAALOE 48X(23G+15ML)",
+        "isi": 48,
+        "status": "Delisted"
+      },
+      {
+        "code": "69743643",
+        "name": "FAIR & LOVELY G&L FM+VITC FM 48X(23+7)G",
+        "isi": 48,
+        "status": "Delisted"
+      }
+    ]
   },
   {
     "barcode": "8999999007799",
@@ -367,7 +1153,75 @@
     "flag": "COTC",
     "brand": "GLOW & LOVELY",
     "bu": "BEAUTY & WELLBEING",
-    "category": "FACE"
+    "category": "FACE",
+    "codes": [
+      {
+        "code": "20095399",
+        "name": "FAIR & LOVELY MULTIVITAMIN CREAM 24X50G",
+        "isi": 24,
+        "status": "Active"
+      },
+      {
+        "code": "62759353",
+        "name": "GLOW & LOVELY MVIT DERMA CREAM 24X46G",
+        "isi": 24,
+        "status": "Active"
+      },
+      {
+        "code": "62759356",
+        "name": "GLOW & LOVELY MVIT DERMA CRM 24X46G",
+        "isi": 24,
+        "status": "Active"
+      },
+      {
+        "code": "65073809",
+        "name": "GLOW&LOVELY CRM+CITRA HBL 24X(46G+60ML)",
+        "isi": 24,
+        "status": "Active"
+      },
+      {
+        "code": "65650039",
+        "name": "GLOW & LOVELY RENEW BRGHT CREAM 24X46G",
+        "isi": 24,
+        "status": "Active"
+      },
+      {
+        "code": "68493637",
+        "name": "FAIR & LOVELY G&L MVIT CREAM 24X50G",
+        "isi": 24,
+        "status": "Active"
+      },
+      {
+        "code": "68846915",
+        "name": "FAIR & LOVELY G&L MVIT CREAM 24X46G",
+        "isi": 24,
+        "status": "Active No Production"
+      },
+      {
+        "code": "62724774",
+        "name": "FAIR & LOVELY G&L FM+UVDUO 24X(46+20)G",
+        "isi": 24,
+        "status": "Delisted"
+      },
+      {
+        "code": "67078629",
+        "name": "FAIR & LOVELY MVIT CREAM+FF 24X(50 + 9)G",
+        "isi": 24,
+        "status": "Delisted"
+      },
+      {
+        "code": "67644135",
+        "name": "FAIR & LOVELY FM LIMITED 24X50G",
+        "isi": 24,
+        "status": "Delisted"
+      },
+      {
+        "code": "68914302",
+        "name": "FAIR & LOVELY G&L FM + FM 24X(46+23)G",
+        "isi": 24,
+        "status": "Delisted"
+      }
+    ]
   },
   {
     "barcode": "8999999035273",
@@ -377,7 +1231,57 @@
     "flag": "COTC",
     "brand": "VASELINE",
     "bu": "BEAUTY & WELLBEING",
-    "category": "HAND & BODY CARE"
+    "category": "HAND & BODY CARE",
+    "codes": [
+      {
+        "code": "65595578",
+        "name": "VASELINE SPF30 PPF VANC SRM 8X3X180ML",
+        "isi": 24,
+        "status": "Active"
+      },
+      {
+        "code": "68487743",
+        "name": "VASELINE HBRIGHT SPF30 SERUM 8X3X180ML",
+        "isi": 24,
+        "status": "Active"
+      },
+      {
+        "code": "69965241",
+        "name": "VASELINE HB SPF30 PPF VIT SRM 8X3X180ML",
+        "isi": 24,
+        "status": "Active"
+      },
+      {
+        "code": "21186646",
+        "name": "VASELINE HW SPF30 SERUM PJ 8X3X180ML",
+        "isi": 24,
+        "status": "Active No Production"
+      },
+      {
+        "code": "21069262",
+        "name": "VASELINE HLT WHT SPF30 SERUM 8X3X180ML",
+        "isi": 24,
+        "status": "Delisted"
+      },
+      {
+        "code": "21133098",
+        "name": "VASELINE HW SPF30 PA++ SERUM 8X3X180ML",
+        "isi": 24,
+        "status": "Delisted"
+      },
+      {
+        "code": "21140348",
+        "name": "VASELINE SPF30 SRM+NIGHT 18X(180+20)ML",
+        "isi": 18,
+        "status": "Delisted"
+      },
+      {
+        "code": "64399041",
+        "name": "VASELINE SPF30 PPF VIT SRM 12X(2X180ML)",
+        "isi": 12,
+        "status": "Delisted"
+      }
+    ]
   },
   {
     "barcode": "8999999052959",
@@ -387,7 +1291,117 @@
     "flag": "COTC",
     "brand": "POND'S",
     "bu": "BEAUTY & WELLBEING",
-    "category": "FACE"
+    "category": "FACE",
+    "codes": [
+      {
+        "code": "62715980",
+        "name": "PONDS BRIGHT MIR FF UCLARITY MM 16X3X50G",
+        "isi": 48,
+        "status": "Active"
+      },
+      {
+        "code": "67033199",
+        "name": "PONDS WHITE BEAUTY FC FOAM 4X6X50G",
+        "isi": 24,
+        "status": "Active"
+      },
+      {
+        "code": "67853652",
+        "name": "PONDS WHITE BEAUTY FACIAL FOAM 4X6X50G",
+        "isi": 24,
+        "status": "Active"
+      },
+      {
+        "code": "67919634",
+        "name": "PONDS WHITE BTY FF PNCA PGN MM 16X3X50G",
+        "isi": 48,
+        "status": "Active"
+      },
+      {
+        "code": "67989695",
+        "name": "PONDS WHT BEAUTY FF PNCA RSE 4X6X50G",
+        "isi": 24,
+        "status": "Active"
+      },
+      {
+        "code": "68512720",
+        "name": "PONDS BRIGHT BTY SERUM FF MM 16X3X50G",
+        "isi": 48,
+        "status": "Active"
+      },
+      {
+        "code": "68512726",
+        "name": "PONDS BRIGHT BTY FF PNCA RSE 4X6X50G",
+        "isi": 24,
+        "status": "Active"
+      },
+      {
+        "code": "69989683",
+        "name": "PONDS BRIGHT MIR FC FOAM UC 4X6X50G",
+        "isi": 24,
+        "status": "Active"
+      },
+      {
+        "code": "20088470",
+        "name": "PONDS FCLCLNSR WB NATURALS FF 4X6X50G",
+        "isi": 24,
+        "status": "Delisted"
+      },
+      {
+        "code": "62070799",
+        "name": "PONDS WB FAC.FOAM 50ML/24",
+        "isi": 24,
+        "status": "Delisted"
+      },
+      {
+        "code": "62070934",
+        "name": "PONDS WHITE BFF 50ML/24",
+        "isi": 24,
+        "status": "Inactive"
+      },
+      {
+        "code": "62071495",
+        "name": "PONDS WBFF 50ML/24",
+        "isi": 24,
+        "status": "Delisted"
+      },
+      {
+        "code": "67106966",
+        "name": "PONDS WHITE BTY FF PNCLPNK 4X6X50G",
+        "isi": 24,
+        "status": "Inactive"
+      },
+      {
+        "code": "67109925",
+        "name": "PNDS WB FF PNCL SEAA 4X6X50G",
+        "isi": 24,
+        "status": "Delisted"
+      },
+      {
+        "code": "67116306",
+        "name": "PONDS WB FF + PWB BIGNOSE 24X50G",
+        "isi": 24,
+        "status": "Delisted"
+      },
+      {
+        "code": "67416575",
+        "name": "PONDS WHITE BEAUTY FF PNCL PGN 16X3X50G",
+        "isi": 48,
+        "status": "Delisted"
+      },
+      {
+        "code": "67567564",
+        "name": "PONDS WHTBTY+PONDS MEN ACNE 24X(50G+4G)",
+        "isi": 24,
+        "status": "Delisted"
+      },
+      {
+        "code": "68494537",
+        "name": "PONDS BRIGHT BEAUTY FACIAL FOAM 4X6X50G",
+        "isi": 24,
+        "status": "Delisted"
+      }
+    ]
   },
   {
     "barcode": "8999999052973",
@@ -397,7 +1411,69 @@
     "flag": "COTC",
     "brand": "POND'S",
     "bu": "BEAUTY & WELLBEING",
-    "category": "FACE"
+    "category": "FACE",
+    "codes": [
+      {
+        "code": "62715979",
+        "name": "PONDS BRIGHT MIR FF UDTOXX MM 16X3X50G",
+        "isi": 48,
+        "status": "Active"
+      },
+      {
+        "code": "67853638",
+        "name": "PONDS PURE WHITE FACIAL FOAM 4X6X50G",
+        "isi": 24,
+        "status": "Active"
+      },
+      {
+        "code": "67919636",
+        "name": "PONDS PURE WHITE FF PNCA PGN MM 16X3X50G",
+        "isi": 48,
+        "status": "Active"
+      },
+      {
+        "code": "68494536",
+        "name": "PONDS PURE BRIGHT FACIAL FOAM 4X6X50G",
+        "isi": 24,
+        "status": "Active"
+      },
+      {
+        "code": "68512714",
+        "name": "PONDS PURE BRIGHT FF PNCA PG MM 16X3X50G",
+        "isi": 48,
+        "status": "Active"
+      },
+      {
+        "code": "69989688",
+        "name": "PONDS BRIGHT MIR FC FOAM DTOXX 4X6X50G",
+        "isi": 24,
+        "status": "Active"
+      },
+      {
+        "code": "20069039",
+        "name": "PONDS FF PURE WHITE 24X50G",
+        "isi": 24,
+        "status": "Delisted"
+      },
+      {
+        "code": "20236585",
+        "name": "PONDS FACIAL FOAM PURE WHITE 24X50G",
+        "isi": 24,
+        "status": "Delisted"
+      },
+      {
+        "code": "67033201",
+        "name": "PONDS PURE WHITE FC FOAM 4X6X50G",
+        "isi": 24,
+        "status": "Delisted"
+      },
+      {
+        "code": "67416576",
+        "name": "PONDS PURE WHITE FC FOAM PGN 16X3X50G",
+        "isi": 48,
+        "status": "Delisted"
+      }
+    ]
   },
   {
     "barcode": "8999999053031",
@@ -407,7 +1483,195 @@
     "flag": "COTC",
     "brand": "POND'S",
     "bu": "BEAUTY & WELLBEING",
-    "category": "FACE"
+    "category": "FACE",
+    "codes": [
+      {
+        "code": "64330904",
+        "name": "PONDS BRGHT FF+CLEAR RTOK 24X(100G+60ML)",
+        "isi": 24,
+        "status": "Active"
+      },
+      {
+        "code": "67853636",
+        "name": "PONDS WHITE BEAUTY FACIAL FOAM 4X6X100G",
+        "isi": 24,
+        "status": "Active"
+      },
+      {
+        "code": "67890303",
+        "name": "PONDS WHITE BEAUTY FF PNCA TH 4X6X100G",
+        "isi": 24,
+        "status": "Active"
+      },
+      {
+        "code": "68512716",
+        "name": "PONDS BRIGHT BEAUTY FOAM TH 4X6X100G",
+        "isi": 24,
+        "status": "Active"
+      },
+      {
+        "code": "69989680",
+        "name": "PONDS BRIGHT MIR FC FOAM UC 4X6X100G",
+        "isi": 24,
+        "status": "Active"
+      },
+      {
+        "code": "64767867",
+        "name": "PONDS BRIGHT MIR+PONDS MEN 24X(100+50)G",
+        "isi": 24,
+        "status": "Active No Production"
+      },
+      {
+        "code": "67109923",
+        "name": "PONDS WB FF PNCL SEAA 4X6X100G",
+        "isi": 24,
+        "status": "Active No Production"
+      },
+      {
+        "code": "68357125",
+        "name": "PONDS WB FF + SERUM BURST 24X(100+10)G",
+        "isi": 24,
+        "status": "Active No Production"
+      },
+      {
+        "code": "62070936",
+        "name": "PONDS WHITE BFF 100ML/24",
+        "isi": 24,
+        "status": "Inactive"
+      },
+      {
+        "code": "62071427",
+        "name": "PONDS WBFF PROMO 100ML+50ML",
+        "isi": 24,
+        "status": "Inactive"
+      },
+      {
+        "code": "62071464",
+        "name": "PONDS WBFF100ML+DETPINK20ML/24",
+        "isi": 24,
+        "status": "Inactive"
+      },
+      {
+        "code": "62071494",
+        "name": "PONDS WBFF 100ML/24",
+        "isi": 24,
+        "status": "Inactive"
+      },
+      {
+        "code": "67033210",
+        "name": "PONDS WHITE BEAUTY FC FOAM 4X6X100G",
+        "isi": 24,
+        "status": "Delisted"
+      },
+      {
+        "code": "67080080",
+        "name": "PONDS WB FC FOAM + POUCH 24X100G",
+        "isi": 24,
+        "status": "Inactive"
+      },
+      {
+        "code": "67106964",
+        "name": "PONDS WHITE BTY FF PNCLPNK 4X6X100G",
+        "isi": 24,
+        "status": "Inactive"
+      },
+      {
+        "code": "67112607",
+        "name": "PONDS WBFF + ENERGY SUN SACH 24X100G",
+        "isi": 24,
+        "status": "Delisted"
+      },
+      {
+        "code": "67157490",
+        "name": "PONDS WBFF GET FOAMPUFF 24X100GR",
+        "isi": 24,
+        "status": "Delisted"
+      },
+      {
+        "code": "67159767",
+        "name": "PONDS WBFF + PONDS MEN ICYGEL50G 24X100G",
+        "isi": 24,
+        "status": "Inactive"
+      },
+      {
+        "code": "67279777",
+        "name": "PONDS WBFF+PONDSMEN ENRGYGEL 24X(100+4)G",
+        "isi": 24,
+        "status": "Inactive"
+      },
+      {
+        "code": "67417321",
+        "name": "PONDS WBFF + WB DAY FM 24X(100+7.5)G",
+        "isi": 24,
+        "status": "Delisted"
+      },
+      {
+        "code": "67417848",
+        "name": "PONDS WHITE BEAUTY FF PROMO LTD 24X100G",
+        "isi": 24,
+        "status": "Delisted"
+      },
+      {
+        "code": "67492926",
+        "name": "PONDS WHITE BEAUTY FF GET PIN 24X100G",
+        "isi": 24,
+        "status": "Delisted"
+      },
+      {
+        "code": "67600200",
+        "name": "PONDS WBFF + TONEUP FM 24X(100G+10G)",
+        "isi": 24,
+        "status": "Delisted"
+      },
+      {
+        "code": "67951254",
+        "name": "PONDS BUNDLE WHITE BTY FF 12X1PC",
+        "isi": 12,
+        "status": "Delisted"
+      },
+      {
+        "code": "68403064",
+        "name": "PONDS WB FF + MICELLAR WTR 24X(100+10)G",
+        "isi": 24,
+        "status": "Delisted"
+      },
+      {
+        "code": "68494545",
+        "name": "PONDS BRIGHT BEAUTY FACIAL FOAM 4X6X100G",
+        "isi": 24,
+        "status": "Delisted"
+      },
+      {
+        "code": "68607857",
+        "name": "PONDS BRGT BTY FF+TONEUP FM 24X(100+10)G",
+        "isi": 24,
+        "status": "Delisted"
+      },
+      {
+        "code": "68623374",
+        "name": "PONDS BRIGHT BTY FF + MW 24X(100G+13ML)",
+        "isi": 24,
+        "status": "Delisted"
+      },
+      {
+        "code": "68725861",
+        "name": "PONDS BRIGHT BTY FF + AM DAY 24X(100+4)G",
+        "isi": 24,
+        "status": "Delisted"
+      },
+      {
+        "code": "68908473",
+        "name": "PONDS BB FF + ROSE MW 24X(100G+55ML)",
+        "isi": 24,
+        "status": "Delisted"
+      },
+      {
+        "code": "68908475",
+        "name": "PONDS BB FF + POWER SRM 24X(100+7.5)G",
+        "isi": 24,
+        "status": "Delisted"
+      }
+    ]
   },
   {
     "barcode": "8999999053048",
@@ -417,7 +1681,129 @@
     "flag": "COTC",
     "brand": "POND'S",
     "bu": "BEAUTY & WELLBEING",
-    "category": "FACE"
+    "category": "FACE",
+    "codes": [
+      {
+        "code": "20236586",
+        "name": "PONDS PURE WHITE DEEP CLNSING FF 24X100G",
+        "isi": 24,
+        "status": "Active"
+      },
+      {
+        "code": "64405251",
+        "name": "PONDS BRIGHT MIR DTOXX TWPCK 12X(2X100G)",
+        "isi": 12,
+        "status": "Active"
+      },
+      {
+        "code": "68494544",
+        "name": "PONDS PURE BRIGHT FACIAL FOAM 4X6X100G",
+        "isi": 24,
+        "status": "Active"
+      },
+      {
+        "code": "69989686",
+        "name": "PONDS BRIGHT MIR FC FOAM DTOXX 4X6X100G",
+        "isi": 24,
+        "status": "Active"
+      },
+      {
+        "code": "20069038",
+        "name": "PONDS FF PURE WHITE 24X100G",
+        "isi": 24,
+        "status": "Delisted"
+      },
+      {
+        "code": "20229963",
+        "name": "PONDS PURE WHITE FF 24X(100G + PTC GIFT)",
+        "isi": 24,
+        "status": "Delisted"
+      },
+      {
+        "code": "20280847",
+        "name": "PONDS PURE WHT + WB NAT CRM 24X(100+20)G",
+        "isi": 24,
+        "status": "Delisted"
+      },
+      {
+        "code": "21011383",
+        "name": "PONDS PURE WHITE FF 24X(100G+GIFT)",
+        "isi": 24,
+        "status": "Delisted"
+      },
+      {
+        "code": "67033212",
+        "name": "PONDS PURE WHITE FC FOAM 4X6X100G",
+        "isi": 24,
+        "status": "Delisted"
+      },
+      {
+        "code": "67033972",
+        "name": "PONDS PUREWHITE+MEN POLLU 24X(100G+50ML)",
+        "isi": 24,
+        "status": "Delisted"
+      },
+      {
+        "code": "67283871",
+        "name": "PONDS PURE WHT+MEN POLL OUT 24X(100+50)G",
+        "isi": 24,
+        "status": "Delisted"
+      },
+      {
+        "code": "67417206",
+        "name": "PONDS PUREWHTFF + DOVE RO 24X(100G+15ML)",
+        "isi": 24,
+        "status": "Delisted"
+      },
+      {
+        "code": "67492925",
+        "name": "PONDS PURE WHITE FF GET BANDANA 24X100G",
+        "isi": 24,
+        "status": "Delisted"
+      },
+      {
+        "code": "67600199",
+        "name": "PONDS PUREWHT FF+TONEUP FM 24X(100G+10G)",
+        "isi": 24,
+        "status": "Delisted"
+      },
+      {
+        "code": "67795282",
+        "name": "PONDS PW FF + VICL HBL AP 24X(100G+20ML)",
+        "isi": 24,
+        "status": "Delisted"
+      },
+      {
+        "code": "67853647",
+        "name": "PONDS PURE WHITE FACIAL FOAM 4X6X100G",
+        "isi": 24,
+        "status": "Delisted"
+      },
+      {
+        "code": "68435786",
+        "name": "PONDS PURE WHT + MEN LOC 24X(100+9)G",
+        "isi": 24,
+        "status": "Delisted"
+      },
+      {
+        "code": "68623369",
+        "name": "PONDS PURE BRIGHT FF + MW 24X(100G+13ML)",
+        "isi": 24,
+        "status": "Delisted"
+      },
+      {
+        "code": "68929100",
+        "name": "PONDS PURE BRIGHT FF + MW 24X(100G+55ML)",
+        "isi": 24,
+        "status": "Delisted"
+      },
+      {
+        "code": "69777896",
+        "name": "PONDS PURE BFF+BB PWR SRM 24X(100+7.5)G",
+        "isi": 24,
+        "status": "Delisted"
+      }
+    ]
   },
   {
     "barcode": "8999999055752",
@@ -427,7 +1813,51 @@
     "flag": "COTC",
     "brand": "GLOW & LOVELY",
     "bu": "BEAUTY & WELLBEING",
-    "category": "FACE"
+    "category": "FACE",
+    "codes": [
+      {
+        "code": "64298005",
+        "name": "GLOW & LOVELY MVIT DERMA FF 12X12X8G",
+        "isi": 144,
+        "status": "Active"
+      },
+      {
+        "code": "65080353",
+        "name": "GLOW & LOVELY MVIT DERMA FF 12X12X7G",
+        "isi": 144,
+        "status": "Active"
+      },
+      {
+        "code": "65650067",
+        "name": "GLOW & LOVELY RENEW BRGHT FF 12X12X7G",
+        "isi": 144,
+        "status": "Active"
+      },
+      {
+        "code": "67039480",
+        "name": "FAIR & LOVELY MVIT FC FOAM 12X12X9G",
+        "isi": 144,
+        "status": "Active"
+      },
+      {
+        "code": "68854824",
+        "name": "FAIR & LOVELY G&L MVIT FC FOAM 12X12X8G",
+        "isi": 144,
+        "status": "Active"
+      },
+      {
+        "code": "69601724",
+        "name": "FAIR & LOVELY FF+CITRABENGK 144X(8G+9ML)",
+        "isi": 144,
+        "status": "Active"
+      },
+      {
+        "code": "68493419",
+        "name": "FAIR & LOVELY G&L MVIT FC FOAM 12X12X9G",
+        "isi": 144,
+        "status": "Delisted"
+      }
+    ]
   },
   {
     "barcode": "8999999055769",
@@ -437,7 +1867,45 @@
     "flag": "COTC",
     "brand": "GLOW & LOVELY",
     "bu": "BEAUTY & WELLBEING",
-    "category": "FACE"
+    "category": "FACE",
+    "codes": [
+      {
+        "code": "64297850",
+        "name": "GLOW & LOVELY MVIT DERMA FF 4X6X50G",
+        "isi": 24,
+        "status": "Active"
+      },
+      {
+        "code": "65650060",
+        "name": "GLOW & LOVELY RENEW BRIGHT FF 4X6X50G",
+        "isi": 24,
+        "status": "Active"
+      },
+      {
+        "code": "68493411",
+        "name": "FAIR & LOVELY G&L MVIT FC FOAM 24X50G",
+        "isi": 24,
+        "status": "Active"
+      },
+      {
+        "code": "68923287",
+        "name": "FAIR & LOVELY G&L MVIT FF 4X6X50G",
+        "isi": 24,
+        "status": "Active"
+      },
+      {
+        "code": "67039482",
+        "name": "FAIR & LOVELY MVIT FC FOAM 24X50G",
+        "isi": 24,
+        "status": "Delisted"
+      },
+      {
+        "code": "68623501",
+        "name": "FAIR & LOVELY G&L FF+POWDR FM 24X(50+7)G",
+        "isi": 24,
+        "status": "Delisted"
+      }
+    ]
   },
   {
     "barcode": "8999999055776",
@@ -447,7 +1915,87 @@
     "flag": "COTC",
     "brand": "GLOW & LOVELY",
     "bu": "BEAUTY & WELLBEING",
-    "category": "FACE"
+    "category": "FACE",
+    "codes": [
+      {
+        "code": "64297849",
+        "name": "GLOW & LOVELY MVIT DERMA FF 4X6X100G",
+        "isi": 24,
+        "status": "Active"
+      },
+      {
+        "code": "64790508",
+        "name": "GLOW&LOVELY FF MV DRM+UVD35 24X(100+7)G",
+        "isi": 24,
+        "status": "Active"
+      },
+      {
+        "code": "65650053",
+        "name": "GLOW & LOVELY RENEW BRGHT FF 4X6X100G",
+        "isi": 24,
+        "status": "Active"
+      },
+      {
+        "code": "65726673",
+        "name": "GLOW&LOVELY MV FF+GLSBRIGHT 24X(100G+6G)",
+        "isi": 24,
+        "status": "Active"
+      },
+      {
+        "code": "68493415",
+        "name": "FAIR & LOVELY G&L MVIT FC FOAM 24X100G",
+        "isi": 24,
+        "status": "Active"
+      },
+      {
+        "code": "68914309",
+        "name": "FAIR & LOVELY G&L FF + FM 24X(100+23)G",
+        "isi": 24,
+        "status": "Active No Production"
+      },
+      {
+        "code": "67039484",
+        "name": "FAIR & LOVELY MVIT FC FOAM 24X100G",
+        "isi": 24,
+        "status": "Delisted"
+      },
+      {
+        "code": "68635038",
+        "name": "FAIR & LOVELY G&L FF+PWDR FM 24X(100+7)G",
+        "isi": 24,
+        "status": "Delisted"
+      },
+      {
+        "code": "68873888",
+        "name": "FAIR & LOVELY G&L FF+ FM 24X(100+7.5)G",
+        "isi": 24,
+        "status": "Delisted"
+      },
+      {
+        "code": "68923282",
+        "name": "FAIR & LOVELY G&L MVIT FF 4X6X100G",
+        "isi": 24,
+        "status": "Delisted"
+      },
+      {
+        "code": "69605355",
+        "name": "FAIR & LOVELY G&L MVIT+FM 24X(100+23)G",
+        "isi": 24,
+        "status": "Delisted"
+      },
+      {
+        "code": "69785126",
+        "name": "FAIR&LOVELY MV FF+UVKRIMVITC 24X(100+7)G",
+        "isi": 24,
+        "status": "Delisted"
+      },
+      {
+        "code": "69799086",
+        "name": "FAIR&LOVELY MV FF+BODYWSH 24X(100G+55ML)",
+        "isi": 24,
+        "status": "Delisted"
+      }
+    ]
   },
   {
     "barcode": "8999999056841",
@@ -457,7 +2005,177 @@
     "flag": "COTC",
     "brand": "POND'S",
     "bu": "BEAUTY & WELLBEING",
-    "category": "FACE"
+    "category": "FACE",
+    "codes": [
+      {
+        "code": "64405565",
+        "name": "PONDS BRIGHT MIR FM CRM+SRM 48X(20+7.5)G",
+        "isi": 48,
+        "status": "Active"
+      },
+      {
+        "code": "67417178",
+        "name": "PONDS WB DAY FM + WBFF 48X(20+50)G",
+        "isi": 48,
+        "status": "Active"
+      },
+      {
+        "code": "67853649",
+        "name": "PONDS WB SKIN PERFECTING CRM NRML 48X20G",
+        "isi": 48,
+        "status": "Active"
+      },
+      {
+        "code": "67991475",
+        "name": "PONDS WB SKN PRF DAY SPR NML CRM 48X20G",
+        "isi": 48,
+        "status": "Active"
+      },
+      {
+        "code": "68494224",
+        "name": "PONDS BRIGHT BEAUTY PERF CRM NRML 48X20G",
+        "isi": 48,
+        "status": "Active"
+      },
+      {
+        "code": "68517893",
+        "name": "PONDS BRIGHT BTY SERUM DAYCRM MM 48X20G",
+        "isi": 48,
+        "status": "Active"
+      },
+      {
+        "code": "68715230",
+        "name": "PONDS BRIGHT BTY SERUM DAY CRM 48X20G",
+        "isi": 48,
+        "status": "Active"
+      },
+      {
+        "code": "69743733",
+        "name": "PONDS DAY FM + BR BTY FF 48X(20+30)G",
+        "isi": 48,
+        "status": "Active"
+      },
+      {
+        "code": "69989416",
+        "name": "PONDS BRIGHT MIR FM CREAM U CLAR 48X20G",
+        "isi": 48,
+        "status": "Active"
+      },
+      {
+        "code": "69974521",
+        "name": "PONDS DAY FM + PURE BR FF 48X(20+50)G",
+        "isi": 48,
+        "status": "Active No Production"
+      },
+      {
+        "code": "20088635",
+        "name": "PONDS DAY CREAM WB NATURALS 48X20G",
+        "isi": 48,
+        "status": "Delisted"
+      },
+      {
+        "code": "20278023",
+        "name": "PONDS WHT BEAUTY NATURAL DAY CRM 48X20G",
+        "isi": 48,
+        "status": "Delisted"
+      },
+      {
+        "code": "21023219",
+        "name": "PONDS WB PINKISH MOIST PROMO 48X(20+20)G",
+        "isi": 48,
+        "status": "Delisted"
+      },
+      {
+        "code": "21023324",
+        "name": "PONDS WB PINKSH CRM PROMO 48X(20G+50G)",
+        "isi": 48,
+        "status": "Inactive"
+      },
+      {
+        "code": "21130340",
+        "name": "PONDS WB NAT SENSITIVE DAY CRM 48X20G",
+        "isi": 48,
+        "status": "Delisted"
+      },
+      {
+        "code": "62729361",
+        "name": "PONDS DAY FM + UV PRTC SRM 48X(20+7.5)G",
+        "isi": 48,
+        "status": "Delisted"
+      },
+      {
+        "code": "67044829",
+        "name": "PONDS WB DAY CRM FOR NORMAL SKIN 48X20G",
+        "isi": 48,
+        "status": "Delisted"
+      },
+      {
+        "code": "67149566",
+        "name": "PONDS WB NORMAL+REXONA WHT 48X(20G+15ML)",
+        "isi": 48,
+        "status": "Inactive"
+      },
+      {
+        "code": "67229016",
+        "name": "PONDS PWB NORMAL + WBFF 48X(20G+50G)",
+        "isi": 48,
+        "status": "Delisted"
+      },
+      {
+        "code": "67303360",
+        "name": "PONDS WB DAY+CLEAR SAKURA 48X(20G+10ML)",
+        "isi": 48,
+        "status": "Delisted"
+      },
+      {
+        "code": "67316819",
+        "name": "PONDS WB DAY+SUNSLK HJBRFR 48X(20G+10ML)",
+        "isi": 48,
+        "status": "Delisted"
+      },
+      {
+        "code": "67417334",
+        "name": "PONDS WB DAY FM + WBFF 48X(20+9)G",
+        "isi": 48,
+        "status": "Delisted"
+      },
+      {
+        "code": "67417849",
+        "name": "PONDS WB NORMAL DAY FM PROMO LTD 48X20G",
+        "isi": 48,
+        "status": "Delisted"
+      },
+      {
+        "code": "67492927",
+        "name": "PONDS WB NORMAL DAY FM GET PIN 48X20G",
+        "isi": 48,
+        "status": "Delisted"
+      },
+      {
+        "code": "67934055",
+        "name": "PONDS WB SKN PRF DAY SPR NRML CRM 48X20G",
+        "isi": 48,
+        "status": "Inactive"
+      },
+      {
+        "code": "68357127",
+        "name": "PONDS WB NRML DAY + POT ESS 48X(20G+9ML)",
+        "isi": 48,
+        "status": "Delisted"
+      },
+      {
+        "code": "68908470",
+        "name": "PONDS BB DAY FM + SSK BL SH 48X(20G+9ML)",
+        "isi": 48,
+        "status": "Delisted"
+      },
+      {
+        "code": "69743729",
+        "name": "PONDS DAY FM + BB POWER SRM 48X(20+7.5)G",
+        "isi": 48,
+        "status": "Delisted"
+      }
+    ]
   },
   {
     "barcode": "8999999056858",
@@ -467,7 +2185,135 @@
     "flag": "COTC",
     "brand": "POND'S",
     "bu": "BEAUTY & WELLBEING",
-    "category": "FACE"
+    "category": "FACE",
+    "codes": [
+      {
+        "code": "67853646",
+        "name": "PONDS WB SKIN PERFECTING CRM NRML 24X40G",
+        "isi": 24,
+        "status": "Active"
+      },
+      {
+        "code": "67991479",
+        "name": "PONDS WB SKN PRF DAY SPR NML CRM 24X40G",
+        "isi": 24,
+        "status": "Active"
+      },
+      {
+        "code": "68494230",
+        "name": "PONDS BRIGHT BEAUTY PERF CRM NRML 24X40G",
+        "isi": 24,
+        "status": "Active"
+      },
+      {
+        "code": "68715227",
+        "name": "PONDS BRIGHT BTY SERUM DAY CRM 24X40G",
+        "isi": 24,
+        "status": "Active"
+      },
+      {
+        "code": "69989485",
+        "name": "PONDS BRIGHT MIR FM CREAM U CLAR 24X40G",
+        "isi": 24,
+        "status": "Active"
+      },
+      {
+        "code": "20096993",
+        "name": "PONDS WB LIGHT CREAM+ WB FF 24X(40G+50G)",
+        "isi": 24,
+        "status": "Delisted"
+      },
+      {
+        "code": "20216264",
+        "name": "PONDS WB PINKSH CRM+CS ABFS 24X(40G+15G)",
+        "isi": 24,
+        "status": "Delisted"
+      },
+      {
+        "code": "20222038",
+        "name": "PONDS WB PNKSH WHITE DAY CREAM 24X40G",
+        "isi": 24,
+        "status": "Delisted"
+      },
+      {
+        "code": "20222421",
+        "name": "PONDS WB PROMO PULSA 24X40G",
+        "isi": 24,
+        "status": "Delisted"
+      },
+      {
+        "code": "20234479",
+        "name": "PONDS WHT BTY PINKISH WHT DAY CRM 24X40G",
+        "isi": 24,
+        "status": "Delisted"
+      },
+      {
+        "code": "21063286",
+        "name": "PONDS WHT BTY PNKSH WHT DAY CRM 24X40G",
+        "isi": 24,
+        "status": "Inactive"
+      },
+      {
+        "code": "62050120",
+        "name": "PONDS FCLMST CLR MNG WBPNK CRM 24X40G",
+        "isi": 24,
+        "status": "Delisted"
+      },
+      {
+        "code": "62071692",
+        "name": "PONDS WB LIGHT CRM 40GR/24",
+        "isi": 24,
+        "status": "Delisted"
+      },
+      {
+        "code": "67044827",
+        "name": "PONDS WB DAY CRM FOR NORMAL SKIN 24X40G",
+        "isi": 24,
+        "status": "Delisted"
+      },
+      {
+        "code": "67065014",
+        "name": "PONDS WB PNKSH DAY+NIGHT CRM 24X(40+10)G",
+        "isi": 24,
+        "status": "Delisted"
+      },
+      {
+        "code": "67080085",
+        "name": "PONDS WB DAY CREAM + POUCH 24X40G",
+        "isi": 24,
+        "status": "Inactive"
+      },
+      {
+        "code": "67162405",
+        "name": "PONDS WB NORMAL DAY + NIGHT 24X(40G+10G)",
+        "isi": 24,
+        "status": "Delisted"
+      },
+      {
+        "code": "67319134",
+        "name": "PONDS WB NORMAL + WBFF 24X(40G+9G)",
+        "isi": 24,
+        "status": "Inactive"
+      },
+      {
+        "code": "67934059",
+        "name": "PONDS WB SKN PRF DAY SPR NRML CRM 24X40G",
+        "isi": 24,
+        "status": "Inactive"
+      },
+      {
+        "code": "68553795",
+        "name": "PONDS WB DAY FM+PWDER 24X(40+50)G",
+        "isi": 24,
+        "status": "Delisted"
+      },
+      {
+        "code": "68908476",
+        "name": "PONDS BB DAY FM + POWER SRM 24X(40+7.5)G",
+        "isi": 24,
+        "status": "Delisted"
+      }
+    ]
   },
   {
     "barcode": "8999999059903",
@@ -477,7 +2323,57 @@
     "flag": "COTC",
     "brand": "POND'S",
     "bu": "BEAUTY & WELLBEING",
-    "category": "FACE"
+    "category": "FACE",
+    "codes": [
+      {
+        "code": "67424840",
+        "name": "PONDS TH AM ULTIM DAY CRM 12X3X10G",
+        "isi": 36,
+        "status": "Active"
+      },
+      {
+        "code": "68124922",
+        "name": "PONDS AGE MIRACLE DAY CREAM12X3X10G",
+        "isi": 36,
+        "status": "Active"
+      },
+      {
+        "code": "69993013",
+        "name": "PONDS AGE MIR FM DAY CREAM UY 12X3X9G",
+        "isi": 36,
+        "status": "Active"
+      },
+      {
+        "code": "66818143",
+        "name": "PONDS CRM AGE MIR DAY 3X12X10ML",
+        "isi": 36,
+        "status": "Inactive"
+      },
+      {
+        "code": "67067507",
+        "name": "PONDS AGE MIRACLE DAY CRM JAR 12X3X10G",
+        "isi": 36,
+        "status": "Delisted"
+      },
+      {
+        "code": "67417806",
+        "name": "PONDS AM DAY+NIGHT CRM 12X(10+10)G",
+        "isi": 12,
+        "status": "Delisted"
+      },
+      {
+        "code": "68726018",
+        "name": "PONDS AGE MIR DAY & NIGHT CRM 36X(10+4)G",
+        "isi": 36,
+        "status": "Delisted"
+      },
+      {
+        "code": "68898953",
+        "name": "PONDS AM DAY + UY SERUM 36X(10+2)G",
+        "isi": 36,
+        "status": "Delisted"
+      }
+    ]
   },
   {
     "barcode": "8999999059910",
@@ -487,7 +2383,57 @@
     "flag": "COTC",
     "brand": "POND'S",
     "bu": "BEAUTY & WELLBEING",
-    "category": "FACE"
+    "category": "FACE",
+    "codes": [
+      {
+        "code": "67067509",
+        "name": "PONDS AGE MIRACLE DAY CRM JAR 4X3X20G",
+        "isi": 12,
+        "status": "Active"
+      },
+      {
+        "code": "69743730",
+        "name": "PONDS AGE MIR DAY & UY SERUM 12X(20+7)G",
+        "isi": 12,
+        "status": "Active"
+      },
+      {
+        "code": "69993016",
+        "name": "PONDS AGE MIR FM DAY CREAM UY 3X4X20G",
+        "isi": 12,
+        "status": "Active"
+      },
+      {
+        "code": "64412823",
+        "name": "PONDS AGE MIRACLE DAY CRM+SRM 12X(20+7)G",
+        "isi": 12,
+        "status": "Delisted"
+      },
+      {
+        "code": "68124921",
+        "name": "PONDS AGE MIRACLE DAY CREAM 3X4X20G",
+        "isi": 12,
+        "status": "Delisted"
+      },
+      {
+        "code": "68403122",
+        "name": "PONDS AM DAY + FF 12X(20+10)G",
+        "isi": 12,
+        "status": "Delisted"
+      },
+      {
+        "code": "68647442",
+        "name": "PONDS AGE MIR DAY & NIGHT CRM 12X(20+4)G",
+        "isi": 12,
+        "status": "Delisted"
+      },
+      {
+        "code": "68760544",
+        "name": "PONDS AGE MIR DAY & UY SERUM 12X(20+2)G",
+        "isi": 12,
+        "status": "Delisted"
+      }
+    ]
   },
   {
     "barcode": "8999999059927",
@@ -497,7 +2443,117 @@
     "flag": "COTC",
     "brand": "POND'S",
     "bu": "BEAUTY & WELLBEING",
-    "category": "FACE"
+    "category": "FACE",
+    "codes": [
+      {
+        "code": "67424837",
+        "name": "PONDS TH AM ULTIM DAY CRM 3X4X50G",
+        "isi": 12,
+        "status": "Active"
+      },
+      {
+        "code": "68124920",
+        "name": "PONDS AGE MIRACLE DAY CREAM 3X4X50G",
+        "isi": 12,
+        "status": "Active"
+      },
+      {
+        "code": "68530441",
+        "name": "PONDS AGE MIRACLE DAY CRM COL 6X50ML",
+        "isi": 6,
+        "status": "Active"
+      },
+      {
+        "code": "69993015",
+        "name": "PONDS AGE MIR FM DAY CREAM UY 3X4X50G",
+        "isi": 12,
+        "status": "Active"
+      },
+      {
+        "code": "67069819",
+        "name": "PONDS AGE MIRACLE DAY CRM NLTM 2X3X50ML",
+        "isi": 6,
+        "status": "Active No Production"
+      },
+      {
+        "code": "20222424",
+        "name": "PONDS AM D.CRM + NECKLACE/EARING 12X50ML",
+        "isi": 12,
+        "status": "Delisted"
+      },
+      {
+        "code": "20248747",
+        "name": "PONDS AM CREAM BUNDLE PACK 12X(50+50)G",
+        "isi": 12,
+        "status": "Delisted"
+      },
+      {
+        "code": "62071441",
+        "name": "PONDS AM DAY CREAM 50ML/6",
+        "isi": 12,
+        "status": "Delisted"
+      },
+      {
+        "code": "62071705",
+        "name": "PONDS AM DAY CREAM JAR 50ML/12",
+        "isi": 12,
+        "status": "Inactive"
+      },
+      {
+        "code": "64413013",
+        "name": "PONDS AGE MIRACLE DAY+NGH CRM 12X(50+9)G",
+        "isi": 12,
+        "status": "Delisted"
+      },
+      {
+        "code": "67066770",
+        "name": "PONDS AM DAY CRM + PAM NC 10GR 12X50G",
+        "isi": 12,
+        "status": "Delisted"
+      },
+      {
+        "code": "67067512",
+        "name": "PONDS AGE MIRACLE DAY CRM JAR 4X3X50G",
+        "isi": 12,
+        "status": "Delisted"
+      },
+      {
+        "code": "67089203",
+        "name": "PONDS AM D+N CRM 2IN1 HIJAB 12X(50+10)ML",
+        "isi": 12,
+        "status": "Delisted"
+      },
+      {
+        "code": "67453794",
+        "name": "PONDS AGE MIRACLE DAY CRM JAR LTD 12X50G",
+        "isi": 12,
+        "status": "Delisted"
+      },
+      {
+        "code": "68402881",
+        "name": "PONDS AM DAY + SERUM 12X(50+3)G",
+        "isi": 12,
+        "status": "Delisted"
+      },
+      {
+        "code": "68705783",
+        "name": "PONDS AGE MIR DAY&NIGHT CRM 12X(50+10)G",
+        "isi": 12,
+        "status": "Delisted"
+      },
+      {
+        "code": "68765328",
+        "name": "PONDS AM DAY + EYE CRM 12X(50+3)G",
+        "isi": 12,
+        "status": "Delisted"
+      },
+      {
+        "code": "69974519",
+        "name": "PONDS AGE MIR DAY & NIGHT 12X(50+10)G",
+        "isi": 12,
+        "status": "Delisted"
+      }
+    ]
   },
   {
     "barcode": "8999999059934",
@@ -507,7 +2563,45 @@
     "flag": "COTC",
     "brand": "POND'S",
     "bu": "BEAUTY & WELLBEING",
-    "category": "FACE"
+    "category": "FACE",
+    "codes": [
+      {
+        "code": "67067517",
+        "name": "PONDS AGE MIRACLE NIGHT CRM JAR 12X3X10G",
+        "isi": 36,
+        "status": "Active"
+      },
+      {
+        "code": "67424838",
+        "name": "PONDS TH AM ULTIM NIGHT CRM JAR 12X3X10G",
+        "isi": 36,
+        "status": "Active"
+      },
+      {
+        "code": "68124924",
+        "name": "PONDS AGE MIRACLE NIGHT CREAM 12X3X10G",
+        "isi": 36,
+        "status": "Active"
+      },
+      {
+        "code": "69993021",
+        "name": "PONDS AGE MIR FM NIGHT CREAM UY 12X3X9G",
+        "isi": 36,
+        "status": "Active"
+      },
+      {
+        "code": "68772733",
+        "name": "PONDS AM NIGHT + UY SERUM 36X(10+2)G",
+        "isi": 36,
+        "status": "Active No Production"
+      },
+      {
+        "code": "21024809",
+        "name": "PONDS AM DEEP ACTION NIGHT CRM 12X3X10G",
+        "isi": 36,
+        "status": "Delisted"
+      }
+    ]
   },
   {
     "barcode": "8999999059941",
@@ -517,7 +2611,87 @@
     "flag": "COTC",
     "brand": "POND'S",
     "bu": "BEAUTY & WELLBEING",
-    "category": "FACE"
+    "category": "FACE",
+    "codes": [
+      {
+        "code": "67424839",
+        "name": "PONDS TH AM ULTIM NIGHT CRM 3X4X50G",
+        "isi": 12,
+        "status": "Active"
+      },
+      {
+        "code": "68124923",
+        "name": "PONDS AGE MIRACLE NIGHT CREAM 3X4X50G",
+        "isi": 12,
+        "status": "Active"
+      },
+      {
+        "code": "68530452",
+        "name": "PONDS AGE MIRACLE NIGHTCRM COL 6X50ML",
+        "isi": 6,
+        "status": "Active"
+      },
+      {
+        "code": "69993014",
+        "name": "PONDS AGE MIR FM NIGHT CREAM UY 3X4X50G",
+        "isi": 12,
+        "status": "Active"
+      },
+      {
+        "code": "20229792",
+        "name": "PONDS AM DEEP ACTION NIGHT CRM 4X3X50G",
+        "isi": 12,
+        "status": "Delisted"
+      },
+      {
+        "code": "20253022",
+        "name": "PONDS AM NIGHT+AM DAY PUMP 12X(50+50)ML",
+        "isi": 12,
+        "status": "Delisted"
+      },
+      {
+        "code": "62071706",
+        "name": "PONDS AM NIGHT CREAM 50ML/12",
+        "isi": 12,
+        "status": "Inactive"
+      },
+      {
+        "code": "67067519",
+        "name": "PONDS AGE MIRACLE NIGHT CRM JAR 4X3X50G",
+        "isi": 12,
+        "status": "Delisted"
+      },
+      {
+        "code": "67069821",
+        "name": "PONDS AGE MIRACLE NIGHTCRM NLTM 2X3X50ML",
+        "isi": 6,
+        "status": "Delisted"
+      },
+      {
+        "code": "67453793",
+        "name": "PONDS AGE MIRACLE NIGHTCRMJAR LTD 12X50G",
+        "isi": 12,
+        "status": "Inactive"
+      },
+      {
+        "code": "67531522",
+        "name": "PONDS AM NIGHT + WB MW 12X(50G+100ML)",
+        "isi": 12,
+        "status": "Delisted"
+      },
+      {
+        "code": "68402868",
+        "name": "PONDS AM NIGHT + EYE CRM 12X(50+3)G",
+        "isi": 12,
+        "status": "Delisted"
+      },
+      {
+        "code": "68705768",
+        "name": "PONDS AGE MIR NIGHT & SERUM 12X(50+3)G",
+        "isi": 12,
+        "status": "Delisted"
+      }
+    ]
   },
   {
     "barcode": "8999999502942",
@@ -527,7 +2701,39 @@
     "flag": "COTC",
     "brand": "VASELINE",
     "bu": "BEAUTY & WELLBEING",
-    "category": "HAND & BODY CARE"
+    "category": "HAND & BODY CARE",
+    "codes": [
+      {
+        "code": "64346401",
+        "name": "VASELINE REPAIRING JELLY PJ TH 12X50ML",
+        "isi": 12,
+        "status": "Active"
+      },
+      {
+        "code": "67106843",
+        "name": "VASELINE PURE JELLY WIP 12X50ML",
+        "isi": 12,
+        "status": "Active"
+      },
+      {
+        "code": "67122064",
+        "name": "VASELINE REPAIRING JELLY 12X50ML",
+        "isi": 12,
+        "status": "Inactive"
+      },
+      {
+        "code": "67206111",
+        "name": "VASELINE REPAIRING JELLY PJ 12X50ML",
+        "isi": 12,
+        "status": "Delisted"
+      },
+      {
+        "code": "67861110",
+        "name": "VASELINE PURE JELLY LTD EDITION 12X50ML",
+        "isi": 12,
+        "status": "Delisted"
+      }
+    ]
   },
   {
     "barcode": "8999999502973",
@@ -537,7 +2743,33 @@
     "flag": "COTC",
     "brand": "VASELINE",
     "bu": "BEAUTY & WELLBEING",
-    "category": "HAND & BODY CARE"
+    "category": "HAND & BODY CARE",
+    "codes": [
+      {
+        "code": "64346400",
+        "name": "VASELINE REPAIRING JELLY PJ TH 12X100ML",
+        "isi": 12,
+        "status": "Active"
+      },
+      {
+        "code": "67106849",
+        "name": "VASELINE PURE JELLY WIP 12X100ML",
+        "isi": 12,
+        "status": "Active"
+      },
+      {
+        "code": "67206113",
+        "name": "VASELINE REPAIRING JELLY PJ 12X100ML",
+        "isi": 12,
+        "status": "Active"
+      },
+      {
+        "code": "67122069",
+        "name": "VASELINE REPAIRING JELLY 12X100ML",
+        "isi": 12,
+        "status": "Inactive"
+      }
+    ]
   },
   {
     "barcode": "8999999506506",
@@ -547,7 +2779,33 @@
     "flag": "COTC",
     "brand": "VASELINE",
     "bu": "BEAUTY & WELLBEING",
-    "category": "HAND & BODY CARE"
+    "category": "HAND & BODY CARE",
+    "codes": [
+      {
+        "code": "65483171",
+        "name": "VASELINE CERAMIDE DEFENSE SPF30 12X400ML",
+        "isi": 12,
+        "status": "Active"
+      },
+      {
+        "code": "68487736",
+        "name": "VASELINE HEALTHY BRIGHT SPF24 12X400ML",
+        "isi": 12,
+        "status": "Active"
+      },
+      {
+        "code": "68826573",
+        "name": "VASELINE HBRIGHT SPF24 VNC 12X400ML",
+        "isi": 12,
+        "status": "Active"
+      },
+      {
+        "code": "67126745",
+        "name": "VASELINE HW SPF24 PJ 12X400ML",
+        "isi": 12,
+        "status": "Active No Production"
+      }
+    ]
   },
   {
     "barcode": "8999999517793",
@@ -557,7 +2815,21 @@
     "flag": "COTC",
     "brand": "CITRA",
     "bu": "BEAUTY & WELLBEING",
-    "category": "FACE"
+    "category": "FACE",
+    "codes": [
+      {
+        "code": "67241212",
+        "name": "CITRA SAKURA FAIR UV FM 24X40G",
+        "isi": 24,
+        "status": "Active"
+      },
+      {
+        "code": "68483852",
+        "name": "CITRA SAKURA GLOW UV FM 24X40G",
+        "isi": 24,
+        "status": "Active"
+      }
+    ]
   },
   {
     "barcode": "8999999520892",
@@ -567,7 +2839,27 @@
     "flag": "COTC",
     "brand": "GLOW & LOVELY",
     "bu": "BEAUTY & WELLBEING",
-    "category": "FACE"
+    "category": "FACE",
+    "codes": [
+      {
+        "code": "67330877",
+        "name": "FAIR & LOVELY POWDER CREAM 48X20G",
+        "isi": 48,
+        "status": "Active"
+      },
+      {
+        "code": "68493495",
+        "name": "FAIR & LOVELY G&L POWDER CREAM 48X20G",
+        "isi": 48,
+        "status": "Active"
+      },
+      {
+        "code": "67794771",
+        "name": "FAIR & LOVELY POWDER CRM 48X20G",
+        "isi": 48,
+        "status": "Delisted"
+      }
+    ]
   },
   {
     "barcode": "8999999526382",
@@ -577,7 +2869,45 @@
     "flag": "COTC",
     "brand": "TRESEMME",
     "bu": "BEAUTY & WELLBEING",
-    "category": "HAIR CARE"
+    "category": "HAIR CARE",
+    "codes": [
+      {
+        "code": "21146126",
+        "name": "TRESEMME KERATIN SMOOTH CON N 18X170ML",
+        "isi": 18,
+        "status": "Active"
+      },
+      {
+        "code": "64306484",
+        "name": "TRESEMME CON KS KERATIN SMOOTH 18X170ML",
+        "isi": 18,
+        "status": "Active"
+      },
+      {
+        "code": "67442017",
+        "name": "TRESEMME KRATIN SM CON 18X170ML",
+        "isi": 18,
+        "status": "Active"
+      },
+      {
+        "code": "68558383",
+        "name": "TRESEMME KRATIN SMOOTH ELXR CON 18X170ML",
+        "isi": 18,
+        "status": "Active"
+      },
+      {
+        "code": "21024370",
+        "name": "TRESEMME KERATINSMOOTH HC 18X190ML",
+        "isi": 18,
+        "status": "Inactive"
+      },
+      {
+        "code": "21138482",
+        "name": "TRESEMME KERATIN SMOOTH CONDI 18X170ML",
+        "isi": 18,
+        "status": "Delisted"
+      }
+    ]
   },
   {
     "barcode": "8999999526405",
@@ -587,7 +2917,99 @@
     "flag": "COTC",
     "brand": "TRESEMME",
     "bu": "BEAUTY & WELLBEING",
-    "category": "HAIR CARE"
+    "category": "HAIR CARE",
+    "codes": [
+      {
+        "code": "21146125",
+        "name": "TRESEMME KERATIN SMOOTH SHP N 18X170ML",
+        "isi": 18,
+        "status": "Active"
+      },
+      {
+        "code": "64306118",
+        "name": "TRESEMME SHP KS KERATIN SMOOTH 18X170ML",
+        "isi": 18,
+        "status": "Active"
+      },
+      {
+        "code": "64853476",
+        "name": "TRESEMME SHP KS+CONDI KS 18X(170+70)ML",
+        "isi": 18,
+        "status": "Active"
+      },
+      {
+        "code": "65739391",
+        "name": "TRESEMME SHP KS KERATIN SMOOTH 18X170G",
+        "isi": 18,
+        "status": "Active"
+      },
+      {
+        "code": "67442021",
+        "name": "TRESEMME KRATIN SM SHP 18X170ML",
+        "isi": 18,
+        "status": "Active"
+      },
+      {
+        "code": "68558380",
+        "name": "TRESEMME KRATIN SMOOTH ELXR SHP 18X170ML",
+        "isi": 18,
+        "status": "Active"
+      },
+      {
+        "code": "21024368",
+        "name": "TRESEMME KERATINSMOOTH SH 18X190ML",
+        "isi": 18,
+        "status": "Inactive"
+      },
+      {
+        "code": "21138481",
+        "name": "TRESEMME KERATIN SMOOTH SHAMPOO 18X170ML",
+        "isi": 18,
+        "status": "Delisted"
+      },
+      {
+        "code": "67159743",
+        "name": "TRESEMME KERATIN SMOOTH SHP+CON 18X170ML",
+        "isi": 18,
+        "status": "Delisted"
+      },
+      {
+        "code": "67164520",
+        "name": "TRESEMME KERATIN SHP+VSN 18X170ML",
+        "isi": 18,
+        "status": "Delisted"
+      },
+      {
+        "code": "67779808",
+        "name": "TRESEMME KRATIN SM SHP+CON 18X(170+70)ML",
+        "isi": 18,
+        "status": "Delisted"
+      },
+      {
+        "code": "68449013",
+        "name": "TRESEMME KRATIN SMOOTH SHP 18X(170+70)ML",
+        "isi": 18,
+        "status": "Delisted"
+      },
+      {
+        "code": "68453749",
+        "name": "TRESEMME KRATIN SMTH SHMP 18X(170+70)ML",
+        "isi": 18,
+        "status": "Delisted"
+      },
+      {
+        "code": "68906086",
+        "name": "TRESEMME KS+PONDS FF 18X(170ML+50G)",
+        "isi": 18,
+        "status": "Delisted"
+      },
+      {
+        "code": "69713645",
+        "name": "TRESEMME KRATIN SMOOTH ELXR SHP 18X150ML",
+        "isi": 18,
+        "status": "Delisted"
+      }
+    ]
   },
   {
     "barcode": "8999999529628",
@@ -597,7 +3019,129 @@
     "flag": "COTC",
     "brand": "CLEAR",
     "bu": "BEAUTY & WELLBEING",
-    "category": "HAIR CARE"
+    "category": "HAIR CARE",
+    "codes": [
+      {
+        "code": "65734791",
+        "name": "CLEAR SHP CSC PRWTN KOMPLIT 36X160G",
+        "isi": 36,
+        "status": "Active"
+      },
+      {
+        "code": "67469524",
+        "name": "CLEAR SHP COMPLETE SOFT CARE 36X160ML",
+        "isi": 36,
+        "status": "Active"
+      },
+      {
+        "code": "69794173",
+        "name": "CLEAR SHP CSC PRWTN KOMPLIT 36X160ML",
+        "isi": 36,
+        "status": "Active"
+      },
+      {
+        "code": "64880609",
+        "name": "CLEAR SHP CSC PRWTN KOMPLIT NEW 36X160ML",
+        "isi": 36,
+        "status": "Active No Production"
+      },
+      {
+        "code": "20203781",
+        "name": "CLEAR SHP NEW CSC UNISEX 36X180ML",
+        "isi": 36,
+        "status": "Inactive"
+      },
+      {
+        "code": "20285300",
+        "name": "CLEAR SHP CSC UNISEX 36X170ML",
+        "isi": 36,
+        "status": "Delisted"
+      },
+      {
+        "code": "21010078",
+        "name": "CLEAR SHP CSC UNISEX 170ML+ CSC UNI 50ML",
+        "isi": 36,
+        "status": "Delisted"
+      },
+      {
+        "code": "21131713",
+        "name": "CLEAR SHP CSC UNISEX AIB 36X170ML",
+        "isi": 36,
+        "status": "Inactive"
+      },
+      {
+        "code": "21136293",
+        "name": "CLEAR SHP CSC UNISEX CM 36X170ML",
+        "isi": 36,
+        "status": "Delisted"
+      },
+      {
+        "code": "62070369",
+        "name": "CLEAR ACTIVE 200ML/36 PROMO",
+        "isi": 36,
+        "status": "Inactive"
+      },
+      {
+        "code": "62071178",
+        "name": "CLEAR SHAMPOO ACTIVE 200ML/36",
+        "isi": 36,
+        "status": "Inactive"
+      },
+      {
+        "code": "62071283",
+        "name": "CLEAR SHP ACTIVE CARE 200ML/36",
+        "isi": 36,
+        "status": "Delisted"
+      },
+      {
+        "code": "62071589",
+        "name": "CLEAR CPLT SOFTCARE 180ML/36",
+        "isi": 36,
+        "status": "Delisted"
+      },
+      {
+        "code": "62071856",
+        "name": "CLEAR CSC 180ML/36 PROMO",
+        "isi": 36,
+        "status": "Delisted"
+      },
+      {
+        "code": "64766559",
+        "name": "CLEAR CSC KOMPLIT+VSL SG 36X(160+20)ML",
+        "isi": 36,
+        "status": "Delisted"
+      },
+      {
+        "code": "67013169",
+        "name": "CLEAR SHP CSC UNISEX + SIRKAM 36X170ML",
+        "isi": 36,
+        "status": "Inactive"
+      },
+      {
+        "code": "67064151",
+        "name": "CLEAR CSC+RXN MEN INV 24X(170+70+15)ML",
+        "isi": 24,
+        "status": "Inactive"
+      },
+      {
+        "code": "68593166",
+        "name": "CLEAR SHP COMPLETE SOFT CARE DA 36X160ML",
+        "isi": 36,
+        "status": "Delisted"
+      },
+      {
+        "code": "68644708",
+        "name": "CLEAR SHP CS CARE 36X(160+50)ML",
+        "isi": 36,
+        "status": "Delisted"
+      },
+      {
+        "code": "68933944",
+        "name": "CLEAR SHP CSC X PONDS FF 36X(160ML+30G)",
+        "isi": 36,
+        "status": "Delisted"
+      }
+    ]
   },
   {
     "barcode": "8999999529710",
@@ -607,7 +3151,81 @@
     "flag": "COTC",
     "brand": "CLEAR MEN",
     "bu": "BEAUTY & WELLBEING",
-    "category": "HAIR CARE"
+    "category": "HAIR CARE",
+    "codes": [
+      {
+        "code": "65734816",
+        "name": "CLEAR SHP MENTHOL FRESH ACT 36X160G",
+        "isi": 36,
+        "status": "Active"
+      },
+      {
+        "code": "66322540",
+        "name": "CLEAR MEN SHP COOL SPORT MENTHOL 36X160G",
+        "isi": 36,
+        "status": "Active"
+      },
+      {
+        "code": "67469579",
+        "name": "CLEAR SHP COOL SPORT MNTL MEN 36X160ML",
+        "isi": 36,
+        "status": "Active"
+      },
+      {
+        "code": "69794099",
+        "name": "CLEAR SHP MENTHOL FRESH ACTIVE 36X160ML",
+        "isi": 36,
+        "status": "Active"
+      },
+      {
+        "code": "65086684",
+        "name": "CLEAR SHP MNTL FRESH ACTIVE CR 36X160ML",
+        "isi": 36,
+        "status": "Active No Production"
+      },
+      {
+        "code": "65426464",
+        "name": "CLEAR SHP MENTHOL FRESH ACT NEW 36X160ML",
+        "isi": 36,
+        "status": "Active No Production"
+      },
+      {
+        "code": "20073047",
+        "name": "CLEAR MEN ICE COOL EURO PROMO 36X180ML",
+        "isi": 36,
+        "status": "Inactive"
+      },
+      {
+        "code": "20079481",
+        "name": "CLEAR MEN COOL SPR+STY 36X(180ML+50ML)",
+        "isi": 36,
+        "status": "Delisted"
+      },
+      {
+        "code": "20204701",
+        "name": "CLEAR SHP NEW IC MENTHOL MEN 36X180ML",
+        "isi": 36,
+        "status": "Delisted"
+      },
+      {
+        "code": "62071525",
+        "name": "CLEAR MAN ACTIV 180ML/36",
+        "isi": 36,
+        "status": "Inactive"
+      },
+      {
+        "code": "68593162",
+        "name": "CLEAR SHP COOL SPRT MNTL MEN DA 36X160ML",
+        "isi": 36,
+        "status": "Delisted"
+      },
+      {
+        "code": "68763623",
+        "name": "CLEAR CSM + AXE BS 36X(160+30)ML",
+        "isi": 36,
+        "status": "Delisted"
+      }
+    ]
   },
   {
     "barcode": "8999999549565",
@@ -617,7 +3235,45 @@
     "flag": "COTC",
     "brand": "POND'S",
     "bu": "BEAUTY & WELLBEING",
-    "category": "FACE"
+    "category": "FACE",
+    "codes": [
+      {
+        "code": "62759134",
+        "name": "PONDS BRIGHTENING MCLR WATER 4X3X100ML",
+        "isi": 12,
+        "status": "Active"
+      },
+      {
+        "code": "67838954",
+        "name": "PONDS ROSE MICELLAR WATER 4X3X100ML",
+        "isi": 12,
+        "status": "Active"
+      },
+      {
+        "code": "68719700",
+        "name": "PONDS ROSE MW + BBFF 12X(100ML+30G)",
+        "isi": 12,
+        "status": "Active No Production"
+      },
+      {
+        "code": "68873847",
+        "name": "PONDS ROSE MICELLAR BANDED 12X(100+55)ML",
+        "isi": 12,
+        "status": "Delisted"
+      },
+      {
+        "code": "68916824",
+        "name": "PONDS ROSE MW + MASK2IN1 12X(100ML+25G)",
+        "isi": 12,
+        "status": "Delisted"
+      },
+      {
+        "code": "68938849",
+        "name": "PONDS ROSE MW + WIPES 12X(100ML+8PCS)",
+        "isi": 12,
+        "status": "Delisted"
+      }
+    ]
   },
   {
     "barcode": "8999999559588",
@@ -627,7 +3283,63 @@
     "flag": "COTC",
     "brand": "VASELINE",
     "bu": "BEAUTY & WELLBEING",
-    "category": "HAND & BODY CARE"
+    "category": "HAND & BODY CARE",
+    "codes": [
+      {
+        "code": "65595565",
+        "name": "VASELINE SOFT GLOW VANC SRM 2X6X180ML",
+        "isi": 12,
+        "status": "Active"
+      },
+      {
+        "code": "66320998",
+        "name": "VASELINE SOFT GLOW VLCT SRM 2X6X180ML",
+        "isi": 12,
+        "status": "Active"
+      },
+      {
+        "code": "68187724",
+        "name": "VASELINE HB SOFT GLOW SRM PJ 4X3X180ML",
+        "isi": 12,
+        "status": "Active"
+      },
+      {
+        "code": "69794123",
+        "name": "VASELINE HB SOFT GLOW VIT SRM 2X6X180ML",
+        "isi": 12,
+        "status": "Active"
+      },
+      {
+        "code": "62736616",
+        "name": "VASELINE SOFT VG+PONDS MW 12X(180+55)ML",
+        "isi": 12,
+        "status": "Delisted"
+      },
+      {
+        "code": "64399039",
+        "name": "VASELINE SOFT GLOW SRM TWPCK 6X(2X180ML)",
+        "isi": 6,
+        "status": "Delisted"
+      },
+      {
+        "code": "68651958",
+        "name": "VASELINE SFT GLW+VAS LIP 12X(180ML+10G)",
+        "isi": 12,
+        "status": "Delisted"
+      },
+      {
+        "code": "68887443",
+        "name": "VASELINE SFTGLW+PAM DAYCRM 12X(180ML+4G)",
+        "isi": 12,
+        "status": "Delisted"
+      },
+      {
+        "code": "69594722",
+        "name": "VASELINE SFTGLW+PONDS BB 12X(180ML+7.5G)",
+        "isi": 12,
+        "status": "Delisted"
+      }
+    ]
   },
   {
     "barcode": "8999999566647",
@@ -637,7 +3349,33 @@
     "flag": "COTC",
     "brand": "GLOW & LOVELY",
     "bu": "BEAUTY & WELLBEING",
-    "category": "FACE"
+    "category": "FACE",
+    "codes": [
+      {
+        "code": "64825646",
+        "name": "GLOW & LOVELY BRIGHT C GLOW 4X6X50G",
+        "isi": 24,
+        "status": "Active"
+      },
+      {
+        "code": "68493657",
+        "name": "FAIR & LOVELY G&L BRGHT C GLOW FF 24X50G",
+        "isi": 24,
+        "status": "Active"
+      },
+      {
+        "code": "68425528",
+        "name": "FAIR & LOVELY BRIGHT C GLOW FF 24X50G",
+        "isi": 24,
+        "status": "Delisted"
+      },
+      {
+        "code": "68923283",
+        "name": "FAIR & LOVELY G&L VIT C GLOW FF 4X6X50G",
+        "isi": 24,
+        "status": "Delisted"
+      }
+    ]
   },
   {
     "barcode": "8999999566654",
@@ -647,7 +3385,51 @@
     "flag": "COTC",
     "brand": "GLOW & LOVELY",
     "bu": "BEAUTY & WELLBEING",
-    "category": "FACE"
+    "category": "FACE",
+    "codes": [
+      {
+        "code": "64825645",
+        "name": "GLOW & LOVELY BRIGHT C GLOW 4X6X100G",
+        "isi": 24,
+        "status": "Active"
+      },
+      {
+        "code": "68493666",
+        "name": "FAIR & LOVELY G&L BRGT C GLOW FF 24X100G",
+        "isi": 24,
+        "status": "Active"
+      },
+      {
+        "code": "68425530",
+        "name": "FAIR & LOVELY BRIGHT C GLOW FF 24X100G",
+        "isi": 24,
+        "status": "Delisted"
+      },
+      {
+        "code": "68914298",
+        "name": "FAIR & LOVELY G&L VITC+FM 24X(100+23)G",
+        "isi": 24,
+        "status": "Delisted"
+      },
+      {
+        "code": "68914300",
+        "name": "FAIR & LOVELY G&L VITC+FM 24X(100+15)G",
+        "isi": 24,
+        "status": "Delisted"
+      },
+      {
+        "code": "68923281",
+        "name": "FAIR & LOVELY G&L VIT C GLOW FF 4X6X100G",
+        "isi": 24,
+        "status": "Delisted"
+      },
+      {
+        "code": "69743647",
+        "name": "FAIR & LOVELY VITCFF+MVITFM 24X(100+23)G",
+        "isi": 24,
+        "status": "Delisted"
+      }
+    ]
   },
   {
     "barcode": "8999999581930",
@@ -657,7 +3439,27 @@
     "flag": "COTC",
     "brand": "VASELINE",
     "bu": "BEAUTY & WELLBEING",
-    "category": "HAND & BODY CARE"
+    "category": "HAND & BODY CARE",
+    "codes": [
+      {
+        "code": "64394856",
+        "name": "VASELINE GH FLAWLESS VCT SERUM 2X6X200ML",
+        "isi": 12,
+        "status": "Active"
+      },
+      {
+        "code": "65486833",
+        "name": "VASELINE GH FLAWLESS SRM VLTR 2X6X200ML",
+        "isi": 12,
+        "status": "Active"
+      },
+      {
+        "code": "68782482",
+        "name": "VASELINE HB GLU SER BUR UV LOT 4X3X200ML",
+        "isi": 12,
+        "status": "Delisted"
+      }
+    ]
   },
   {
     "barcode": "8999999581947",
@@ -667,7 +3469,27 @@
     "flag": "COTC",
     "brand": "VASELINE",
     "bu": "BEAUTY & WELLBEING",
-    "category": "HAND & BODY CARE"
+    "category": "HAND & BODY CARE",
+    "codes": [
+      {
+        "code": "64394864",
+        "name": "VASELINE GH DEWY VCT SERUM 2X6X200ML",
+        "isi": 12,
+        "status": "Active"
+      },
+      {
+        "code": "65486851",
+        "name": "VASELINE GH DEWY SRM VLTR 2X6X200ML",
+        "isi": 12,
+        "status": "Active"
+      },
+      {
+        "code": "68782484",
+        "name": "VASELINE HB GLU SER BURST LOT 4X3X200ML",
+        "isi": 12,
+        "status": "Active No Production"
+      }
+    ]
   },
   {
     "barcode": "8999999589400",
@@ -677,7 +3499,21 @@
     "flag": "COTC",
     "brand": "GLOW & LOVELY",
     "bu": "BEAUTY & WELLBEING",
-    "category": "FACE"
+    "category": "FACE",
+    "codes": [
+      {
+        "code": "64835147",
+        "name": "GLOW & LOVELY SUN UV SPF35 VITC 48X20G",
+        "isi": 48,
+        "status": "Active"
+      },
+      {
+        "code": "69596559",
+        "name": "GLOW & LOVELY SUN UV DUO SPF 35 48X20G",
+        "isi": 48,
+        "status": "Active"
+      }
+    ]
   },
   {
     "barcode": "8999999589417",
@@ -687,7 +3523,33 @@
     "flag": "COTC",
     "brand": "GLOW & LOVELY",
     "bu": "BEAUTY & WELLBEING",
-    "category": "FACE"
+    "category": "FACE",
+    "codes": [
+      {
+        "code": "64806828",
+        "name": "GLOW & LOVELY UV+CITRA PRTC 24X(40+10)ML",
+        "isi": 24,
+        "status": "Active"
+      },
+      {
+        "code": "64835146",
+        "name": "GLOW & LOVELY SUN UV SPF35 VITC 24X40G",
+        "isi": 24,
+        "status": "Active"
+      },
+      {
+        "code": "69596561",
+        "name": "GLOW & LOVELY SUN UV DUO SPF 35 24X40G",
+        "isi": 24,
+        "status": "Active"
+      },
+      {
+        "code": "69743645",
+        "name": "FAIR & LOVELY VITC (FM+FF) 24X(40+50)G",
+        "isi": 24,
+        "status": "Active No Production"
+      }
+    ]
   },
   {
     "barcode": "8999999590048",
@@ -697,7 +3559,27 @@
     "flag": "COTC",
     "brand": "VASELINE",
     "bu": "BEAUTY & WELLBEING",
-    "category": "HAND & BODY CARE"
+    "category": "HAND & BODY CARE",
+    "codes": [
+      {
+        "code": "64394860",
+        "name": "VASELINE GH OVRNGHT VCT SERUM 2X6X200 ML",
+        "isi": 12,
+        "status": "Active"
+      },
+      {
+        "code": "65487083",
+        "name": "VASELINE GH OVERNIGHT SRM VLTR 2X6X200ML",
+        "isi": 12,
+        "status": "Active"
+      },
+      {
+        "code": "69611514",
+        "name": "VASELINE GLUTA SBL OVERNIGHT 4X3X200 ML",
+        "isi": 12,
+        "status": "Delisted"
+      }
+    ]
   },
   {
     "barcode": "8999999590055",
@@ -707,7 +3589,33 @@
     "flag": "COTC",
     "brand": "VASELINE",
     "bu": "BEAUTY & WELLBEING",
-    "category": "HAND & BODY CARE"
+    "category": "HAND & BODY CARE",
+    "codes": [
+      {
+        "code": "64398224",
+        "name": "VASELINE GH OVRNGHT VCT SERUM 4X3X330 ML",
+        "isi": 12,
+        "status": "Active"
+      },
+      {
+        "code": "65487086",
+        "name": "VASELINE GH OVERNIGHT SRM VLTR 4X3X330ML",
+        "isi": 12,
+        "status": "Active"
+      },
+      {
+        "code": "66319969",
+        "name": "VASELINE GH OVERNIGHT SRM VLTR 4X3X300ML",
+        "isi": 12,
+        "status": "Active"
+      },
+      {
+        "code": "69611515",
+        "name": "VASELINE GLUTA SBL OVERNIGHT 4X3X330 ML",
+        "isi": 12,
+        "status": "Active No Production"
+      }
+    ]
   },
   {
     "barcode": "8999999596972",
@@ -717,7 +3625,27 @@
     "flag": "COTC",
     "brand": "VASELINE",
     "bu": "BEAUTY & WELLBEING",
-    "category": "HAND & BODY CARE"
+    "category": "HAND & BODY CARE",
+    "codes": [
+      {
+        "code": "64394853",
+        "name": "VASELINE GH PROAGE VCT SERUM 2X6X200ML",
+        "isi": 12,
+        "status": "Active"
+      },
+      {
+        "code": "65486839",
+        "name": "VASELINE GH PROAGE SRM VLTR 2X6X200ML",
+        "isi": 12,
+        "status": "Active"
+      },
+      {
+        "code": "62680397",
+        "name": "VASELINE GL HYA PROAGE SERUM 4X3X200ML",
+        "isi": 12,
+        "status": "Delisted"
+      }
+    ]
   },
   {
     "barcode": "8999999602932",
@@ -727,7 +3655,21 @@
     "flag": "COTC",
     "brand": "VASELINE",
     "bu": "BEAUTY & WELLBEING",
-    "category": "HAND & BODY CARE"
+    "category": "HAND & BODY CARE",
+    "codes": [
+      {
+        "code": "64391691",
+        "name": "VASELINE GH SPF 50 VCT SERUM 2X6X200ML",
+        "isi": 12,
+        "status": "Active"
+      },
+      {
+        "code": "65491674",
+        "name": "VASELINE GH LUMI SPF50 SRM VLC 2X6X200ML",
+        "isi": 12,
+        "status": "Active"
+      }
+    ]
   },
   {
     "barcode": "8999999605872",
@@ -737,7 +3679,21 @@
     "flag": "COTC",
     "brand": "POND'S",
     "bu": "BEAUTY & WELLBEING",
-    "category": "FACE"
+    "category": "FACE",
+    "codes": [
+      {
+        "code": "64766550",
+        "name": "PONDS UV MIRACLE BRIGHT SPF 50 12X25G",
+        "isi": 12,
+        "status": "Active"
+      },
+      {
+        "code": "69697961",
+        "name": "PONDS UV PROTECT SUNSERUM SPF50+ 2X6X30G",
+        "isi": 12,
+        "status": "Active"
+      }
+    ]
   },
   {
     "barcode": "8999999605889",
@@ -747,7 +3703,51 @@
     "flag": "COTC",
     "brand": "CITRA",
     "bu": "BEAUTY & WELLBEING",
-    "category": "HAND & BODY CARE"
+    "category": "HAND & BODY CARE",
+    "codes": [
+      {
+        "code": "20069828",
+        "name": "CITRA H&B LST WHITE UV PUMP 12X400ML",
+        "isi": 12,
+        "status": "Active"
+      },
+      {
+        "code": "64781848",
+        "name": "CITRA HBL BENGKOANG PERFECT UV 12X380ML",
+        "isi": 12,
+        "status": "Active"
+      },
+      {
+        "code": "64790454",
+        "name": "CITRA HBL BENGKOANG+SERUM 12X(380+100)ML",
+        "isi": 12,
+        "status": "Active"
+      },
+      {
+        "code": "67024851",
+        "name": "CITRA HBL NAT WHITE UV 12X400ML",
+        "isi": 12,
+        "status": "Active No Production"
+      },
+      {
+        "code": "67467271",
+        "name": "CITRA HBL NAT GLOW WHITE UV 12X380ML",
+        "isi": 12,
+        "status": "Active No Production"
+      },
+      {
+        "code": "68487591",
+        "name": "CITRA HBL BENGKOANG NAT GLOW UV 12X380ML",
+        "isi": 12,
+        "status": "Delisted"
+      },
+      {
+        "code": "69739043",
+        "name": "CITRA HBL BENGK+ COCOA FS 12X(380ML+90G)",
+        "isi": 12,
+        "status": "Delisted"
+      }
+    ]
   },
   {
     "barcode": "8999999605902",
@@ -757,7 +3757,45 @@
     "flag": "COTC",
     "brand": "CITRA",
     "bu": "BEAUTY & WELLBEING",
-    "category": "HAND & BODY CARE"
+    "category": "HAND & BODY CARE",
+    "codes": [
+      {
+        "code": "20209889",
+        "name": "CITRA HBL PEARLY WHITE UV 12X400ML",
+        "isi": 12,
+        "status": "Active"
+      },
+      {
+        "code": "64781852",
+        "name": "CITRA HBL PEARLY RADIANT UV 12X380ML",
+        "isi": 12,
+        "status": "Active"
+      },
+      {
+        "code": "67024924",
+        "name": "CITRA HBL PEARLY WHITE UV RL 12X400ML",
+        "isi": 12,
+        "status": "Active No Production"
+      },
+      {
+        "code": "67467269",
+        "name": "CITRA HBL PEARLY WHITE UV RL 12X380ML",
+        "isi": 12,
+        "status": "Active No Production"
+      },
+      {
+        "code": "68487590",
+        "name": "CITRA HBL PEARLY GLOW UV 12X380ML",
+        "isi": 12,
+        "status": "Delisted"
+      },
+      {
+        "code": "69739042",
+        "name": "CITRA HBL PEARL+MARINE FF 12X(380ML+90G)",
+        "isi": 12,
+        "status": "Delisted"
+      }
+    ]
   },
   {
     "barcode": "8999999605940",
@@ -767,7 +3805,123 @@
     "flag": "COTC",
     "brand": "CITRA",
     "bu": "BEAUTY & WELLBEING",
-    "category": "HAND & BODY CARE"
+    "category": "HAND & BODY CARE",
+    "codes": [
+      {
+        "code": "64781782",
+        "name": "CITRA HBL BENGKOANG PERFECT UV 24X210ML",
+        "isi": 24,
+        "status": "Active"
+      },
+      {
+        "code": "67024840",
+        "name": "CITRA HBL NAT WHITE UV 4X6X250ML",
+        "isi": 24,
+        "status": "Active"
+      },
+      {
+        "code": "68487601",
+        "name": "CITRA HBL BENGKOANG NAT GLW UV 4X6X230ML",
+        "isi": 24,
+        "status": "Active"
+      },
+      {
+        "code": "67467275",
+        "name": "CITRA HBL NAT GLOW WHITE UV 4X6X230ML",
+        "isi": 24,
+        "status": "Active No Production"
+      },
+      {
+        "code": "68618725",
+        "name": "CITRA NAT GLW+CITRA NATGLW 24X(230+55)ML",
+        "isi": 24,
+        "status": "Active No Production"
+      },
+      {
+        "code": "20069823",
+        "name": "CITRA H&B LST WHITE UV 4X6X250ML",
+        "isi": 24,
+        "status": "Delisted"
+      },
+      {
+        "code": "20098645",
+        "name": "CITRA HBL L.WHITE+S.BAR 18X(250ML+75G)",
+        "isi": 18,
+        "status": "Delisted"
+      },
+      {
+        "code": "62071202",
+        "name": "CITRA WL 250ML/18 REL",
+        "isi": 18,
+        "status": "Inactive"
+      },
+      {
+        "code": "62071755",
+        "name": "CITRA H&B LASTING WHT 250ML/18",
+        "isi": 18,
+        "status": "Inactive"
+      },
+      {
+        "code": "62071788",
+        "name": "CITRA H&B LSTG PURITY 250ML/18",
+        "isi": 18,
+        "status": "Inactive"
+      },
+      {
+        "code": "62071843",
+        "name": "CITRA H&B LST WHT EXT 250ML/18",
+        "isi": 18,
+        "status": "Delisted"
+      },
+      {
+        "code": "62071846",
+        "name": "CITRA H&B LSTG YOUTH 250ML/18",
+        "isi": 18,
+        "status": "Inactive"
+      },
+      {
+        "code": "64348209",
+        "name": "CITRA HBL BENGKOANG 4X6X210ML",
+        "isi": 24,
+        "status": "Delisted"
+      },
+      {
+        "code": "64349077",
+        "name": "CITRA HBL BENGKOANG+SERUM 24X(210+100)ML",
+        "isi": 24,
+        "status": "Delisted"
+      },
+      {
+        "code": "67005233",
+        "name": "CITRA LST WHT HBL+BW POUCH 24X(250+60ML)",
+        "isi": 24,
+        "status": "Delisted"
+      },
+      {
+        "code": "67068062",
+        "name": "CITRA NAT WHT HBL+BW POUCH 24X(250+60ML)",
+        "isi": 24,
+        "status": "Delisted"
+      },
+      {
+        "code": "67617199",
+        "name": "CITRA NAT GLOW HBL+BW 24X(230+55)ML",
+        "isi": 24,
+        "status": "Delisted"
+      },
+      {
+        "code": "68647447",
+        "name": "CITRA HBL BENGKOANG NAT GLW UV 4X6X250ML",
+        "isi": 24,
+        "status": "Delisted"
+      },
+      {
+        "code": "68926962",
+        "name": "CITRA HBL BENGKOANG NAT GLW UV 4X6X210ML",
+        "isi": 24,
+        "status": "Delisted"
+      }
+    ]
   },
   {
     "barcode": "8999999605957",
@@ -777,7 +3931,123 @@
     "flag": "COTC",
     "brand": "CITRA",
     "bu": "BEAUTY & WELLBEING",
-    "category": "HAND & BODY CARE"
+    "category": "HAND & BODY CARE",
+    "codes": [
+      {
+        "code": "64784528",
+        "name": "CITRA HBL BENGKOANG PERFECT UV 36X110ML",
+        "isi": 36,
+        "status": "Active"
+      },
+      {
+        "code": "68487611",
+        "name": "CITRA HBL BENGKOANG NAT GLW UV 6X6X120ML",
+        "isi": 36,
+        "status": "Active"
+      },
+      {
+        "code": "67024922",
+        "name": "CITRA HBL NAT WHITE UV 6X6X120ML",
+        "isi": 36,
+        "status": "Active No Production"
+      },
+      {
+        "code": "67467251",
+        "name": "CITRA HBL NAT GLOW WHT UV 6X6X120ML",
+        "isi": 36,
+        "status": "Active No Production"
+      },
+      {
+        "code": "68689349",
+        "name": "CITRA BENGKOANG+CITRA FC 36X(120ML+9G)",
+        "isi": 36,
+        "status": "Active No Production"
+      },
+      {
+        "code": "20069808",
+        "name": "CITRA H&B LST WHITE UV 6X6X120ML",
+        "isi": 36,
+        "status": "Delisted"
+      },
+      {
+        "code": "20246496",
+        "name": "CITRA L.WHITE BOTTLE+TUBE 36X(120+30)ML",
+        "isi": 36,
+        "status": "Delisted"
+      },
+      {
+        "code": "62070734",
+        "name": "CITRA WL 120ML/36 NEW",
+        "isi": 36,
+        "status": "Inactive"
+      },
+      {
+        "code": "62071199",
+        "name": "CITRA WL REL 36X120ML",
+        "isi": 36,
+        "status": "Inactive"
+      },
+      {
+        "code": "62071460",
+        "name": "CITRA WL BAG PROMO 120ML-3PCS",
+        "isi": 12,
+        "status": "Inactive"
+      },
+      {
+        "code": "62071785",
+        "name": "CITRA H&B LASTING WHT 120ML/36",
+        "isi": 36,
+        "status": "Inactive"
+      },
+      {
+        "code": "62071787",
+        "name": "CITRA H&B LSTG PURITY120ML/36",
+        "isi": 36,
+        "status": "Inactive"
+      },
+      {
+        "code": "62071842",
+        "name": "CITRA H&B LST WHT EXT 120ML/36",
+        "isi": 36,
+        "status": "Delisted"
+      },
+      {
+        "code": "62071845",
+        "name": "CITRA H&B LSTG YOUTH 120ML/36",
+        "isi": 36,
+        "status": "Inactive"
+      },
+      {
+        "code": "64362945",
+        "name": "CITRA BENGKOANG+CLEAR RTOK 36X(110+60)ML",
+        "isi": 36,
+        "status": "Delisted"
+      },
+      {
+        "code": "64377843",
+        "name": "CITRA BENGKOANG+SUNSILK 36X(110+50)ML",
+        "isi": 36,
+        "status": "Delisted"
+      },
+      {
+        "code": "68489412",
+        "name": "CITRA HBL NAT GLO+BAR SOAP 36X(120+70)ML",
+        "isi": 36,
+        "status": "Delisted"
+      },
+      {
+        "code": "68689380",
+        "name": "CITRA BENGKOANG+CITRA BAR 36X(120ML+70G)",
+        "isi": 36,
+        "status": "Delisted"
+      },
+      {
+        "code": "68926967",
+        "name": "CITRA HBL BENGKOANG NAT GLW UV 6X6X110ML",
+        "isi": 36,
+        "status": "Delisted"
+      }
+    ]
   },
   {
     "barcode": "8999999605964",
@@ -787,7 +4057,51 @@
     "flag": "COTC",
     "brand": "CITRA",
     "bu": "BEAUTY & WELLBEING",
-    "category": "HAND & BODY CARE"
+    "category": "HAND & BODY CARE",
+    "codes": [
+      {
+        "code": "64784512",
+        "name": "CITRA HBL SAKURA SUPPLE UV 24X210ML",
+        "isi": 24,
+        "status": "Active"
+      },
+      {
+        "code": "67182200",
+        "name": "CITRA HBL SAKURA FAIR UV 24X250ML",
+        "isi": 24,
+        "status": "Active"
+      },
+      {
+        "code": "68487602",
+        "name": "CITRA HBL SAKURA GLOW UV 4X6X230ML",
+        "isi": 24,
+        "status": "Active"
+      },
+      {
+        "code": "67467245",
+        "name": "CITRA HBL SAKURA FAIR UV 24X230ML",
+        "isi": 24,
+        "status": "Active No Production"
+      },
+      {
+        "code": "64389926",
+        "name": "CITRA HBL SAKURA UV 4X6X210ML",
+        "isi": 24,
+        "status": "Delisted"
+      },
+      {
+        "code": "68943099",
+        "name": "CITRA HBL SAKURA GLOW UV 4X6X210ML",
+        "isi": 24,
+        "status": "Delisted"
+      },
+      {
+        "code": "69739045",
+        "name": "CITRA HBL SAKURA+SSK SHP 24X(210+70)ML",
+        "isi": 24,
+        "status": "Delisted"
+      }
+    ]
   },
   {
     "barcode": "8999999605988",
@@ -797,7 +4111,99 @@
     "flag": "COTC",
     "brand": "CITRA",
     "bu": "BEAUTY & WELLBEING",
-    "category": "HAND & BODY CARE"
+    "category": "HAND & BODY CARE",
+    "codes": [
+      {
+        "code": "20070493",
+        "name": "CITRA H&B LST WHITE UV 6X6X60ML",
+        "isi": 36,
+        "status": "Active"
+      },
+      {
+        "code": "64784532",
+        "name": "CITRA HBL BENGKOANG PERFECT UV 36X60ML",
+        "isi": 36,
+        "status": "Active"
+      },
+      {
+        "code": "67024850",
+        "name": "CITRA HBL NAT WHITE UV 6X6X60ML",
+        "isi": 36,
+        "status": "Active No Production"
+      },
+      {
+        "code": "67467267",
+        "name": "CITRA HBL NAT GLOW WHITE 6X6X60ML",
+        "isi": 36,
+        "status": "Active No Production"
+      },
+      {
+        "code": "21071874",
+        "name": "CITRA HBL LASTING WHITE UV 12X600ML",
+        "isi": 12,
+        "status": "Inactive"
+      },
+      {
+        "code": "62070733",
+        "name": "CITRA WL 60ML/36 NEW",
+        "isi": 36,
+        "status": "Inactive"
+      },
+      {
+        "code": "62071183",
+        "name": "CITRA BL REL 36X60ML",
+        "isi": 36,
+        "status": "Delisted"
+      },
+      {
+        "code": "62071194",
+        "name": "CITRA WL REL 36X60ML",
+        "isi": 36,
+        "status": "Inactive"
+      },
+      {
+        "code": "62071645",
+        "name": "CITRA WL 90ML/36 PROMO",
+        "isi": 36,
+        "status": "Inactive"
+      },
+      {
+        "code": "62071784",
+        "name": "CITRA H&B LASTING WHT 60ML/36",
+        "isi": 36,
+        "status": "Inactive"
+      },
+      {
+        "code": "62071786",
+        "name": "CITRA H&B LSTG PURITY 60ML/36",
+        "isi": 36,
+        "status": "Inactive"
+      },
+      {
+        "code": "62071808",
+        "name": "CITRA H&B LASTING GLOW 60ML/36",
+        "isi": 36,
+        "status": "Delisted"
+      },
+      {
+        "code": "62071841",
+        "name": "CITRA H&B LAST WHT EXT 60ML/36",
+        "isi": 36,
+        "status": "Delisted"
+      },
+      {
+        "code": "62071844",
+        "name": "CITRA H&B LSTG YOUTH 60ML/36",
+        "isi": 36,
+        "status": "Inactive"
+      },
+      {
+        "code": "68487614",
+        "name": "CITRA HBL BENGKOANG NAT GLOW UV 6X6X60ML",
+        "isi": 36,
+        "status": "Delisted"
+      }
+    ]
   },
   {
     "barcode": "8999999605995",
@@ -807,7 +4213,75 @@
     "flag": "COTC",
     "brand": "CITRA",
     "bu": "BEAUTY & WELLBEING",
-    "category": "HAND & BODY CARE"
+    "category": "HAND & BODY CARE",
+    "codes": [
+      {
+        "code": "64784526",
+        "name": "CITRA HBL PEARLY RADIANT UV 24X210ML",
+        "isi": 24,
+        "status": "Active"
+      },
+      {
+        "code": "68487600",
+        "name": "CITRA HBL PEARLY GLOW UV 4X6X230ML",
+        "isi": 24,
+        "status": "Active"
+      },
+      {
+        "code": "67467241",
+        "name": "CITRA HBL PEARLY WHITE UV 4X6X230ML",
+        "isi": 24,
+        "status": "Active No Production"
+      },
+      {
+        "code": "68617583",
+        "name": "CITRA HBL PEARL+CITRA PERL 24X(230+55)ML",
+        "isi": 24,
+        "status": "Active No Production"
+      },
+      {
+        "code": "68904490",
+        "name": "CITRA PEARLY+CITRA NATGLW 24X(230+55)ML",
+        "isi": 24,
+        "status": "Active No Production"
+      },
+      {
+        "code": "64348206",
+        "name": "CITRA HBL PEARLY 4X6X210ML",
+        "isi": 24,
+        "status": "Delisted"
+      },
+      {
+        "code": "64349078",
+        "name": "CITRA HBL PEARLY + SERUM 24X(210+100)ML",
+        "isi": 24,
+        "status": "Delisted"
+      },
+      {
+        "code": "67197709",
+        "name": "CITRA HBL PEARLY WHT PROMO 24X(250+60)ML",
+        "isi": 24,
+        "status": "Delisted"
+      },
+      {
+        "code": "67617201",
+        "name": "CITRA PEARLY WHT HBL+BW FM 24X(230+8)ML",
+        "isi": 24,
+        "status": "Delisted"
+      },
+      {
+        "code": "68647448",
+        "name": "CITRA HBL PEARLY GLOW UV 4X6X250ML",
+        "isi": 24,
+        "status": "Delisted"
+      },
+      {
+        "code": "68926954",
+        "name": "CITRA HBL PEARLY GLOW UV 4X6X210ML",
+        "isi": 24,
+        "status": "Delisted"
+      }
+    ]
   },
   {
     "barcode": "8999999606008",
@@ -817,7 +4291,63 @@
     "flag": "COTC",
     "brand": "CITRA",
     "bu": "BEAUTY & WELLBEING",
-    "category": "HAND & BODY CARE"
+    "category": "HAND & BODY CARE",
+    "codes": [
+      {
+        "code": "64784530",
+        "name": "CITRA HBL PEARLY RADIANT UV 36X110ML",
+        "isi": 36,
+        "status": "Active"
+      },
+      {
+        "code": "68487613",
+        "name": "CITRA HBL PEARLY GLOW UV 6X6X120ML",
+        "isi": 36,
+        "status": "Active"
+      },
+      {
+        "code": "67024841",
+        "name": "CITRA HBL PEARLY WHITE UV RL 6X6X120ML",
+        "isi": 36,
+        "status": "Active No Production"
+      },
+      {
+        "code": "67467253",
+        "name": "CITRA HBL PEARLY WHITE UV 6X6X120ML",
+        "isi": 36,
+        "status": "Active No Production"
+      },
+      {
+        "code": "20069807",
+        "name": "CITRA H&B PEARLY WHITE UV 6X6X120ML",
+        "isi": 36,
+        "status": "Delisted"
+      },
+      {
+        "code": "68645561",
+        "name": "CITRA HBL PEARL+CITRA FM 24X(120ML+20G)",
+        "isi": 24,
+        "status": "Delisted"
+      },
+      {
+        "code": "68689332",
+        "name": "CITRA PEARLY+CITRA FC 36X(120ML+9G)",
+        "isi": 36,
+        "status": "Delisted"
+      },
+      {
+        "code": "68896528",
+        "name": "CITRA PEARLY+CITRA BAR 36X(120ML+70G)",
+        "isi": 36,
+        "status": "Delisted"
+      },
+      {
+        "code": "68926955",
+        "name": "CITRA HBL PEARLY GLOW UV 6X6X110ML",
+        "isi": 36,
+        "status": "Delisted"
+      }
+    ]
   },
   {
     "barcode": "8999999606022",
@@ -827,7 +4357,45 @@
     "flag": "COTC",
     "brand": "CITRA",
     "bu": "BEAUTY & WELLBEING",
-    "category": "HAND & BODY CARE"
+    "category": "HAND & BODY CARE",
+    "codes": [
+      {
+        "code": "64784520",
+        "name": "CITRA HBL NOURISH MOIST UV 24X210ML",
+        "isi": 24,
+        "status": "Active"
+      },
+      {
+        "code": "67467249",
+        "name": "CITRA HBL NOURISH WHT 4X6X230ML",
+        "isi": 24,
+        "status": "Active"
+      },
+      {
+        "code": "68943079",
+        "name": "CITRA HBL NOURISHING GLOW UV 4X6X210ML",
+        "isi": 24,
+        "status": "Active"
+      },
+      {
+        "code": "67446107",
+        "name": "CITRA HBL NOURISHING WHITE UV 4X6X230ML",
+        "isi": 24,
+        "status": "Delisted"
+      },
+      {
+        "code": "68487599",
+        "name": "CITRA HBL NOURISHING GLOW UV 4X6X230ML",
+        "isi": 24,
+        "status": "Delisted"
+      },
+      {
+        "code": "69739038",
+        "name": "CITRA HBL NOURISH+SSK SHP 24X(210+70)ML",
+        "isi": 24,
+        "status": "Delisted"
+      }
+    ]
   },
   {
     "barcode": "8999999612054",
@@ -837,7 +4405,111 @@
     "flag": "COTC",
     "brand": "SUNSILK",
     "bu": "BEAUTY & WELLBEING",
-    "category": "HAIR CARE"
+    "category": "HAIR CARE",
+    "codes": [
+      {
+        "code": "65733298",
+        "name": "SUNSILK SHP GLOSSYBLACK 36X160G",
+        "isi": 36,
+        "status": "Active"
+      },
+      {
+        "code": "67009810",
+        "name": "SUNSILK SHP BLK SHINE SD 36X170ML",
+        "isi": 36,
+        "status": "Active"
+      },
+      {
+        "code": "68725486",
+        "name": "SUNSILK SHP BLK SHINE AI 36X160ML",
+        "isi": 36,
+        "status": "Active"
+      },
+      {
+        "code": "64905716",
+        "name": "SUNSILK SH BS+ANTKTMB 36X(160ML+50ML)",
+        "isi": 36,
+        "status": "Active No Production"
+      },
+      {
+        "code": "64939351",
+        "name": "SUNSILK SHP GLOSSYBLACK 36X160ML",
+        "isi": 36,
+        "status": "Active No Production"
+      },
+      {
+        "code": "20284991",
+        "name": "SUNSILK SHP BLACK 36X170ML",
+        "isi": 36,
+        "status": "Inactive"
+      },
+      {
+        "code": "21072509",
+        "name": "SUNSILK SHP BLACKSHINE+CON 36X(170+50)ML",
+        "isi": 36,
+        "status": "Delisted"
+      },
+      {
+        "code": "21141881",
+        "name": "SUNSILK SHP+LON BLACK 36X(170+10ML)",
+        "isi": 36,
+        "status": "Delisted"
+      },
+      {
+        "code": "62071239",
+        "name": "SUNSILK BLACK SHINE 200ML/36",
+        "isi": 36,
+        "status": "Inactive"
+      },
+      {
+        "code": "62071379",
+        "name": "SUNSILK BLACK SHINE 250ML/36",
+        "isi": 36,
+        "status": "Inactive"
+      },
+      {
+        "code": "62071474",
+        "name": "SUNSILK SHP SHINYBLACK200ML/36",
+        "isi": 36,
+        "status": "Inactive"
+      },
+      {
+        "code": "62071951",
+        "name": "SSK BLACK SHP180+LO50/36 PROMO",
+        "isi": 36,
+        "status": "Delisted"
+      },
+      {
+        "code": "64910205",
+        "name": "SUNSILK SHP GLOSSY BLACK 36X160ML",
+        "isi": 36,
+        "status": "Delisted"
+      },
+      {
+        "code": "68618878",
+        "name": "SUNSILK SH BLKSHN+KG BAR 36X(170ML+85G)",
+        "isi": 36,
+        "status": "Delisted"
+      },
+      {
+        "code": "68705987",
+        "name": "SUNSILK SH BLKSHN+PONDS MW 36X(170+13)ML",
+        "isi": 36,
+        "status": "Delisted"
+      },
+      {
+        "code": "68922483",
+        "name": "SUNSILK SH BS+PONDS FF 36X(160ML+50G)",
+        "isi": 36,
+        "status": "Delisted"
+      },
+      {
+        "code": "69571802",
+        "name": "SUNSILK SH BS + TSM KS 36X(160ML+70ML)",
+        "isi": 36,
+        "status": "Delisted"
+      }
+    ]
   },
   {
     "barcode": "8999999612139",
@@ -847,7 +4519,141 @@
     "flag": "COTC",
     "brand": "SUNSILK",
     "bu": "BEAUTY & WELLBEING",
-    "category": "HAIR CARE"
+    "category": "HAIR CARE",
+    "codes": [
+      {
+        "code": "65733301",
+        "name": "SUNSILK SHP SILKYSMOOTH 36X160G",
+        "isi": 36,
+        "status": "Active"
+      },
+      {
+        "code": "67009847",
+        "name": "SUNSILK SHP SOFT&SMTH SD 36X170ML",
+        "isi": 36,
+        "status": "Active"
+      },
+      {
+        "code": "68725484",
+        "name": "SUNSILK SHP SOFT&SMTH AI 36X160ML",
+        "isi": 36,
+        "status": "Active"
+      },
+      {
+        "code": "64939387",
+        "name": "SUNSILK SHP SILKYSMOOTH 36X160ML",
+        "isi": 36,
+        "status": "Active No Production"
+      },
+      {
+        "code": "20063243",
+        "name": "SUNSILK SHP SS PR CON 18X(180+90)ML",
+        "isi": 18,
+        "status": "Inactive"
+      },
+      {
+        "code": "20067502",
+        "name": "SUNSILK S&S SHP 36X(180ML+CON90ML)",
+        "isi": 36,
+        "status": "Inactive"
+      },
+      {
+        "code": "20068156",
+        "name": "SUNSILK SHP SOFT&SMOOTH 36X180ML",
+        "isi": 36,
+        "status": "Inactive"
+      },
+      {
+        "code": "20085743",
+        "name": "SUNSILK SHP SS+COND 36X(180ML+50ML)",
+        "isi": 36,
+        "status": "Delisted"
+      },
+      {
+        "code": "20211274",
+        "name": "SUNSILK SHP SOFT&SMOOTH B02 36X180ML",
+        "isi": 36,
+        "status": "Inactive"
+      },
+      {
+        "code": "20284987",
+        "name": "SUNSILK SHP SOFT&SMOOTH 36X170ML",
+        "isi": 36,
+        "status": "Delisted"
+      },
+      {
+        "code": "21072510",
+        "name": "SUNSILK SHP SS + CON 36X(170+50)ML",
+        "isi": 36,
+        "status": "Delisted"
+      },
+      {
+        "code": "21141880",
+        "name": "SUNSILK SHP+LON SS 36X(170+10ML)",
+        "isi": 36,
+        "status": "Inactive"
+      },
+      {
+        "code": "62071233",
+        "name": "SUNSILK STRONG&SMOOTH 200ML/36",
+        "isi": 36,
+        "status": "Delisted"
+      },
+      {
+        "code": "62071386",
+        "name": "SUNSILK STRONG&SMOOTH 250ML/36",
+        "isi": 36,
+        "status": "Inactive"
+      },
+      {
+        "code": "62071602",
+        "name": "SSK SHP SOFT&SMOOTH 180ML/36",
+        "isi": 36,
+        "status": "Inactive"
+      },
+      {
+        "code": "62072050",
+        "name": "SUNSILK SHP SS 180ML+CON90/36 PROMO",
+        "isi": 36,
+        "status": "Inactive"
+      },
+      {
+        "code": "64910207",
+        "name": "SUNSILK SHP SILKY SMOOTH 36X160ML",
+        "isi": 36,
+        "status": "Delisted"
+      },
+      {
+        "code": "67138782",
+        "name": "SUNSILK SHP S&S SD SHP+CON 36X170ML",
+        "isi": 36,
+        "status": "Delisted"
+      },
+      {
+        "code": "68406846",
+        "name": "SUNSILK SHP SOFT&SMOOTH 36X(170+50)ML",
+        "isi": 36,
+        "status": "Delisted"
+      },
+      {
+        "code": "68740759",
+        "name": "SUNSILK SHP SS+PONDS FM 36X(170ML+12G)",
+        "isi": 36,
+        "status": "Delisted"
+      },
+      {
+        "code": "68897235",
+        "name": "SUNSILK SHP SS+PONDS FM 36X(160ML+12G)",
+        "isi": 36,
+        "status": "Delisted"
+      },
+      {
+        "code": "69625263",
+        "name": "SUNSILK SH SS + COND SS 36X(160ML+70ML)",
+        "isi": 36,
+        "status": "Delisted"
+      }
+    ]
   },
   {
     "barcode": "8999999612344",
@@ -857,7 +4663,135 @@
     "flag": "COTC",
     "brand": "DOVE",
     "bu": "BEAUTY & WELLBEING",
-    "category": "HAIR CARE"
+    "category": "HAIR CARE",
+    "codes": [
+      {
+        "code": "64947124",
+        "name": "DOVE SHP BIOTIN AHL KERINGSEHAT 24X155ML",
+        "isi": 24,
+        "status": "Active"
+      },
+      {
+        "code": "65218554",
+        "name": "DUM DOVE SHP BIOTIN AHL KRGSHT 24X155ML",
+        "isi": 24,
+        "status": "Active"
+      },
+      {
+        "code": "65733248",
+        "name": "DOVE SHP BIOTIN AHL KRGSHT 24X155G",
+        "isi": 24,
+        "status": "Active"
+      },
+      {
+        "code": "67020554",
+        "name": "DOVE SHP TTL HFL TRMT DX 24X160ML",
+        "isi": 24,
+        "status": "Active"
+      },
+      {
+        "code": "67105121",
+        "name": "DOVE HFL TMT DX SHP+DEO 24X160ML",
+        "isi": 24,
+        "status": "Active"
+      },
+      {
+        "code": "67288608",
+        "name": "DOVE SHP TT HF TR DX+CON 24X(160+4X10)ML",
+        "isi": 24,
+        "status": "Active"
+      },
+      {
+        "code": "68511082",
+        "name": "DOVE SHP PERAWATAN RONTOK 24X135ML",
+        "isi": 24,
+        "status": "Active No Production"
+      },
+      {
+        "code": "20077417",
+        "name": "DOVE HAIRFALL SHP+COND 24X(180ML+90ML)",
+        "isi": 24,
+        "status": "Delisted"
+      },
+      {
+        "code": "20083762",
+        "name": "DOVE SHP HAIR FALL 24X180ML",
+        "isi": 24,
+        "status": "Inactive"
+      },
+      {
+        "code": "20276740",
+        "name": "DOVE SHAMPOO HAIR FALL 24X170ML",
+        "isi": 24,
+        "status": "Delisted"
+      },
+      {
+        "code": "21132878",
+        "name": "DOVE SHP HF + HBL 24X170ML+50ML",
+        "isi": 24,
+        "status": "Delisted"
+      },
+      {
+        "code": "21132880",
+        "name": "DOVE SHP HF + CON HF 24X(170ML+50ML)",
+        "isi": 24,
+        "status": "Delisted"
+      },
+      {
+        "code": "21135219",
+        "name": "DOVE SH TOTAL HF TREATMENT DMT 24X160ML",
+        "isi": 24,
+        "status": "Delisted"
+      },
+      {
+        "code": "21141870",
+        "name": "DOVE SHP HF + LEAVEON IR 24X(160ML+40ML)",
+        "isi": 24,
+        "status": "Delisted"
+      },
+      {
+        "code": "62071992",
+        "name": "DOVE SHP HFALL THRP 180ML/24",
+        "isi": 24,
+        "status": "Delisted"
+      },
+      {
+        "code": "67740447",
+        "name": "DOVE SHP TTL HFL+SPR CON 24X(160+2X16)ML",
+        "isi": 24,
+        "status": "Delisted"
+      },
+      {
+        "code": "68334136",
+        "name": "DOVE SHP TTL HFL TRMT DX 24X(160+70)ML",
+        "isi": 24,
+        "status": "Delisted"
+      },
+      {
+        "code": "68717874",
+        "name": "DOVE SHP PERAWATAN RONTOK 24X(135+70)ML",
+        "isi": 24,
+        "status": "Delisted"
+      },
+      {
+        "code": "68874705",
+        "name": "DOVE SHP PRWTN RNTK+KTMBE 24X(135+50)ML",
+        "isi": 24,
+        "status": "Delisted"
+      },
+      {
+        "code": "68897244",
+        "name": "DOVE SHP PRWT RNTOK+RNTOK 24X(135+50)ML",
+        "isi": 24,
+        "status": "Delisted"
+      },
+      {
+        "code": "69991732",
+        "name": "DOVE SHP+CONDI PRWT RNTOK 24X(135+70)ML",
+        "isi": 24,
+        "status": "Delisted"
+      }
+    ]
   },
   {
     "barcode": "8999999612375",
@@ -867,7 +4801,33 @@
     "flag": "COTC",
     "brand": "DOVE",
     "bu": "BEAUTY & WELLBEING",
-    "category": "HAIR CARE"
+    "category": "HAIR CARE",
+    "codes": [
+      {
+        "code": "65218563",
+        "name": "DUM DOVE SHP MICELLAR AHL MNYK 24X155ML",
+        "isi": 24,
+        "status": "Active"
+      },
+      {
+        "code": "65733257",
+        "name": "DOVE SHP MICELLAR BERMINYAK 24X155G",
+        "isi": 24,
+        "status": "Active"
+      },
+      {
+        "code": "64947143",
+        "name": "DOVE SHP MICELLAR AHL BERMINYAK 24X155ML",
+        "isi": 24,
+        "status": "Active No Production"
+      },
+      {
+        "code": "69964429",
+        "name": "DOVE SH MICELLAR HAIR BOOST 24X135ML",
+        "isi": 24,
+        "status": "Active No Production"
+      }
+    ]
   },
   {
     "barcode": "8999999612658",
@@ -877,7 +4837,21 @@
     "flag": "COTC",
     "brand": "CITRA",
     "bu": "BEAUTY & WELLBEING",
-    "category": "HAND & BODY CARE"
+    "category": "HAND & BODY CARE",
+    "codes": [
+      {
+        "code": "64955908",
+        "name": "CITRA UV BODY SRM RADIANT FRSH 2X6X180ML",
+        "isi": 12,
+        "status": "Active"
+      },
+      {
+        "code": "69988566",
+        "name": "CITRA HBL SERUM COMPLETE GLOW 2X6X180ML",
+        "isi": 12,
+        "status": "Active No Production"
+      }
+    ]
   },
   {
     "barcode": "8999999612672",
@@ -887,7 +4861,21 @@
     "flag": "COTC",
     "brand": "CITRA",
     "bu": "BEAUTY & WELLBEING",
-    "category": "HAND & BODY CARE"
+    "category": "HAND & BODY CARE",
+    "codes": [
+      {
+        "code": "64955920",
+        "name": "CITRA UV BODY SRM SPF 30 PA++ 2X6X180ML",
+        "isi": 12,
+        "status": "Active"
+      },
+      {
+        "code": "69988570",
+        "name": "CITRA HBL SERUM PROTECT GLOW 2X6X180ML",
+        "isi": 12,
+        "status": "Active No Production"
+      }
+    ]
   },
   {
     "barcode": "8999999612986",
@@ -897,7 +4885,15 @@
     "flag": "COTC",
     "brand": "DOVE",
     "bu": "BEAUTY & WELLBEING",
-    "category": "HAIR CARE"
+    "category": "HAIR CARE",
+    "codes": [
+      {
+        "code": "64960777",
+        "name": "DOVE CON MICELLAR AHL BERMINYAK 12X135ML",
+        "isi": 12,
+        "status": "Active"
+      }
+    ]
   },
   {
     "barcode": "8999999612993",
@@ -907,7 +4903,69 @@
     "flag": "COTC",
     "brand": "DOVE",
     "bu": "BEAUTY & WELLBEING",
-    "category": "HAIR CARE"
+    "category": "HAIR CARE",
+    "codes": [
+      {
+        "code": "64960783",
+        "name": "DOVE CON BIOTIN AHL KERINGSEHAT 12X135ML",
+        "isi": 12,
+        "status": "Active"
+      },
+      {
+        "code": "67021236",
+        "name": "DOVE CON TTL HFL TRMT DX 18X160ML",
+        "isi": 18,
+        "status": "Active"
+      },
+      {
+        "code": "68472029",
+        "name": "DOVE CON PERAWATAN RONTOK 18X160ML",
+        "isi": 18,
+        "status": "Active"
+      },
+      {
+        "code": "20083751",
+        "name": "DOVE CON HAIR FALL 24X180ML",
+        "isi": 24,
+        "status": "Delisted"
+      },
+      {
+        "code": "20085221",
+        "name": "DOVE CON TRT HAIRFALL 12X180ML",
+        "isi": 12,
+        "status": "Delisted"
+      },
+      {
+        "code": "20276765",
+        "name": "DOVE CONDITIONER HAIR FALL 24X170ML",
+        "isi": 24,
+        "status": "Delisted"
+      },
+      {
+        "code": "20276856",
+        "name": "DOVE CON TRT HAIR FALL 12X170ML",
+        "isi": 12,
+        "status": "Inactive"
+      },
+      {
+        "code": "21072917",
+        "name": "DOVE CON TTL HF TRMT DMT 18X170ML",
+        "isi": 18,
+        "status": "Inactive"
+      },
+      {
+        "code": "21135846",
+        "name": "DOVE CON TTL HF TRMT DMT 18X160ML",
+        "isi": 18,
+        "status": "Delisted"
+      },
+      {
+        "code": "62071994",
+        "name": "DOVE CON HFALL THRP 180ML/24",
+        "isi": 24,
+        "status": "Inactive"
+      }
+    ]
   },
   {
     "barcode": "8999999616045",
@@ -917,7 +4975,27 @@
     "flag": "COTC",
     "brand": "GLOW & LOVELY",
     "bu": "BEAUTY & WELLBEING",
-    "category": "FACE"
+    "category": "FACE",
+    "codes": [
+      {
+        "code": "64835412",
+        "name": "GLOW & LOVELY SUN UV SPF35 VITC 12X12X7G",
+        "isi": 144,
+        "status": "Active"
+      },
+      {
+        "code": "65426411",
+        "name": "GLOW & LOVELY SUN UV SPF35 VITC 6X12X7G",
+        "isi": 72,
+        "status": "Active"
+      },
+      {
+        "code": "69596557",
+        "name": "GLOW & LOVELY SUN UV DUO SPF35 12X12X7G",
+        "isi": 144,
+        "status": "Active"
+      }
+    ]
   },
   {
     "barcode": "8999999616618",
@@ -927,7 +5005,15 @@
     "flag": "COTC",
     "brand": "POND'S",
     "bu": "BEAUTY & WELLBEING",
-    "category": "FACE"
+    "category": "FACE",
+    "codes": [
+      {
+        "code": "65463767",
+        "name": "PONDS HYDRA MIRACLE FOAM 4X3X100G",
+        "isi": 12,
+        "status": "Active"
+      }
+    ]
   },
   {
     "barcode": "8999999719081",
@@ -937,7 +5023,21 @@
     "flag": "COTC",
     "brand": "VASELINE",
     "bu": "BEAUTY & WELLBEING",
-    "category": "HAND & BODY CARE"
+    "category": "HAND & BODY CARE",
+    "codes": [
+      {
+        "code": "62071908",
+        "name": "VICL H.SUNBLCK SPF 30 100ML/36",
+        "isi": 36,
+        "status": "Active"
+      },
+      {
+        "code": "65544110",
+        "name": "VASELINE SUNBLOCK SPF30 6X6X100ML",
+        "isi": 36,
+        "status": "Active"
+      }
+    ]
   },
   {
     "barcode": "8999999719395",
@@ -947,7 +5047,69 @@
     "flag": "COTC",
     "brand": "VASELINE",
     "bu": "BEAUTY & WELLBEING",
-    "category": "HAND & BODY CARE"
+    "category": "HAND & BODY CARE",
+    "codes": [
+      {
+        "code": "65482095",
+        "name": "VASELINE CERAMIDE EXT BRIGHT 6X6X100ML",
+        "isi": 36,
+        "status": "Active"
+      },
+      {
+        "code": "68487740",
+        "name": "VASELINE UV EXTRA BRIGHTENING 36X100ML",
+        "isi": 36,
+        "status": "Active"
+      },
+      {
+        "code": "68826566",
+        "name": "VASELINE UV EXT BRIGHTENING VNC 36X100ML",
+        "isi": 36,
+        "status": "Active"
+      },
+      {
+        "code": "21185708",
+        "name": "VASELINE HW UV LIGHTENING PJ 36X100ML",
+        "isi": 36,
+        "status": "Active No Production"
+      },
+      {
+        "code": "20263144",
+        "name": "VASELINE HLT WHT UV LIGHTENING 36X100ML",
+        "isi": 36,
+        "status": "Delisted"
+      },
+      {
+        "code": "62070751",
+        "name": "VASELINE WHITE AHA 120ML/36",
+        "isi": 36,
+        "status": "Inactive"
+      },
+      {
+        "code": "62071457",
+        "name": "VASELINE WHITE AHA PROMO TUMB",
+        "isi": 12,
+        "status": "Inactive"
+      },
+      {
+        "code": "62071502",
+        "name": "VASELINE IC HLTY WHT 100ML/36",
+        "isi": 36,
+        "status": "Inactive"
+      },
+      {
+        "code": "62071939",
+        "name": "VICL HEALTHY WHITE 100ML/36",
+        "isi": 36,
+        "status": "Inactive"
+      },
+      {
+        "code": "69739532",
+        "name": "VASELINE UVEB + SOFT GLOW 36X(100+15)ML",
+        "isi": 36,
+        "status": "Delisted"
+      }
+    ]
   },
   {
     "barcode": "8999999719401",
@@ -957,7 +5119,63 @@
     "flag": "COTC",
     "brand": "VASELINE",
     "bu": "BEAUTY & WELLBEING",
-    "category": "HAND & BODY CARE"
+    "category": "HAND & BODY CARE",
+    "codes": [
+      {
+        "code": "65483148",
+        "name": "VASELINE CERAMIDE EXT BRIGHT 12X400ML",
+        "isi": 12,
+        "status": "Active"
+      },
+      {
+        "code": "68487742",
+        "name": "VASELINE UV EXTRA BRIGHTENING 12X400ML",
+        "isi": 12,
+        "status": "Active"
+      },
+      {
+        "code": "68826582",
+        "name": "VASELINE UV EXT BRIGHTENING VNC 12X400ML",
+        "isi": 12,
+        "status": "Active"
+      },
+      {
+        "code": "21185707",
+        "name": "VASELINE HW UV LIGHTENING PJ 12X400ML",
+        "isi": 12,
+        "status": "Active No Production"
+      },
+      {
+        "code": "20263146",
+        "name": "VASELINE HLT WHT UV LIGHTENING 12X400ML",
+        "isi": 12,
+        "status": "Delisted"
+      },
+      {
+        "code": "21185706",
+        "name": "VASELINE HW UV LIGHTENING PJ 6X2X400ML",
+        "isi": 12,
+        "status": "Delisted"
+      },
+      {
+        "code": "62071542",
+        "name": "VASELINE IC HLTY WHT 400ML/12",
+        "isi": 12,
+        "status": "Inactive"
+      },
+      {
+        "code": "62071940",
+        "name": "VICL HEALTHY WHITE 400ML/12",
+        "isi": 12,
+        "status": "Delisted"
+      },
+      {
+        "code": "64398168",
+        "name": "VASELINE UVEB + SPF20 SRM 12X(400+180)ML",
+        "isi": 12,
+        "status": "Delisted"
+      }
+    ]
   },
   {
     "barcode": "8999999719418",
@@ -967,7 +5185,135 @@
     "flag": "COTC",
     "brand": "VASELINE",
     "bu": "BEAUTY & WELLBEING",
-    "category": "HAND & BODY CARE"
+    "category": "HAND & BODY CARE",
+    "codes": [
+      {
+        "code": "65482383",
+        "name": "VASELINE CERAMIDE EXT BRIGHT 3X6X200ML",
+        "isi": 18,
+        "status": "Active"
+      },
+      {
+        "code": "68487738",
+        "name": "VASELINE UV EXTRA BRIGHTENING 18X200ML",
+        "isi": 18,
+        "status": "Active"
+      },
+      {
+        "code": "68826561",
+        "name": "VASELINE UV EXT BRIGHTENING VNC 18X200ML",
+        "isi": 18,
+        "status": "Active"
+      },
+      {
+        "code": "21185705",
+        "name": "VASELINE HW UV LIGHTENING PJ 18X200ML",
+        "isi": 18,
+        "status": "Active No Production"
+      },
+      {
+        "code": "20246709",
+        "name": "VASELINE H.WHITE+DOVE SHP 18X(200+50)ML",
+        "isi": 18,
+        "status": "Delisted"
+      },
+      {
+        "code": "20263145",
+        "name": "VASELINE HLT WHT UV LIGHTENING 18X200ML",
+        "isi": 18,
+        "status": "Delisted"
+      },
+      {
+        "code": "62070739",
+        "name": "VICL WHITE AHA 250ML/18",
+        "isi": 18,
+        "status": "Inactive"
+      },
+      {
+        "code": "62070756",
+        "name": "VASELINE WHITE AHA 250ML/18",
+        "isi": 18,
+        "status": "Inactive"
+      },
+      {
+        "code": "62071503",
+        "name": "VASELINE IC HLTY WHT 200ML/18",
+        "isi": 18,
+        "status": "Inactive"
+      },
+      {
+        "code": "62071941",
+        "name": "VICL HEALTHY WHITE 200ML/18",
+        "isi": 18,
+        "status": "Inactive"
+      },
+      {
+        "code": "62736682",
+        "name": "VASELINE UVEB + SOFT GLOW 18X(200+15)ML",
+        "isi": 18,
+        "status": "Delisted"
+      },
+      {
+        "code": "64408506",
+        "name": "VASELINE UVEB + SOFT GLOW 18X(200+100)ML",
+        "isi": 18,
+        "status": "Delisted"
+      },
+      {
+        "code": "67064488",
+        "name": "VASELINE UV LIGHT+SPF24 18X(200+20)ML",
+        "isi": 18,
+        "status": "Delisted"
+      },
+      {
+        "code": "67562769",
+        "name": "VASELINE HW UV LTNG+SPF24 18X(200+20)ML",
+        "isi": 18,
+        "status": "Delisted"
+      },
+      {
+        "code": "67562770",
+        "name": "VASELINE HW UV LTNG+DOVERO 18X(200+15)ML",
+        "isi": 18,
+        "status": "Delisted"
+      },
+      {
+        "code": "68393694",
+        "name": "VASELINE UV+SMPL SOFT GLOW 18X(200+15)ML",
+        "isi": 18,
+        "status": "Delisted"
+      },
+      {
+        "code": "68534301",
+        "name": "VASELINE UVL+VAS F&F SMPL 18X(200+20)ML",
+        "isi": 18,
+        "status": "Delisted"
+      },
+      {
+        "code": "68597735",
+        "name": "VASELINE UVB+SMPL SOFT GLW 18X(200+15)ML",
+        "isi": 18,
+        "status": "Delisted"
+      },
+      {
+        "code": "68701938",
+        "name": "VASELINE UVB+VAS ANTIBAC 18X(200+50)ML",
+        "isi": 18,
+        "status": "Delisted"
+      },
+      {
+        "code": "69739531",
+        "name": "VASELINE UVEB+PONDS DAY 18X(200ML+7.5G)",
+        "isi": 18,
+        "status": "Delisted"
+      },
+      {
+        "code": "69968528",
+        "name": "VASELINE UVEB+PONDS BBFF 18X(200ML+50G)",
+        "isi": 18,
+        "status": "Delisted"
+      }
+    ]
   },
   {
     "barcode": "9556126670654",
@@ -977,7 +5323,39 @@
     "flag": "COTC",
     "brand": "VASELINE",
     "bu": "BEAUTY & WELLBEING",
-    "category": "HAND & BODY CARE"
+    "category": "HAND & BODY CARE",
+    "codes": [
+      {
+        "code": "64398227",
+        "name": "VASELINE GH FLAWLESS VCT SERUM 4X3X330ML",
+        "isi": 12,
+        "status": "Active"
+      },
+      {
+        "code": "64883016",
+        "name": "VASELINE GH SRM FLAWLESS BRGHT 12X330ML",
+        "isi": 12,
+        "status": "Active"
+      },
+      {
+        "code": "65486836",
+        "name": "VASELINE GH FLAWLESS SRM VLTR 4X3X330ML",
+        "isi": 12,
+        "status": "Active"
+      },
+      {
+        "code": "66319955",
+        "name": "VASELINE GH FLAWLESS SRM VLTR 4X3X300ML",
+        "isi": 12,
+        "status": "Active"
+      },
+      {
+        "code": "68818383",
+        "name": "VASELINE HB GLU SER BUR UV LOT 4X3X330ML",
+        "isi": 12,
+        "status": "Active No Production"
+      }
+    ]
   },
   {
     "barcode": "9556126670661",
@@ -987,6 +5365,38 @@
     "flag": "COTC",
     "brand": "VASELINE",
     "bu": "BEAUTY & WELLBEING",
-    "category": "HAND & BODY CARE"
+    "category": "HAND & BODY CARE",
+    "codes": [
+      {
+        "code": "64398225",
+        "name": "VASELINE GH DEWY VCT SERUM 4X3X330ML",
+        "isi": 12,
+        "status": "Active"
+      },
+      {
+        "code": "64883023",
+        "name": "VASELINE GH SRM DEWY RADIANCE 12X330ML",
+        "isi": 12,
+        "status": "Active"
+      },
+      {
+        "code": "65486854",
+        "name": "VASELINE GH DEWY SRM VLTR 4X3X330ML",
+        "isi": 12,
+        "status": "Active"
+      },
+      {
+        "code": "66319962",
+        "name": "VASELINE GH DEWY SRM VLTR 4X3X300ML",
+        "isi": 12,
+        "status": "Active"
+      },
+      {
+        "code": "68818385",
+        "name": "VASELINE HB GLU SER BURST LOT 4X3X330ML",
+        "isi": 12,
+        "status": "Delisted"
+      }
+    ]
   }
 ]

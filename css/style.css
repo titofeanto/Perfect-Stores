@@ -755,3 +755,16 @@ button:disabled { opacity: 0.55; cursor: default; transform: none; }
     transition-duration: 0.01ms !important;
   }
 }
+
+/* Rincian stock distributor per SKU Code (collapsible) */
+details.dt-codes { margin-top: 8px; border: 1px solid var(--border); border-radius: 8px; padding: 6px 10px; }
+details.dt-codes summary { cursor: pointer; font-size: 12px; color: var(--accent); }
+.dt-code-row { border-top: 1px solid var(--border); padding: 7px 0; }
+.dt-code-row:first-of-type { margin-top: 6px; }
+.dt-code-row p { margin: 0; }
+.dt-code-head { font-size: 11px; color: var(--text-muted); }
+.dt-code-no { font-family: ui-monospace, "SF Mono", Menlo, monospace; font-weight: 600; color: var(--text); font-size: 12.5px; }
+.dt-code-name { font-size: 12px; color: var(--text-secondary); margin: 1px 0 2px; }
+.dt-code-qty { font-size: 12px; }
+.dt-code-row.has-stock .dt-code-qty { color: var(--success); font-weight: 600; }
+.dt-code-row.no-stock .dt-code-qty { color: var(--text-muted); }
