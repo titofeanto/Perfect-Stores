@@ -634,11 +634,12 @@ function priceSectionHtml(sku) {
       </div>
     </div>
     <button type="button" class="promo-toggle price-competitor-toggle" data-price-toggle="${barcode}" style="margin-top:8px;">
-      <span>Harga kompetitor${filledCompCount ? ` (${filledCompCount}/${compIds.length} terisi)` : compIds.length ? ` (0/${compIds.length} terisi)` : ''}</span>
+      <span>Harga kompetitor${filledCompCount ? ` (${filledCompCount}/${compIds.length} terisi)` : compIds.length ? ` (0/${compIds.length} terisi)` : ' (belum ada kompetitor)'}</span>
       <span class="product-group-icon ${isOpen ? 'open' : ''}">&#9656;</span>
     </button>
     <div class="product-group-body" data-price-competitor-body="${barcode}" style="display:${isOpen ? 'block' : 'none'}; margin-top:8px;">
       ${compHtml}
+      ${!compIds.length && !formOpen ? '<p class="upload-status">Belum ada kompetitor untuk produk ini. Klik "+ Tambah kompetitor", isi brand/produknya sekaligus harga di toko ini.</p>' : ''}
       ${formOpen ? `
         <div class="competitor-form" data-price-form-for="${barcode}">
           <label class="field-label">Brand kompetitor</label>
@@ -647,6 +648,11 @@ function priceSectionHtml(sku) {
           <input type="text" class="price-comp-name" placeholder="Nama produk kompetitor">
           <label class="field-label">Ukuran kemasan (opsional)</label>
           <input type="text" class="price-comp-size" placeholder="Misal: 190g">
+          <label class="field-label">Harga di toko ini (Rp)</label>
+          <div class="price-input-wrap" style="margin-bottom:8px;">
+            <span>Rp</span>
+            <input type="number" min="0" class="price-comp-price" placeholder="Harga kompetitor di toko ini">
+          </div>
           <div style="display:flex; gap:6px;">
             <button type="button" class="price-comp-cancel" style="flex:1;">Batal</button>
             <button type="button" class="price-comp-save primary" style="flex:1;">Simpan kompetitor</button>
@@ -785,6 +791,7 @@ function wirePriceSectionEvents() {
       const brand = form.querySelector('.price-comp-brand').value.trim();
       const productName = form.querySelector('.price-comp-name').value.trim();
       const packSize = form.querySelector('.price-comp-size').value.trim();
+      const price = form.querySelector('.price-comp-price').value.trim();
       if (!brand || !productName) {
         showToast('Isi minimal brand dan nama produk kompetitor.', 'danger');
         return;
@@ -796,7 +803,21 @@ function wirePriceSectionEvents() {
         if (!priceCompetitors[barcode]) priceCompetitors[barcode] = {};
         priceCompetitors[barcode][cid] = { brand, productName, packSize };
         openPriceAddForm = null;
-        showToast(`Kompetitor "${brand}" ditambahkan.`, 'success');
+        // Harga (kalau diisi) langsung disimpan untuk toko + bulan ini, tanpa harus ketik ulang di kolom harga.
+        let priceSaved = true;
+        if (price !== '') {
+          if (!currentPriceEntry[barcode]) currentPriceEntry[barcode] = {};
+          if (!currentPriceEntry[barcode].competitorPrices) currentPriceEntry[barcode].competitorPrices = {};
+          currentPriceEntry[barcode].competitorPrices[cid] = price;
+          try {
+            await savePriceField(currentStore, currentPriceMonthKey, barcode, 'competitor', cid, price);
+          } catch (err) {
+            priceSaved = false;
+            console.error('Kompetitor tersimpan, tapi harga gagal disimpan:', err);
+          }
+        }
+        if (priceSaved) showToast(`Kompetitor "${brand}" ditambahkan.`, 'success');
+        else showToast(`Kompetitor "${brand}" ditambahkan, tapi harganya gagal disimpan. Isi lagi di kolom harga.`, 'danger');
         renderSkuList();
       } catch (err) {
         console.error('Gagal menambah kompetitor:', err);
