@@ -4,6 +4,7 @@ import { loadStores, loadSkuList } from './store-data.js';
 import { getWeeksForMonth, findWeekContaining, fmtShort, MONTHS_ID } from './weeks.js';
 import { summarizeEntry, buildOosDetail, normalizeField, fieldTotal, fieldIsEmpty } from './entry-utils.js?v=3';
 import { esc, dtCodesHtml, fmtTotal } from './dt-stock.js?v=1';
+import { MAX_SKU_PER_IMAGE, paginateShareItems, renderShareImages, shareToWhatsApp } from './share-image.js?v=3';
 import { downloadAsExcel } from './export-utils.js';
 
 const TODAY = new Date();
@@ -38,6 +39,7 @@ async function init() {
   el('monthSel').addEventListener('change', () => { populateWeekSelect(); loadAndRender(); });
   el('weekSel').addEventListener('change', loadAndRender);
   el('oosModalClose').addEventListener('click', () => el('oosModal').classList.remove('show'));
+  el('oosShareBtn').addEventListener('click', onShareOos);
   el('exportAllBtn').addEventListener('click', exportAllStores);
 
   await loadAndRender();
@@ -357,9 +359,19 @@ function dtStatusBadge(d) {
   return '<span class="status-pill progress" style="background:var(--danger-bg); color:var(--danger);">Stock DT tidak ada / kosong - Request SPO / tanya kapan datang</span>';
 }
 
+let currentShare = null; // {row, week, picked} untuk popup SKU yang sedang dibuka (picked = hasil paginateShareItems)
+
 function openOosModal(storeId, week) {
   const row = rowsByStoreId[storeId];
   if (!row) return;
+  const picked = paginateShareItems(row.oosDetail);
+  currentShare = { row, week, picked };
+  const n = picked.pages.length;
+  el('oosShareBtn').disabled = n === 0;
+  el('oosShareBtn').textContent = n > 1 ? `Bagikan ke WhatsApp (${n} gambar)` : 'Bagikan ke WhatsApp (gambar)';
+  el('oosShareNote').textContent = n
+    ? `${picked.totalOos} SKU kosong dibagi ${MAX_SKU_PER_IMAGE} SKU per gambar = ${n} gambar (format HP 1080x1920), urut dari stock DT terbanyak.`
+    : 'Tidak ada SKU kosong di toko ini, jadi tidak ada yang perlu dibagikan.';
   el('oosModalTitle').textContent = `SKU tidak ada di toko - ${row.store.name}`;
   el('oosModalSubtitle').innerHTML = `${week.label} (${fmtShort(week.start)} - ${fmtShort(week.end)}) &middot; dicocokkan ke stock distributor ${row.store.area} TERKINI (bukan histori minggu itu)`;
   if (!row.oosDetail.length) {
@@ -376,6 +388,35 @@ function openOosModal(storeId, week) {
     `).join('');
   }
   el('oosModal').classList.add('show');
+}
+
+async function onShareOos() {
+  if (!currentShare || !currentShare.picked.pages.length) return;
+  const { row, week, picked } = currentShare;
+  const btn = el('oosShareBtn');
+  const original = btn.textContent;
+  btn.disabled = true;
+  btn.textContent = 'Menyiapkan gambar...';
+  try {
+    const blobs = await renderShareImages({
+      storeName: row.store.name,
+      area: row.store.area,
+      weekLabel: week.label,
+      weekRange: `${fmtShort(week.start)} - ${fmtShort(week.end)}`,
+    }, picked);
+    const caption = `Halo, berikut ${picked.totalOos} SKU yang kosong di ${row.store.name} (${week.label}), ${blobs.length} gambar. `
+      + 'Yang ada stock di DT mohon dibantu order; yang kosong di DT mohon Request SPO / tanya kapan datang. Terima kasih.';
+    const result = await shareToWhatsApp(blobs, row.store.name, caption);
+    if (result === 'downloaded') {
+      el('oosShareNote').textContent = `${blobs.length} gambar sudah terunduh dan WhatsApp dibuka. Tempel/drag gambar ke chat salesman.`;
+    }
+  } catch (err) {
+    console.error('Gagal membagikan rekap:', err);
+    el('oosShareNote').textContent = 'Gagal membuat gambar: ' + (err.message || err);
+  } finally {
+    btn.textContent = original;
+    btn.disabled = false;
+  }
 }
 
 init();
