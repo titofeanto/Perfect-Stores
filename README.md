@@ -1,4 +1,4 @@
-# SBA COTC - Input SKU Wajib
+# Logbook Perfect Stores
 
 App sederhana untuk SBA (Sahabat Belanja Anda) mengisi data SKU wajib (COTC:
 Stock, Order, Barang Masuk Toko, Penjualan) per toko, per minggu kalender
@@ -106,7 +106,7 @@ Lalu buka `http://localhost:8080` (atau port yang muncul) di browser.
 ```
 git init
 git add .
-git commit -m "Initial commit: SBA COTC app"
+git commit -m "Initial commit: Logbook Perfect Stores app"
 git branch -M main
 git remote add origin <URL_REPO_GITHUB_ANDA>
 git push -u origin main

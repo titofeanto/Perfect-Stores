@@ -166,9 +166,9 @@ function slug(s) {
   return String(s).replace(/[^a-z0-9]+/gi, '_').replace(/^_|_$/g, '').slice(0, 40) || 'toko';
 }
 
-// Di HP: buka menu bagikan bawaan dengan SEMUA gambar terlampir sekaligus (pilih WhatsApp ->
+// Di HP: buka menu bagikan bawaan dengan semua gambar terlampir sekaligus (pilih WhatsApp ->
 // pilih kontak). Web tidak bisa memaksa aplikasi tujuan, jadi WhatsApp dipilih dari menu itu.
-// Di komputer / browser tanpa dukungan: gambar diunduh, lalu WhatsApp dibuka dengan teks -- gambarnya
+// Di komputer / browser tanpa dukungan: gambar diunduh, lalu WhatsApp dibuka dengan teks, gambarnya
 // tinggal ditempel/di-drag ke chat.
 // Mengembalikan 'shared' | 'downloaded' | 'cancelled'.
 export async function shareToWhatsApp(blobs, storeName, caption) {

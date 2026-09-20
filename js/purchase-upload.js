@@ -1,6 +1,6 @@
 // Parsing file "Upload Extract Penjualan" (pembelian toko dari distributor).
 // Kolom yang dipakai cuma: Outlet (=storeId), SKUCode (=PC Code), TotalQuantity(PCS), INVDate.
-// Kolom lain (harga, GSV, diskon, pajak, dst) diabaikan sepenuhnya -- tidak pernah disimpan.
+// Kolom lain (harga, GSV, diskon, pajak, dst) diabaikan sepenuhnya dan tidak pernah disimpan.
 
 function parseInvDate(raw) {
   if (raw instanceof Date && !isNaN(raw)) return raw;
@@ -17,14 +17,12 @@ function parseInvDate(raw) {
   return null;
 }
 
-// Mengembalikan daftar baris mentah {outlet, skuCode, qty, invDate} -- belum
+// Mengembalikan daftar baris mentah {outlet, skuCode, qty, invDate}, belum
 // dicocokkan ke toko/SKU wajib, itu dilakukan di app.js karena butuh akses ke
 // daftar toko & SKU wajib yang sudah dimuat.
 export function parsePurchaseWorkbook(arrayBuffer) {
-  // cellDates:true -- WAJIB, supaya kolom tanggal Excel asli (bukan teks) langsung
-  // jadi objek Date yang benar. Tanpa ini, SheetJS mengembalikan angka serial mentah
-  // yang gampang salah hitung kalau dikonversi manual (ini penyebab bug "semua baris
-  // dianggap di luar minggu manapun" yang pernah terjadi).
+  // cellDates:true wajib: tanpa ini SheetJS mengembalikan angka serial mentah untuk
+  // kolom tanggal, yang mudah salah hitung kalau dikonversi manual.
   const wb = window.XLSX.read(arrayBuffer, { type: 'array', cellDates: true });
   const ws = wb.Sheets[wb.SheetNames[0]];
   const rows = window.XLSX.utils.sheet_to_json(ws, { header: 1, defval: null });

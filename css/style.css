@@ -1,5 +1,5 @@
 :root {
-  /* ---- Color tokens (OKLCH-derived, seed #0F0E9A) ---- */
+  /* Color tokens (OKLCH-derived, seed #0F0E9A) */
   --bg: #f4f7fc;
   --surface: #fdfdff;
   --surface-muted: #eef0f6;
@@ -24,7 +24,7 @@
   --danger-bg: #ffe4e1;
   --on-danger: #ffffff;
 
-  /* extra hues for flag badges -- kept distinct from accent/warning so meaning never collides */
+  /* extra hues for flag badges, kept distinct from accent/warning so meaning never collides */
   --violet: #622c91;
   --violet-bg: #f0e6ff;
   --amber: #803100;
@@ -41,7 +41,7 @@
   font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
 }
 
-/* ---- Dark mode: independently designed (near-black + elevation), not inverted ---- */
+/* Dark mode: independently designed (near-black + elevation), not inverted */
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
     --bg: #0a0c11;
@@ -111,7 +111,7 @@
   color-scheme: dark;
 }
 
-/* Layout melebar bertahap sesuai lebar layar -- iPhone tetap seperti biasa,
+/* Layout melebar bertahap sesuai lebar layar: iPhone tetap seperti biasa,
    iPad/desktop dapat ruang lebih lega, bukan cuma kolom sempit di tengah. */
 @media (min-width: 700px) {
   :root { --content-width: 660px; }
@@ -687,8 +687,8 @@ button:disabled { opacity: 0.55; cursor: default; transform: none; }
   border-radius: var(--radius-lg);
 }
 
-/* Harga jual + kompetitor -- dipakai di Survei Harga DAN di app Input SKU
-   (toko yang termasuk scope Survei Harga), supaya keduanya konsisten. */
+/* Harga jual + kompetitor: dipakai di Survei Harga dan di app Input SKU,
+   supaya keduanya konsisten. */
 .price-row {
   background: var(--surface-muted);
   border-radius: var(--radius);
@@ -746,7 +746,7 @@ button:disabled { opacity: 0.55; cursor: default; transform: none; }
 .competitor-form input { margin-bottom: 6px; }
 .badge.flag-none { background: var(--surface-muted); color: var(--text-muted); }
 
-/* Hormati pengaturan "Reduce Motion" di HP/laptop orang -- animasi & transisi jadi
+/* Hormati pengaturan "Reduce Motion" di HP/laptop orang: animasi & transisi jadi
    nyaris instan, tapi status akhirnya (terbuka/tertutup/tampil) tetap benar. */
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after {

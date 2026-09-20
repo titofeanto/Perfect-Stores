@@ -3,7 +3,7 @@ import { db, doc, getDoc, setDoc, serverTimestamp } from './firebase-init.js';
 // Semua data kompetitor disimpan di SATU dokumen (bukan 1 dokumen per produk) supaya
 // cukup 1x baca untuk semua produk sekaligus, bukan ratusan read terpisah.
 // Struktur: { items: { [barcode]: { [competitorId]: {brand, productName, packSize, addedAt} } } }
-// Kunci pakai BARCODE (bukan PC Code) -- data harga dari toko biasanya per barcode,
+// Kunci pakai BARCODE (bukan PC Code): data harga dari toko biasanya per barcode,
 // sedangkan 1 PC Code kadang menaungi beberapa barcode/varian sekaligus.
 const COMPETITORS_DOC = 'all';
 
@@ -13,7 +13,7 @@ export async function loadCompetitors() {
   return snap.exists() ? (snap.data().items || {}) : {};
 }
 
-// Begitu ditambahkan oleh siapa pun, langsung tersimpan global -- toko/user lain yang
+// Begitu ditambahkan oleh siapa pun, langsung tersimpan global, jadi toko/user lain yang
 // buka survei harga produk yang sama akan langsung melihat kompetitor ini juga.
 export async function addCompetitor(barcode, competitor) {
   const competitorId = 'c' + Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
@@ -33,7 +33,7 @@ export async function addCompetitor(barcode, competitor) {
   return competitorId;
 }
 
-// Koreksi data kompetitor yang sudah ada (misal salah ketik nama brand) -- berlaku
+// Koreksi data kompetitor yang sudah ada (misal salah ketik nama brand). Berlaku
 // global juga, langsung berubah untuk semua toko begitu disimpan.
 export async function updateCompetitor(barcode, competitorId, competitor) {
   const ref = doc(db, 'competitors', COMPETITORS_DOC);

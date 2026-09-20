@@ -3,7 +3,7 @@
 // "Export semua toko", supaya bisa export -> edit di Excel -> upload balik (round-trip).
 // Header dicocokkan by NAMA kolom, bukan posisi tetap.
 //
-// Kunci utama pencocokan produk = BARCODE (bukan PC Code) -- data harga dari toko
+// Kunci utama pencocokan produk = BARCODE (bukan PC Code): data harga dari toko
 // biasanya per barcode/varian. PCCode tetap dibaca kalau ada, sebagai fallback untuk
 // baris yang tidak punya kolom Barcode.
 

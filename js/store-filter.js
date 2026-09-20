@@ -1,11 +1,9 @@
-// Penyaring toko yang RINGAN -- BUKAN otentikasi sungguhan. Cuma mempersempit
-// daftar toko yang tampil, berdasarkan file data/user-mapping.json yang Anda edit
-// & upload manual ke GitHub. Siapa pun yang paham teknis tetap bisa lihat data
-// toko lain kalau mau -- ini murni kenyamanan tampilan, bukan pembatasan akses.
+// Penyaring toko ringan, bukan otentikasi. Hanya mempersempit daftar toko berdasarkan
+// data/user-mapping.json (diedit dan diupload manual ke GitHub). Siapa pun yang paham
+// teknis tetap bisa melihat data toko lain.
 //
-// Sengaja "fail open": kalau file mapping tidak ada / gagal load / usernya tidak
-// ketemu, TETAP tampilkan SEMUA toko -- supaya tidak ada yang ke-lock out cuma
-// karena mapping belum diisi/salah ketik.
+// Sengaja "fail open": kalau file mapping tidak ada, gagal dimuat, atau username tidak
+// ketemu, semua toko tetap tampil supaya tidak ada yang terkunci karena mapping salah.
 
 let cachedMapping = null; // {name, storeIds, isMaster} milik akun yang dipilih, atau null (= semua toko)
 let allMappings = {};
@@ -28,7 +26,7 @@ function injectPickerMarkup(usernames) {
   div.className = 'login-gate';
   div.innerHTML = `
     <div class="login-box">
-      <h1 style="font-size:19px; font-weight:650; margin:0 0 4px;">Perfect Stores</h1>
+      <h1 style="font-size:19px; font-weight:650; margin:0 0 4px;">Logbook Perfect Stores</h1>
       <p style="font-size:13px; color:var(--text-secondary); margin:0 0 16px;">Pilih akun Anda supaya daftar toko lebih ringkas (opsional).</p>
       <label class="field-label">Akun</label>
       <select id="accountSelect" style="margin-bottom:14px;">
@@ -71,7 +69,7 @@ function applyMapping(username) {
 }
 
 // Panggil di awal tiap halaman (pengganti requireLogin/authReady yang lama).
-// Resolve dengan {mapping} -- mapping null artinya "tampilkan semua toko".
+// Resolve dengan {mapping}. mapping null artinya "tampilkan semua toko".
 export function pickAccount() {
   return new Promise(async (resolve) => {
     resolveReady = resolve;
@@ -84,7 +82,7 @@ export function pickAccount() {
       return;
     }
     if (!usernames.length) {
-      // Belum ada mapping sama sekali -- langsung tampil semua toko, tidak perlu tanya apa-apa.
+      // Belum ada mapping sama sekali: langsung tampil semua toko, tidak perlu tanya apa-apa.
       applyMapping(null);
       return;
     }

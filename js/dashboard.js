@@ -1,5 +1,5 @@
 import { db, doc, getDoc, collection, query, where, getDocs, authReady } from './firebase-init.js';
-import { pickAccount, storeIsAllowed, switchAccount } from './store-filter.js?v=1';
+import { pickAccount, storeIsAllowed, switchAccount } from './store-filter.js?v=2';
 import { loadStores, loadSkuList } from './store-data.js';
 import { getWeeksForMonth, findWeekContaining, fmtShort, MONTHS_ID } from './weeks.js';
 import { summarizeEntry, buildOosDetail, normalizeField, fieldTotal, fieldIsEmpty } from './entry-utils.js?v=3';
@@ -45,8 +45,8 @@ async function init() {
   await loadAndRender();
 }
 
-// distributorStock cuma menyimpan snapshot TERBARU (bukan histori per minggu) --
-// dimuat sekali saja, bukan tergantung minggu yang dipilih.
+// distributorStock hanya menyimpan snapshot terbaru (bukan histori per minggu),
+// jadi dimuat sekali saja, tidak tergantung minggu yang dipilih.
 async function loadDistributorStockAll() {
   const areas = [...new Set(stores.map(s => s.area))]; // semua area toko yang bisa dilihat akun ini
   const results = await Promise.all(areas.map(async area => {
@@ -166,7 +166,7 @@ const FLAG_LABELS = { 'COTC': 'COTC', 'MARKET MAKING': 'Market making', 'NPD': '
 const FLAG_ORDER = ['COTC', 'MARKET MAKING', 'NPD'];
 
 // Persentase SKU yang stock-nya > 0 (tersedia di toko), diagregasi lintas semua toko, per flag.
-// "Belum diisi" tidak dihitung sebagai tersedia maupun tidak tersedia -- cuma dikeluarkan
+// "Belum diisi" tidak dihitung sebagai tersedia maupun tidak tersedia, hanya dikeluarkan
 // dari pembilang, supaya persentase tidak salah tafsir sebelum data lengkap semua.
 function renderFlagAvailability(rows) {
   const agg = {};
@@ -195,7 +195,7 @@ function renderFlagAvailability(rows) {
 }
 
 function renderTable(rows, week) {
-  // Toko yang sudah diisi ditampilkan lebih dulu (kebalikan dari sebelumnya), lalu
+  // Toko yang sudah diisi ditampilkan lebih dulu, lalu
   // di dalam grup yang sama, yang paling lengkap duluan.
   const statusPriority = { submitted: 0, progress: 1, notstarted: 2 };
   const sorted = [...rows].sort((a, b) => {
@@ -248,7 +248,7 @@ function fieldValue(raw, isi) {
   return fieldIsEmpty(f) ? '' : fieldTotal(f, isi);
 }
 
-// Export 1 toko: SEMUA periode/minggu yang pernah diisi (bukan cuma bulan yang sedang dipilih).
+// Export 1 toko: semua periode/minggu yang pernah diisi (bukan cuma bulan yang sedang dipilih).
 async function exportOneStore(storeId, triggerEl) {
   const store = stores.find(s => s.id === storeId);
   if (!store) return;
@@ -373,7 +373,7 @@ function openOosModal(storeId, week) {
     ? `${picked.totalOos} SKU kosong dibagi ${MAX_SKU_PER_IMAGE} SKU per gambar = ${n} gambar (format HP 1080x1920), urut dari stock DT terbanyak.`
     : 'Tidak ada SKU kosong di toko ini, jadi tidak ada yang perlu dibagikan.';
   el('oosModalTitle').textContent = `SKU tidak ada di toko - ${row.store.name}`;
-  el('oosModalSubtitle').innerHTML = `${week.label} (${fmtShort(week.start)} - ${fmtShort(week.end)}) &middot; dicocokkan ke stock distributor ${row.store.area} TERKINI (bukan histori minggu itu)`;
+  el('oosModalSubtitle').innerHTML = `${week.label} (${fmtShort(week.start)} - ${fmtShort(week.end)}) &middot; dicocokkan ke stock distributor ${row.store.area} terkini (bukan histori minggu itu)`;
   if (!row.oosDetail.length) {
     el('oosModalBody').innerHTML = '<p class="upload-status">Tidak ada SKU dengan stock 0 untuk toko ini.</p>';
   } else {

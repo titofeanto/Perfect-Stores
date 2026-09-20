@@ -1,5 +1,5 @@
 import { authReady } from './firebase-init.js';
-import { pickAccount, switchAccount } from './store-filter.js?v=1';
+import { pickAccount, switchAccount } from './store-filter.js?v=2';
 import { loadStores } from './store-data.js';
 
 const el = (id) => document.getElementById(id);
@@ -18,8 +18,8 @@ async function init() {
   el('mappingDownloadBtn').addEventListener('click', onDownloadClick);
 }
 
-// Kolom "Store Name" formatnya "{StoreID}-{Nama Toko}" -- ID-nya dicocokkan dulu
-// (paling akurat), nama cuma fallback kalau formatnya beda dari yang diharapkan.
+// Kolom "Store Name" formatnya "{StoreID}-{Nama Toko}". ID dicocokkan dulu (paling akurat),
+// nama hanya fallback kalau formatnya beda.
 function parseStoreCell(raw) {
   const val = String(raw).trim();
   const m = val.match(/^((?:\d+-)*\d+)-(.+)$/);
@@ -93,7 +93,7 @@ function onFileSelected(e) {
       el('mappingParsePreview').textContent = `${usernameCount} akun terbaca (dari ${rows.length - 1} baris), siap di-download.`;
       let detail = '';
       if (unknownStores.length) {
-        detail += `<p class="upload-status" style="color:var(--danger);">${unknownStores.length} baris menyebut toko yang BELUM ADA di data app ini -- baris ini TIDAK ikut dimasukkan:</p>`;
+        detail += `<p class="upload-status" style="color:var(--danger);">${unknownStores.length} baris menyebut toko yang belum ada di data app ini, jadi baris ini tidak ikut dimasukkan:</p>`;
         detail += unknownStores.slice(0, 15).map(u => `<p class="upload-status">- ${u.username}: ${u.name} (ID ${u.id}${u.scope ? ', scope ' + u.scope : ''})</p>`).join('');
         if (unknownStores.length > 15) detail += `<p class="upload-status">...dan ${unknownStores.length - 15} lainnya.</p>`;
       }

@@ -1,4 +1,4 @@
-// Helper export ke Excel (format mentah/long -- 1 baris per kombinasi, siap di-pivot).
+// Helper export ke Excel (format mentah/long: 1 baris per kombinasi, siap di-pivot).
 // Pakai library XLSX yang sudah dimuat via CDN <script> di halaman (window.XLSX).
 
 export function downloadAsExcel(rows, filename, sheetName) {

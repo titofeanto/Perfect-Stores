@@ -1,4 +1,4 @@
-// Logic bersama untuk status kelengkapan SKU wajib -- dipakai oleh app.js (input per toko)
+// Logic bersama untuk status kelengkapan SKU wajib. Dipakai oleh app.js (input per toko)
 // dan dashboard.js (rekap lintas toko), supaya definisi "lengkap/belum lengkap" selalu sama.
 
 import { computeDtStock } from './dt-stock.js?v=1';
@@ -44,11 +44,10 @@ export function statusOf(item) {
 }
 
 // Daftar SKU yang stock tokonya 0, dicocokkan dengan stock distributor (kalau ada
-// datanya) -- dipakai dashboard untuk drill-down "Tidak ada" per toko.
+// datanya). Dipakai dashboard untuk drill-down "Tidak ada" per toko.
 // Stock DT dihitung per barcode (jumlah semua SKU Code-nya), lihat dt-stock.js.
-// CATATAN: distributorStock cuma menyimpan snapshot TERBARU (bukan histori per minggu),
-// jadi kalau minggu yang dilihat bukan minggu berjalan, angka DT ini adalah kondisi
-// TERKINI, bukan kondisi persis pada minggu itu.
+// distributorStock hanya menyimpan snapshot terbaru (bukan histori per minggu), jadi untuk
+// minggu yang bukan minggu berjalan, angka DT ini adalah kondisi terkini, bukan kondisi minggu itu.
 export function buildOosDetail(items, skuList, distStockItems) {
   items = items || {};
   const result = [];
@@ -72,7 +71,7 @@ export function buildOosDetail(items, skuList, distStockItems) {
 // Ringkas 1 dokumen entry (hasil isian 1 toko utk 1 minggu) terhadap 1 daftar SKU wajib.
 // items: map {barcode: {stock,order,masuk,jual}} dari Firestore (bisa format lama/baru/kosong).
 // skuList: array SKU wajib toko itu (dari data/sku-*.json).
-// byFlag: breakdown ketersediaan (stock > 0) per flag COTC/MARKET MAKING/NPD -- dipakai
+// byFlag: breakdown ketersediaan (stock > 0) per flag COTC/MARKET MAKING/NPD. Dipakai
 // dashboard untuk persentase "barang yang terdapat di toko" per kategori.
 export function summarizeEntry(items, skuList) {
   items = items || {};

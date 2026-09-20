@@ -26,7 +26,7 @@ export function computeDtStock(sku, distStockItems) {
       ? { karton: Number(dt.karton) || 0, lusin: Number(dt.lusin) || 0, pcs: Number(dt.pcs) || 0 }
       : null;
     const qtyPcs = breakdown ? breakdown.karton * isi + breakdown.lusin * 12 + breakdown.pcs : 0;
-    // Kode delisted tanpa stock tidak berguna buat order -- disembunyikan supaya daftar tidak panjang.
+    // Kode delisted tanpa stock tidak berguna buat order, jadi disembunyikan supaya daftar tidak panjang.
     if (c.status === 'Delisted' && qtyPcs <= 0) { hiddenDelisted++; continue; }
     codes.push({ code: c.code, name: c.name, status: c.status, isi, breakdown, qtyPcs });
   }

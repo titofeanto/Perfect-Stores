@@ -1,5 +1,5 @@
 import { db, doc, getDoc, setDoc, serverTimestamp, authReady } from './firebase-init.js';
-import { pickAccount, storeIsAllowed, getCurrentMapping, switchAccount } from './store-filter.js?v=1';
+import { pickAccount, storeIsAllowed, getCurrentMapping, switchAccount } from './store-filter.js?v=2';
 import { loadStores, loadSkuList, groupStoresByArea } from './store-data.js';
 import { getWeeksForMonth, findWeekContaining, fmtShort, MONTHS_ID, addDays, isoDate } from './weeks.js';
 import { loadDistributorStock, parseDistributorWorkbook, saveDistributorStock } from './stock-upload.js';
@@ -31,8 +31,8 @@ let categoryFilter = 'all';
 let brandFilter = 'all';
 let expandedSkuGroups = {};
 let priceEligible = false; // sekarang selalu true (semua toko) setelah onStoreChange jalan
-let currentPriceEntry = {}; // barcode -> {unileverPrice, competitorPrices:{id:price}} -- data harga bulan ini
-let priceCompetitors = {}; // barcode -> {competitorId: {brand, productName, packSize}} -- master kompetitor global
+let currentPriceEntry = {}; // barcode -> {unileverPrice, competitorPrices:{id:price}}, data harga bulan ini
+let priceCompetitors = {}; // barcode -> {competitorId: {brand, productName, packSize}}, master kompetitor global
 let expandedPriceCompetitor = {}; // barcode -> bool, collapsed by default
 let openPriceAddForm = null; // barcode yang sedang buka form "+ Tambah kompetitor"
 let editingPriceCompetitor = null; // {barcode, competitorId} yang sedang diedit
@@ -75,7 +75,7 @@ function badgeHtml(sku, item) {
   return html;
 }
 
-// ---------- Init ----------
+// Init
 
 async function init() {
   await authReady;
@@ -177,7 +177,7 @@ function populateWeekSelect(preferPeriodKey) {
   currentWeek = currentWeeks[idx];
 }
 
-// ---------- Event wiring ----------
+// Event wiring
 
 function attachStaticHandlers() {
   el('areaSel').addEventListener('change', onAreaChange);
@@ -237,8 +237,7 @@ async function onStoreChange(preferPeriodKey) {
   categoryFilter = 'all';
   brandFilter = 'all';
   expandedSkuGroups = {};
-  // Harga jual (+ kompetitor) sekarang tersedia utk SEMUA toko (sebelumnya cuma
-  // scope Survei Harga LMT SPM "EC BIG" + Beauty).
+  // Harga jual (+ kompetitor) tersedia untuk semua toko.
   priceEligible = true;
   expandedPriceCompetitor = {};
   if (priceEligible && !Object.keys(priceCompetitors).length) {
@@ -255,9 +254,7 @@ async function onStoreChange(preferPeriodKey) {
 }
 
 // Data stock distributor dimuat sekali per area lalu di-cache di memori.
-// Dulu ini cuma dimuat kalau tab "Stock distributor" dibuka -- akibatnya
-// SBA yang langsung ke tab Input tidak pernah melihat info stock distributor
-// walau datanya sudah ada di database. Sekarang dimuat otomatis begitu toko dipilih.
+// Dimuat otomatis begitu toko dipilih, supaya info stock distributor langsung tampil di tab Input.
 async function ensureDistributorStockLoaded(area) {
   if (distributorCache[area] !== undefined) return;
   try {
@@ -274,10 +271,8 @@ async function onMonthChange() {
 }
 
 async function onWeekChange() {
-  // PENTING: jangan panggil populateWeekSelect() di sini. Fungsi itu membangun ulang
-  // seluruh daftar <option> dan (kalau tidak dikasih preferPeriodKey) otomatis balik
-  // ke minggu yang mengandung tanggal HARI INI -- efeknya pilihan manual user di
-  // dropdown Minggu langsung ketimpa detik itu juga. Cukup baca index yang baru dipilih.
+  // Jangan panggil populateWeekSelect() di sini: fungsi itu membangun ulang <option> dan
+  // kembali ke minggu hari ini, sehingga pilihan manual di dropdown Minggu ketimpa.
   const idx = Number(el('weekSel').value);
   if (currentWeeks[idx]) currentWeek = currentWeeks[idx];
   await afterPeriodDataChange();
@@ -286,9 +281,8 @@ async function onWeekChange() {
 async function afterPeriodDataChange() {
   await loadEntryForCurrentPeriod();
   renderAll();
-  // Kalau sedang di tab Stock distributor / Barang Masuk, refresh juga -- dulu cuma
-  // ke-refresh kalau pindah tab lalu balik lagi, jadi kelihatan seperti "Minggu tidak
-  // bisa diganti" waktu masih di tab yang sama.
+  // Kalau sedang di tab Stock distributor / Barang Masuk, refresh juga supaya
+  // ganti Minggu langsung terlihat di tab itu.
   if (currentTab === 'stock') refreshStockTab();
   if (currentTab === 'masuk') refreshMasukTab();
 }
@@ -310,7 +304,7 @@ function switchTab(tab) {
   if (tab === 'masuk') refreshMasukTab();
 }
 
-// ---------- Firestore load/save for entries ----------
+// Firestore load/save for entries
 
 function entryDocId(store, week) {
   return `${store.id}__${week.periodKey}`;
@@ -382,9 +376,8 @@ function scheduleSaveField(barcode) {
 async function saveField(barcode) {
   const sku = currentSkuList.find(s => s.barcode === barcode);
   const itemToSave = {};
-  // Cuma Stock & Order yang ditulis dari sini -- Masuk & Jual sengaja TIDAK disentuh
-  // supaya tidak menimpa data yang nanti diisi lewat upload pembelian toko oleh Supervisor
-  // atau hasil hitung otomatis.
+  // Hanya Stock & Order yang ditulis dari sini. Masuk & Jual tidak disentuh supaya tidak
+  // menimpa data dari upload pembelian toko (Supervisor) atau hasil hitung otomatis.
   for (const f of EDITABLE_FIELDS) {
     const fo = currentEntry[barcode][f];
     itemToSave[f] = { karton: fo.karton, lusin: fo.lusin, pcs: fo.pcs, total: fieldTotal(fo, sku.isi) };
@@ -413,8 +406,8 @@ async function submitAllZeroFilled() {
   for (const sku of currentSkuList) {
     const item = currentEntry[sku.barcode];
     const filled = {};
-    // Cuma Stock & Order yang di-zero-fill dan dikirim -- Masuk & Jual dibiarkan
-    // apa adanya (diisi dari sumber lain: upload Supervisor / hitung otomatis).
+    // Hanya Stock & Order yang di-zero-fill dan dikirim. Masuk & Jual dibiarkan
+    // (diisi dari upload Supervisor / hitung otomatis).
     for (const f of EDITABLE_FIELDS) {
       const fo = item[f];
       const normalized = {
@@ -572,9 +565,8 @@ function skuCardHtml(sku, distStock) {
   `;
 }
 
-// Harga jual (+ kompetitor) -- cuma utk toko yang termasuk scope Survei Harga.
-// Data harga ini SAMA dengan yang dipakai halaman Survei Harga (kunci barcode,
-// per bulan) -- isi dari sini atau dari sana, hasilnya nyambung, tidak dobel kerja.
+// Harga jual (+ kompetitor). Datanya sama dengan halaman Survei Harga (kunci barcode,
+// per bulan), jadi diisi dari mana pun hasilnya nyambung.
 function priceSectionHtml(sku) {
   const barcode = sku.barcode;
   const priceItem = currentPriceEntry[barcode] || {};
@@ -692,8 +684,7 @@ function renderSkuList() {
   }
 
   // Dikelompokkan per BU, collapsible, dengan ringkasan (lengkap/tidak ada) di tiap
-  // header grup -- supaya daftar SKU wajib yang panjang lebih rapi dan tidak perlu
-  // scroll semuanya cuma untuk lihat progress per kelompok.
+  // header grup, supaya daftar SKU wajib yang panjang tidak perlu di-scroll semuanya.
   const groups = {};
   const groupOrderSeen = [];
   for (const sku of filtered) {
@@ -880,8 +871,8 @@ function scheduleSavePriceField(barcode, kind, competitorId, value) {
   }, 600);
 }
 
-// SKU Promo: opsional, TIDAK dihitung ke progress/lengkap SKU wajib sama sekali.
-// Cuma 1 kolom Stock sederhana (bukan karton/lusin/pcs) -- ini murni cek availability,
+// SKU Promo: opsional, tidak dihitung ke progress/lengkap SKU wajib sama sekali.
+// Cuma 1 kolom Stock sederhana (bukan karton/lusin/pcs), ini murni cek availability,
 // bukan pencatatan operasional selengkap SKU wajib.
 function promoBadgeHtml(val) {
   const isAda = val !== '' && Number(val) > 0;
@@ -1037,7 +1028,7 @@ async function onConfirmSubmit() {
     renderAll();
     renderRecap();
     showToast(`Berhasil dikirim untuk ${currentWeek.label}, ${currentStore.name}`, 'success');
-    // Setelah stock minggu ini tersimpan, coba hitung ulang Jual minggu SEBELUMNYA
+    // Setelah stock minggu ini tersimpan, coba hitung ulang Jual minggu sebelumnya
     // (kalau minggu sebelumnya sudah ada datanya).
     const prevWeekStart = addDays(currentWeek.start, -7);
     computeAndSaveJualForStorePeriod(currentStore.id, prevWeekStart, currentSkuList).catch(err => {
@@ -1128,7 +1119,7 @@ function onBarcodeDetected(rawValue) {
 // Rumus: Jual minggu N = Stock minggu N + Barang Masuk minggu N - Stock minggu N+1.
 // Baru bisa dihitung setelah Stock minggu N+1 (minggu depannya) sudah diisi.
 // Dipanggil dari 2 arah: (1) setelah SBA submit stock minggu ini -> hitung ulang
-// Jual minggu SEBELUMNYA, dan (2) setelah Supervisor upload Barang Masuk untuk
+// Jual minggu sebelumnya, dan (2) setelah Supervisor upload Barang Masuk untuk
 // suatu minggu -> hitung ulang Jual minggu itu (kalau stock minggu depannya sudah ada).
 async function computeAndSaveJualForStorePeriod(storeId, weekStart, skuList) {
   const periodKey = isoDate(weekStart);
@@ -1245,14 +1236,14 @@ async function onStockSave() {
 // ---------- Upload Extract (data pembelian toko dari distributor -> Barang Masuk, oleh Supervisor) ----------
 
 let pendingMasukResult = null;
-let lastMasukFile = null; // File terakhir yang dipilih -- dipakai untuk baca ulang otomatis kalau Minggu diganti
+let lastMasukFile = null; // File terakhir yang dipilih, dipakai untuk baca ulang otomatis kalau Minggu diganti
 
 function refreshMasukTab() {
   if (!currentWeek) return;
   el('masukPeriodInfo').textContent = `Periode target: ${currentWeek.label} (${fmtShort(currentWeek.start)} - ${fmtShort(currentWeek.end)})`;
   if (lastMasukFile) {
-    // File sudah pernah dipilih sebelumnya -- baca ulang otomatis utk periode yang baru
-    // dipilih, supaya ganti Minggu tidak perlu klik "Choose File" lagi dari nol.
+    // File sudah pernah dipilih: baca ulang otomatis untuk periode yang baru,
+    // supaya ganti Minggu tidak perlu memilih file lagi.
     processMasukFile(lastMasukFile);
   } else {
     el('masukParsePreview').textContent = '';
@@ -1334,7 +1325,7 @@ function processMasukFile(file) {
       if (result.outOfRange > 0) detail += `<p class="upload-status">${result.outOfRange} baris di luar rentang ${currentWeek.label} diabaikan.</p>`;
       if (result.unmatchedStores.length) {
         const shown = result.unmatchedStores.slice(0, 8).join(', ');
-        const more = result.unmatchedStores.length > 8 ? ` &middot; dan ${result.unmatchedStores.length - 8} kode outlet lain (di luar 36 toko SBA COTC)` : '';
+        const more = result.unmatchedStores.length > 8 ? ` &middot; dan ${result.unmatchedStores.length - 8} kode outlet lain (di luar 36 toko di app ini)` : '';
         detail += `<p class="upload-status">${result.unmatchedStores.length} kode outlet tidak dikenal diabaikan: ${shown}${more}</p>`;
       }
       if (result.nonWajibCount > 0) detail += `<p class="upload-status">${result.nonWajibCount} baris di luar SKU wajib toko terkait diabaikan.</p>`;
@@ -1367,7 +1358,7 @@ async function onMasukSave() {
   const periodKey = currentWeek.periodKey;
   const storeIds = Object.keys(result.perStoreQty);
 
-  // Langkah 1: simpan ke Firestore. INI SATU-SATUNYA yang menentukan toast sukses/gagal.
+  // Simpan ke Firestore. Hanya langkah ini yang menentukan toast sukses/gagal.
   try {
     await Promise.all(storeIds.map(storeId => {
       const store = stores.find(s => s.id === storeId);
@@ -1405,7 +1396,7 @@ async function onMasukSave() {
   btn.textContent = 'Simpan ke database';
   btn.disabled = true;
 
-  // Langkah 2: hitung ulang Jual (best-effort, tidak boleh mengubah toast di atas kalau gagal)
+  // Hitung ulang Jual (best-effort, tidak boleh mengubah toast di atas kalau gagal)
   Promise.all(storeIds.map(async storeId => {
     const store = stores.find(s => s.id === storeId);
     if (!store) return;
@@ -1413,8 +1404,8 @@ async function onMasukSave() {
     return computeAndSaveJualForStorePeriod(storeId, currentWeek.start, skuList);
   })).catch(err => console.error('Gagal hitung ulang Jual setelah upload Masuk:', err));
 
-  // Langkah 3: refresh tampilan toko yang sedang dibuka, kalau termasuk yang baru diupdate
-  // (best-effort juga -- data sudah AMAN tersimpan di langkah 1, ini cuma soal tampilan).
+  // Refresh tampilan toko yang sedang dibuka kalau termasuk yang baru diupdate
+  // (best-effort: data sudah tersimpan di atas).
   if (currentStore && result.perStoreQty[currentStore.id]) {
     try {
       await loadEntryForCurrentPeriod();
