@@ -32,6 +32,7 @@ export function buildPushOrderWorkbook({ store, week, weekRange, oosDetail }) {
       'Minggu': `${week.label} (${weekRange})`,
       'Barcode': String(d.barcode),
       'Nama Produk': d.name,
+      'Flag': d.flag || 'COTC',
       'Status DT': dtStatusText(d),
       'SKU Code Disarankan': best ? best.code : '',
       'Stock DT (pcs)': hasStock ? d.dtQty : 0,
@@ -61,7 +62,7 @@ export function buildPushOrderWorkbook({ store, week, weekRange, oosDetail }) {
   const X = window.XLSX;
   const wb = X.utils.book_new();
   const ws1 = X.utils.json_to_sheet(orderRows);
-  ws1['!cols'] = [6, 20, 32, 12, 24, 16, 46, 40, 20, 14, 26, 16, 16, 24].map(wch => ({ wch }));
+  ws1['!cols'] = [6, 20, 32, 12, 24, 16, 46, 16, 40, 20, 14, 26, 16, 16, 24].map(wch => ({ wch }));
   X.utils.book_append_sheet(wb, ws1, 'Push Order');
   if (codeRows.length) {
     const ws2 = X.utils.json_to_sheet(codeRows);

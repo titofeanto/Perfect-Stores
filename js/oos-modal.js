@@ -3,10 +3,12 @@
 // Butuh markup #oosModal (lihat dashboard.html / index.html).
 import { esc, dtCodesHtml, fmtTotal } from './dt-stock.js?v=1';
 import { MAX_SKU_PER_IMAGE, paginateShareItems, renderShareImages, shareToWhatsApp } from './share-image.js?v=4';
-import { buildPushOrderWorkbook, shareExcel } from './share-excel.js?v=1';
+import { buildPushOrderWorkbook, shareExcel } from './share-excel.js?v=2';
 import { fmtShort } from './weeks.js';
 
 const el = (id) => document.getElementById(id);
+const FLAG_LABELS = { 'COTC': 'COTC', 'MARKET MAKING': 'Market making', 'NPD': 'NPD' };
+const FLAG_BADGE_CLASS = { 'COTC': 'flag-cotc', 'MARKET MAKING': 'flag-market', 'NPD': 'flag-npd' };
 
 let currentShare = null; // {store, week, picked} untuk popup yang sedang dibuka (picked = hasil paginateShareItems)
 
@@ -56,7 +58,7 @@ export function showOosModal({ store, week, oosDetail }) {
     el('oosModalBody').innerHTML = oosDetail.map(d => `
       <div class="sku-item">
         <p class="sku-name">${esc(d.name)}</p>
-        <p class="sku-code">${esc(d.barcode)}</p>
+        <p class="sku-code">${esc(d.barcode)} <span class="badge ${FLAG_BADGE_CLASS[d.flag] || 'flag-cotc'}">${esc(FLAG_LABELS[d.flag] || d.flag || 'COTC')}</span></p>
         <div>${dtStatusBadge(d)}</div>
         ${d.dtQty > 0 ? `<p class="upload-status">Total stock DT ${esc(store.area)}: ${fmtTotal(d.dtQty, d.isi)} (= ${d.dtQty} pcs)</p>` : ''}
         ${dtCodesHtml(d)}

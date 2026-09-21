@@ -3,9 +3,9 @@ import { pickAccount, storeIsAllowed, switchAccount } from './store-filter.js?v=
 import { loadStores, loadSkuList } from './store-data.js';
 import { getWeeksForMonth, findWeekContaining, fmtShort, MONTHS_ID } from './weeks.js';
 import { summarizeEntry, buildOosDetail, normalizeField, fieldTotal, fieldIsEmpty } from './entry-utils.js?v=3';
-import { wireOosModal, showOosModal } from './oos-modal.js?v=4';
+import { wireOosModal, showOosModal } from './oos-modal.js?v=5';
 import { downloadAsExcel } from './export-utils.js';
-import { esc } from './dt-stock.js?v=1';
+import { esc, fmtTotal } from './dt-stock.js?v=1';
 
 const TODAY = new Date();
 const el = (id) => document.getElementById(id);
@@ -22,6 +22,9 @@ let allAreas = [];
 let allBus = [];
 let selectedAreas = new Set();
 let selectedBus = new Set();
+let allFlags = [];
+let selectedFlags = new Set();
+let oppShowAll = false;
 let selectedStoreIds = new Set();
 let storeQuery = '';
 
@@ -122,15 +125,16 @@ async function loadAndRender() {
   el('dashboardContent').style.display = 'block';
 }
 
-// Susun ulang rekap dari data minggu yang sudah di-fetch, sesuai filter Area / Bisnis Unit / Toko.
-// Filter Bisnis Unit menyaring SKU wajib (bukan toko), jadi Lengkap / OSA / Tidak ada ikut
-// dihitung ulang hanya dari SKU di BU terpilih. Toko tanpa SKU di BU terpilih tidak ditampilkan.
+// Susun ulang rekap dari data minggu yang sudah di-fetch, sesuai filter Area / Flag SKU / Bisnis Unit / Toko.
+// Filter Flag SKU dan Bisnis Unit menyaring SKU wajib (bukan toko), jadi Lengkap / OSA / Tidak ada ikut
+// dihitung ulang hanya dari SKU yang lolos (mis. hanya flag COTC). Toko tanpa SKU di BU terpilih tidak ditampilkan.
 function renderDashboard() {
   if (!entriesByStore) return;
   const week = currentWeeks[+el('weekSel').value];
   const rows = [];
   for (const store of activeStores()) {
-    const skuList = (skuListCache[store.scopeSlug] || []).filter(sku => selectedBus.has(sku.bu || NO_BU));
+    const skuList = (skuListCache[store.scopeSlug] || []).filter(sku =>
+      selectedBus.has(sku.bu || NO_BU) && selectedFlags.has(sku.flag || 'COTC'));
     if (!skuList.length) continue;
     const entry = entriesByStore[store.id] || null;
     const summary = summarizeEntry(entry ? entry.items : null, skuList);
@@ -145,6 +149,7 @@ function renderDashboard() {
   renderMetrics(rows);
   renderAreaSummary(rows);
   renderFlagAvailability(rows);
+  renderOpportunities(rows);
   renderTable(rows, week);
   renderFilterInfo(rows.length);
 }
@@ -156,17 +161,26 @@ function initFilters() {
   const buSet = new Set();
   for (const list of Object.values(skuListCache)) for (const sku of list) buSet.add(sku.bu || NO_BU);
   allBus = [...buSet].sort();
+  const flagSet = new Set();
+  for (const list of Object.values(skuListCache)) for (const sku of list) flagSet.add(sku.flag || 'COTC');
+  allFlags = [...flagSet].sort((a, b) => {
+    const ia = FLAG_ORDER.indexOf(a), ib = FLAG_ORDER.indexOf(b);
+    return (ia === -1 ? 99 : ia) - (ib === -1 ? 99 : ib) || a.localeCompare(b);
+  });
   resetFilters(false);
 
   el('storeQuery').addEventListener('input', (e) => { storeQuery = e.target.value; renderStoreChecklist(); renderDashboard(); });
   el('storePickAll').addEventListener('click', () => { visibleStores().forEach(s => selectedStoreIds.add(s.id)); renderStoreChecklist(); renderDashboard(); });
   el('storePickNone').addEventListener('click', () => { visibleStores().forEach(s => selectedStoreIds.delete(s.id)); renderStoreChecklist(); renderDashboard(); });
   el('filterReset').addEventListener('click', () => resetFilters(true));
+  el('oppMore').addEventListener('click', () => { oppShowAll = !oppShowAll; renderDashboard(); });
 }
 
 function resetFilters(rerender) {
   selectedAreas = new Set(allAreas);
   selectedBus = new Set(allBus);
+  selectedFlags = new Set(allFlags);
+  oppShowAll = false;
   selectedStoreIds = new Set(stores.map(s => s.id));
   storeQuery = '';
   el('storeQuery').value = '';
@@ -183,14 +197,15 @@ function toggleChoice(set, all, value) {
   else set.add(value);
 }
 
-function chipRowHtml(all, set, dataAttr) {
+function chipRowHtml(all, set, dataAttr, labelOf) {
   const allActive = set.size === all.length;
   return `<span class="chip ${allActive ? 'active' : ''}" ${dataAttr}="__all__">Semua</span>`
-    + all.map(v => `<span class="chip ${!allActive && set.has(v) ? 'active' : ''}" ${dataAttr}="${esc(v)}">${esc(v)}</span>`).join('');
+    + all.map(v => `<span class="chip ${!allActive && set.has(v) ? 'active' : ''}" ${dataAttr}="${esc(v)}">${esc(labelOf ? labelOf(v) : v)}</span>`).join('');
 }
 
 function renderFilterChips() {
   el('areaChips').innerHTML = chipRowHtml(allAreas, selectedAreas, 'data-area');
+  el('flagChips').innerHTML = chipRowHtml(allFlags, selectedFlags, 'data-flag', f => FLAG_LABELS[f] || f);
   el('buChips').innerHTML = chipRowHtml(allBus, selectedBus, 'data-bu');
   el('areaChips').querySelectorAll('.chip').forEach(chip => {
     chip.addEventListener('click', () => {
@@ -198,6 +213,15 @@ function renderFilterChips() {
       if (v === '__all__') selectedAreas = new Set(allAreas); else toggleChoice(selectedAreas, allAreas, v);
       renderFilterChips();
       renderStoreChecklist();
+      renderDashboard();
+    });
+  });
+  el('flagChips').querySelectorAll('.chip').forEach(chip => {
+    chip.addEventListener('click', () => {
+      const v = chip.dataset.flag;
+      if (v === '__all__') selectedFlags = new Set(allFlags); else toggleChoice(selectedFlags, allFlags, v);
+      oppShowAll = false;
+      renderFilterChips();
       renderDashboard();
     });
   });
@@ -312,6 +336,74 @@ function renderFlagAvailability(rows) {
       </div>
     `;
   }).join('') || '<p class="upload-status">Belum ada data untuk periode ini.</p>';
+}
+
+const FLAG_BADGE_CLASS = { 'COTC': 'flag-cotc', 'MARKET MAKING': 'flag-market', 'NPD': 'flag-npd' };
+const OPP_LIMIT = 30;
+
+// Peluang order: SKU yang kosong di toko (stock 0) dirangkum lintas toko yang lolos filter, lengkap dengan
+// stock DT per area -- supaya jelas SKU mana (mis. flag COTC) yang bisa dikejar ordernya sekarang.
+// Urutan: paling banyak toko yang bisa dikejar (ada stock DT di area tokonya) di atas.
+function renderOpportunities(rows) {
+  const bySku = new Map();
+  for (const r of rows) {
+    for (const d of r.oosDetail) {
+      let o = bySku.get(d.barcode);
+      if (!o) { o = { barcode: d.barcode, name: d.name, flag: d.flag || 'COTC', isi: d.isi, stores: [] }; bySku.set(d.barcode, o); }
+      o.stores.push({ name: r.store.name, area: r.store.area, dtQty: d.dtQty, hasDtData: d.hasDtData });
+    }
+  }
+  const all = [...bySku.values()].map(o => ({ ...o, chase: o.stores.filter(s => s.hasDtData && s.dtQty > 0).length }));
+  const chasable = all.filter(o => o.chase > 0)
+    .sort((a, b) => b.chase - a.chase || b.stores.length - a.stores.length || a.name.localeCompare(b.name));
+  const noDt = all.length - chasable.length;
+  const picked = allFlags.length && selectedFlags.size < allFlags.length
+    ? [...selectedFlags].map(f => FLAG_LABELS[f] || f).join(' + ') : 'semua flag';
+  el('oppTitle').textContent = `Peluang order - ${picked}`;
+  const storeSku = all.reduce((s, o) => s + o.stores.length, 0);
+  el('oppSummary').textContent = all.length
+    ? `${chasable.length} SKU bisa dikejar (ada stock di DT) dari ${all.length} SKU yang kosong di toko (${storeSku} kombinasi toko-SKU).`
+      + (noDt ? ` ${noDt} SKU kosong juga di DT: Request SPO / tanya kapan datang.` : '')
+    : 'Tidak ada SKU kosong di toko untuk filter ini.';
+
+  const shown = oppShowAll ? chasable : chasable.slice(0, OPP_LIMIT);
+  el('oppList').innerHTML = shown.map(o => {
+    const byArea = {};
+    for (const s of o.stores) {
+      const a = byArea[s.area] || (byArea[s.area] = { dtQty: s.dtQty, hasDtData: s.hasDtData, names: [] });
+      a.names.push(s.name);
+    }
+    const areas = Object.entries(byArea).sort((x, y) => y[1].dtQty - x[1].dtQty);
+    const dtParts = areas.filter(([, a]) => a.dtQty > 0).map(([area, a]) => `${esc(area)} ${a.dtQty} pcs`);
+    const areaHtml = areas.map(([area, a]) => {
+      const status = !a.hasDtData ? '<span class="empty">data DT belum di-upload</span>'
+        : a.dtQty > 0 ? `<span class="stock">stock DT ${fmtTotal(a.dtQty, o.isi)} (= ${a.dtQty} pcs)</span>`
+        : '<span class="empty">DT kosong - Request SPO</span>';
+      return `<div class="opp-area"><b>${esc(area)}: ${status}</b><span class="stores">${a.names.map(esc).join(', ')}</span></div>`;
+    }).join('');
+    return `
+      <details class="opp-item">
+        <summary>
+          <span class="opp-top">
+            <span class="badge ${FLAG_BADGE_CLASS[o.flag] || 'flag-cotc'}">${esc(FLAG_LABELS[o.flag] || o.flag)}</span>
+            <span class="opp-name">${esc(o.name)}</span>
+            <span class="opp-caret">&#9656;</span>
+          </span>
+          <span class="opp-meta">Kosong di <b>${o.stores.length} toko</b> &middot; bisa dikejar di ${o.chase} toko &middot; DT: ${dtParts.join(', ') || '-'}</span>
+        </summary>
+        <div class="opp-detail">
+          <span class="opp-code">Barcode ${esc(o.barcode)}</span>
+          ${areaHtml}
+        </div>
+      </details>`;
+  }).join('');
+  const more = el('oppMore');
+  if (chasable.length > OPP_LIMIT) {
+    more.style.display = 'block';
+    more.textContent = oppShowAll ? `Tampilkan ${OPP_LIMIT} teratas saja` : `Tampilkan semua ${chasable.length} SKU`;
+  } else {
+    more.style.display = 'none';
+  }
 }
 
 function renderTable(rows, week) {
