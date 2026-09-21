@@ -816,13 +816,15 @@ details.dt-codes summary { cursor: pointer; font-size: 12px; color: var(--accent
    Lensa kaca meluncur ke tab aktif dengan pegas (lihat js/bottom-nav.js). */
 :root {
   --bottom-nav-h: 64px;
-  --bottom-nav-gap: 12px; /* jarak kapsul dari tepi bawah layar */
+  /* Jarak kapsul dari tepi bawah layar. Minimal 22px supaya shadow (maks. 22px di bawah kapsul)
+     tidak terpotong tepi layar; di layar ber-home-indicator ikut safe-area + 6px. */
+  --bottom-nav-offset: max(22px, calc(env(safe-area-inset-bottom, 0px) + 6px));
 }
 .bottom-nav {
   position: fixed;
   left: 0;
   right: 0;
-  bottom: calc(var(--bottom-nav-gap) + env(safe-area-inset-bottom));
+  bottom: var(--bottom-nav-offset);
   z-index: 40; /* di bawah popup/modal (50), toast (200) dan layar pilih akun (500) */
   padding: 0 16px;
   pointer-events: none; /* hanya kapsulnya yang menangkap sentuhan */
@@ -838,13 +840,15 @@ details.dt-codes summary { cursor: pointer; font-size: 12px; color: var(--accent
   padding: 6px;
   border-radius: 999px;
   pointer-events: auto;
+  background: var(--surface); /* cadangan iOS < 16.2 (tanpa color-mix) */
   background: color-mix(in srgb, var(--surface) 52%, transparent);
   -webkit-backdrop-filter: blur(22px) saturate(180%);
   backdrop-filter: blur(22px) saturate(180%);
+  border: 1px solid var(--border);
   border: 1px solid color-mix(in srgb, var(--text) 9%, transparent);
   box-shadow:
-    0 10px 30px rgb(var(--shadow-rgb) / 0.20),
-    0 2px 6px rgb(var(--shadow-rgb) / 0.10),
+    0 6px 16px rgb(var(--shadow-rgb) / 0.16),   /* jatuh maks. 22px di bawah kapsul = pas dengan jarak tepi */
+    0 1px 3px rgb(var(--shadow-rgb) / 0.10),
     inset 0 1px 0 rgb(255 255 255 / 0.55),   /* cahaya tepat di tepi atas */
     inset 0 -1px 0 rgb(255 255 255 / 0.12);
 }
@@ -866,17 +870,19 @@ details.dt-codes summary { cursor: pointer; font-size: 12px; color: var(--accent
   width: calc((100% - 12px) / var(--n));
   border-radius: 999px;
   pointer-events: none;
+  background: var(--accent-bg); /* cadangan iOS < 16.2 */
   background: linear-gradient(180deg,
     color-mix(in srgb, var(--accent) 24%, transparent),
     color-mix(in srgb, var(--accent) 12%, transparent));
-  -webkit-backdrop-filter: blur(8px) saturate(160%) brightness(1.06);
-  backdrop-filter: blur(8px) saturate(160%) brightness(1.06);
+  /* Tanpa backdrop-filter: kapsul induk sudah Backdrop Root, filter di sini tak terlihat tapi memboroskan 1 pass blur/frame */
+  box-shadow:
+    inset 0 1px 0 rgb(255 255 255 / 0.6),
+    0 3px 12px rgb(var(--shadow-rgb) / 0.18); /* cadangan iOS < 16.2 */
   box-shadow:
     inset 0 1px 0 rgb(255 255 255 / 0.6),
     inset 0 -1px 0 rgb(255 255 255 / 0.14),
     0 3px 12px color-mix(in srgb, var(--accent) 28%, transparent);
   transform: translateX(calc(var(--i) * 100%));
-  will-change: transform;
 }
 .bottom-nav-item {
   position: relative;
@@ -902,24 +908,12 @@ details.dt-codes summary { cursor: pointer; font-size: 12px; color: var(--accent
 .bottom-nav-icon { display: flex; align-items: center; justify-content: center; height: 24px; }
 .bottom-nav-item:focus-visible { outline: 2px solid var(--accent); outline-offset: -4px; border-radius: 999px; }
 
-/* Pudar lembut di bawah kapsul supaya kaca terbaca di atas konten apa pun (edge effect, bukan garis pemisah) */
-body.has-bottom-nav::after {
-  content: '';
-  position: fixed;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  height: calc(var(--bottom-nav-h) + var(--bottom-nav-gap) + 40px + env(safe-area-inset-bottom));
-  z-index: 39;
-  pointer-events: none;
-  background: linear-gradient(180deg, transparent, color-mix(in srgb, var(--bg) 78%, transparent));
-}
 /* ruang di bawah konten supaya isi terakhir tidak tertutup kapsul; toast naik di atasnya */
 body.has-bottom-nav .app {
-  padding-bottom: calc(var(--bottom-nav-h) + var(--bottom-nav-gap) + 36px + env(safe-area-inset-bottom));
+  padding-bottom: calc(var(--bottom-nav-h) + var(--bottom-nav-offset) + 28px);
 }
 body.has-bottom-nav .toast {
-  bottom: calc(var(--bottom-nav-h) + var(--bottom-nav-gap) + 16px + env(safe-area-inset-bottom));
+  bottom: calc(var(--bottom-nav-h) + var(--bottom-nav-offset) + 16px);
 }
 @media (min-width: 700px) {
   .bottom-nav-item { font-size: 12px; }
@@ -930,7 +924,7 @@ body.has-bottom-nav .toast {
 @media (prefers-reduced-transparency: reduce) {
   .bottom-nav-inner { background: var(--surface); -webkit-backdrop-filter: none; backdrop-filter: none; }
   .bottom-nav-inner::before { display: none; }
-  .bottom-nav-lens { background: var(--accent-bg); -webkit-backdrop-filter: none; backdrop-filter: none; }
+  .bottom-nav-lens { background: var(--accent-bg); }
 }
 @media (prefers-contrast: more) {
   .bottom-nav-inner { background: var(--surface); border-color: var(--text); -webkit-backdrop-filter: none; backdrop-filter: none; }

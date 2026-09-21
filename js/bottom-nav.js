@@ -28,20 +28,27 @@ function currentPage() {
   return last || 'index.html';
 }
 
-// Respons pegas (damping 0.8 = sedikit memantul karena ada "momentum" dari sentuhan, response 0.42s)
-// dijadikan easing CSS linear(): lensa dianimasikan dari nilai SAAT INI ke target, bukan durasi kaku.
-function springEasing(damping = 0.8, response = 0.42) {
+// Ketukan tab tidak membawa momentum -> hampir kritis (damping 0.92, tanpa pantulan terlihat),
+// response 0.32s, dipotong di 1.4x response (~450ms; sisa <0.1% tak terlihat).
+// Dijadikan easing CSS linear(): lensa dianimasikan dari nilai SAAT INI ke target, bukan durasi kaku.
+function springEasing(damping = 0.92, response = 0.32) {
   const w = (2 * Math.PI) / response;
   const wd = w * Math.sqrt(1 - damping * damping);
-  const T = response * 2.4;
+  const T = response * 1.4;
   const pts = [];
-  const N = 36;
+  const N = 28;
   for (let k = 0; k <= N; k++) {
     const t = (k / N) * T;
     const x = 1 - Math.exp(-damping * w * t) * (Math.cos(wd * t) + (damping * w / wd) * Math.sin(wd * t));
     pts.push((k === N ? 1 : x).toFixed(4));
   }
   return { easing: `linear(${pts.join(', ')})`, duration: Math.round(T * 1000) };
+}
+
+// linear() baru ada di Safari 17.2+. Di bawahnya pakai ease-out kuat 320ms (bukan error).
+function lensTiming() {
+  const ok = window.CSS && CSS.supports && CSS.supports('animation-timing-function', 'linear(0, 1)');
+  return ok ? springEasing() : { easing: 'cubic-bezier(0.22, 1, 0.36, 1)', duration: 320 };
 }
 
 function safeStorage(fn) {
@@ -71,17 +78,33 @@ function mount() {
 
   // Lensa meluncur dari tab halaman sebelumnya ke tab halaman ini
   const lens = inner.querySelector('.bottom-nav-lens');
+  const items = [...inner.querySelectorAll('.bottom-nav-item')];
   const prev = safeStorage(() => sessionStorage.getItem(STORE_KEY));
   const prevIdx = prev === null ? NaN : Number(prev);
   const reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  if (!reduce && Number.isInteger(prevIdx) && prevIdx >= 0 && prevIdx < ITEMS.length && prevIdx !== activeIdx && lens.animate) {
-    const s = springEasing();
-    lens.animate(
-      [{ transform: `translateX(${prevIdx * 100}%)` }, { transform: `translateX(${activeIdx * 100}%)` }],
-      { duration: s.duration, easing: s.easing }
-    );
-  }
+  const canAnimate = !reduce && lens.animate && Number.isInteger(prevIdx)
+    && prevIdx >= 0 && prevIdx < ITEMS.length && prevIdx !== activeIdx;
+  // Simpan DULU: kalau animasi gagal, halaman berikutnya tetap benar.
   safeStorage(() => sessionStorage.setItem(STORE_KEY, String(activeIdx)));
+  if (canAnimate) {
+    try {
+      const s = lensTiming();
+      // Warna label ikut bergerak bersama lensa: mulai dari tab lama, pindah ke tab baru di frame berikutnya
+      // (aria-current tetap di tab yang benar sejak awal).
+      items[activeIdx].classList.remove('active');
+      items[prevIdx].classList.add('active');
+      lens.animate(
+        [{ transform: `translateX(${prevIdx * 100}%)` }, { transform: `translateX(${activeIdx * 100}%)` }],
+        { duration: s.duration, easing: s.easing }
+      );
+      requestAnimationFrame(() => requestAnimationFrame(() => {
+        items[prevIdx].classList.remove('active');
+        items[activeIdx].classList.add('active');
+      }));
+    } catch (e) {
+      items.forEach((el, i) => el.classList.toggle('active', i === activeIdx));
+    }
+  }
 }
 
 if (document.body) mount();
