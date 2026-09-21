@@ -6,7 +6,7 @@ import { loadDistributorStock, parseDistributorWorkbook, saveDistributorStock } 
 import { supportsNativeBarcodeDetector, startNativeScan, stopNativeScan, startFallbackScan, stopFallbackScan } from './barcode-scan.js';
 import { parsePurchaseWorkbook } from './purchase-upload.js';
 import { computeDtStock, dtCodesHtml, fmtTotal, hasDistributorData, esc } from './dt-stock.js?v=1';
-import { wireOosModal, showOosModal } from './oos-modal.js?v=2';
+import { wireOosModal, showOosModal } from './oos-modal.js?v=4';
 import { loadPromoSku, loadPriceEntry, savePriceField, loadCompetitors, addCompetitor, updateCompetitor } from './harga-data.js';
 import { FIELDS, EDITABLE_FIELDS, fieldTotal, fieldIsEmpty, normalizeField, statusOf, buildOosDetail } from './entry-utils.js?v=3';
 

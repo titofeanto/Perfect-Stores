@@ -3,7 +3,7 @@ import { pickAccount, storeIsAllowed, switchAccount } from './store-filter.js?v=
 import { loadStores, loadSkuList } from './store-data.js';
 import { getWeeksForMonth, findWeekContaining, fmtShort, MONTHS_ID } from './weeks.js';
 import { summarizeEntry, buildOosDetail, normalizeField, fieldTotal, fieldIsEmpty } from './entry-utils.js?v=3';
-import { wireOosModal, showOosModal } from './oos-modal.js?v=2';
+import { wireOosModal, showOosModal } from './oos-modal.js?v=4';
 import { downloadAsExcel } from './export-utils.js';
 import { esc } from './dt-stock.js?v=1';
 

@@ -112,18 +112,30 @@ function renderPage(info, page, pageNo, pageCount, offset, picked) {
     ctx.font = `600 ${name.px}px ${FONT}`;
     ctx.fillText(name.text, TEXT_X, y + 38);
 
+    // Barcode selalu tampil di baris ke-3 (dipakai salesman untuk memastikan produk sudah
+    // terdaftar/listing di toko), diikuti SKU Code yang punya stock di DT.
+    const bcLabel = 'Barcode ';
+    ctx.font = `22px ${MONO}`;
+    const labelW = ctx.measureText(bcLabel).width;
+    ctx.fillStyle = '#545860';
+    ctx.fillText(bcLabel, TEXT_X, y + 92);
+    ctx.fillStyle = '#161a24';
+    ctx.font = `700 22px ${MONO}`;
+    ctx.fillText(d.barcode, TEXT_X + labelW, y + 92);
+    const bcEnd = TEXT_X + labelW + ctx.measureText(d.barcode).width + 28;
+
     if (d.hasDtData && d.dtQty > 0) {
       ctx.fillStyle = '#005d2d';
       ctx.font = `700 26px ${FONT}`;
       ctx.fillText(`Stock DT: ${fmtTotal(d.dtQty, d.isi)}  (${d.dtQty} pcs)`, TEXT_X, y + 68);
       const withStock = d.codes.filter(c => c.qtyPcs > 0);
-      const shown = withStock.slice(0, 3).map(c => `${c.code} (${c.qtyPcs} pcs)`);
+      const shown = withStock.slice(0, 2).map(c => `${c.code} (${c.qtyPcs} pcs)`);
       const more = withStock.length - shown.length;
-      const codes = fitLine(ctx, 'SKU Code: ' + shown.join(' · ') + (more > 0 ? ` · +${more}` : ''),
-        px => `${px}px ${MONO}`, TEXT_W, 20, 15);
+      const codes = fitLine(ctx, 'SKU: ' + shown.join(' · ') + (more > 0 ? ` · +${more}` : ''),
+        px => `${px}px ${MONO}`, W - PAD - bcEnd, 20, 14);
       ctx.fillStyle = '#545860';
       ctx.font = `${codes.px}px ${MONO}`;
-      ctx.fillText(codes.text, TEXT_X, y + 92);
+      ctx.fillText(codes.text, bcEnd, y + 92);
     } else {
       ctx.fillStyle = '#b3261e';
       ctx.font = `700 26px ${FONT}`;
@@ -142,9 +154,10 @@ function renderPage(info, page, pageNo, pageCount, offset, picked) {
   ctx.font = `22px ${FONT}`;
   const notes = [
     'Urut dari stock DT terbanyak. Stock DT = total semua SKU Code sebarcode.',
+    'Barcode dipakai untuk memastikan produk sudah terdaftar (listing) di toko.',
     pageNo < pageCount ? `Lanjut ke gambar ${pageNo + 1}/${pageCount}.` : 'Selesai.',
   ];
-  notes.forEach((n, i) => ctx.fillText(wrapText(ctx, n, W - PAD * 2, 1)[0], PAD, fy + 44 + i * 34));
+  notes.forEach((n, i) => ctx.fillText(wrapText(ctx, n, W - PAD * 2, 1)[0], PAD, fy + 42 + i * 32));
 
   return new Promise((resolve, reject) => {
     canvas.toBlob(b => (b ? resolve(b) : reject(new Error('Gagal membuat gambar'))), 'image/png');
