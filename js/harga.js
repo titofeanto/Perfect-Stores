@@ -1,6 +1,6 @@
 import { db, collection, query, where, getDocs, authReady } from './firebase-init.js';
 import { pickAccount, storeIsAllowed, switchAccount } from './store-filter.js?v=2';
-import { loadStores, loadSkuList } from './store-data.js';
+import { loadStores, loadSkuList, groupStoresByArea } from './store-data.js';
 import { MONTHS_ID } from './weeks.js';
 import { loadCompetitors, addCompetitor, updateCompetitor, loadPriceEntry, savePriceField, saveBulkPriceEntries, loadPromoSku, savePromoSku } from './harga-data.js';
 import { supportsNativeBarcodeDetector, startNativeScan, stopNativeScan, startFallbackScan, stopFallbackScan } from './barcode-scan.js';
@@ -16,7 +16,8 @@ const FLAG_CLASS = { 'COTC': 'flag-cotc', 'MARKET MAKING': 'flag-market', 'NPD':
 
 const CHANNEL_LABELS = { 'lmt-spm': 'LMT SPM', 'local-minis': 'LMT Local Minis', 'haba-dt': 'HABA' };
 
-let ecBigStores = [];
+let stores = []; // semua toko yang boleh dilihat akun ini (sama seperti halaman input)
+let storesByArea = {};
 let allProducts = [];
 let competitors = {}; // pcode -> {competitorId: {...}}
 let currentEntry = {}; // pcode -> {unileverPrice, competitorPrices:{id:price}}
@@ -52,28 +53,34 @@ async function init() {
   await authReady;
   const { mapping } = await pickAccount();
   const allStores = await loadStores();
-  // Survei harga: 8 toko LMT SPM "EC BIG" + 2 toko Beauty/Cosmetic Expert Traditional
-  // (SAGA BEAUTY, DEDE MAMA), keduanya scope HABA DT. Lalu disaring lagi sesuai
-  // mapping akun yang dipilih (isMaster = lihat semua 10 toko itu).
-  ecBigStores = allStores.filter(s =>
-    (s.subChannel === 'LOCAL SUPERMARKET EC BIG' || s.subChannel === 'COSMETIC EXPERT TRADITIONAL')
-    && storeIsAllowed(s.id)
-  );
+  // Survei harga tersedia untuk semua toko (dulu cuma 10 toko EC BIG + Beauty), disaring sesuai
+  // mapping akun yang dipilih (isMaster = semua toko). Pilihan toko: cari nama / Area -> Toko,
+  // sama persis dengan halaman input.
+  stores = allStores.filter(s => storeIsAllowed(s.id));
+  storesByArea = groupStoresByArea(stores);
   const nameLabel = document.getElementById('loggedInAs');
   if (nameLabel) nameLabel.textContent = mapping ? (mapping.name + (mapping.isMaster ? ' (semua toko)' : '')) : 'Semua toko';
   const logoutBtn = document.getElementById('logoutBtn');
   if (logoutBtn) logoutBtn.addEventListener('click', switchAccount);
-  if (!ecBigStores.length) {
-    document.querySelector('.app').innerHTML = '<div class="card" style="margin-top:40px;"><p>Akun ini belum ter-mapping ke toko survei harga mana pun. Hubungi admin.</p></div>';
+  if (!stores.length) {
+    document.querySelector('.app').innerHTML = '<div class="card" style="margin-top:40px;"><p>Akun ini belum ter-mapping ke toko mana pun. Hubungi admin.</p></div>';
     return;
   }
   competitors = await loadCompetitors();
 
-  populateStoreSelect();
+  populateAreaSelect();
+  populateStoreSelect(el('areaSel').value);
   populateMonthSelect();
   populateChannelSelect();
   renderFlagFilterChips();
 
+  el('areaSel').addEventListener('change', () => { populateStoreSelect(el('areaSel').value); onStoreOrMonthChange(); });
+  el('storeSearch').addEventListener('input', renderStoreSearchResults);
+  el('storeSearch').addEventListener('keydown', (e) => {
+    if (e.key !== 'Enter') return;
+    const first = el('storeSearchResults').querySelector('.store-search-item');
+    if (first) { e.preventDefault(); pickStoreFromSearch(first.dataset.storeId); }
+  });
   el('storeSel').addEventListener('change', onStoreOrMonthChange);
   el('monthSel').addEventListener('change', onStoreOrMonthChange);
   el('searchBox').addEventListener('input', (e) => { searchText = e.target.value; renderProductList(); });
@@ -105,8 +112,46 @@ function populateChannelSelect() {
     .map(([slug, label]) => `<option value="${slug}">${label}</option>`).join('');
 }
 
-function populateStoreSelect() {
-  el('storeSel').innerHTML = ecBigStores.map(s => `<option value="${s.id}">${s.name} (${s.area})</option>`).join('');
+const esc = (s) => String(s == null ? '' : s).replace(/[&<>"]/g, ch => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[ch]));
+
+function populateAreaSelect() {
+  const areas = Object.keys(storesByArea).sort();
+  el('areaSel').innerHTML = areas.map(a => `<option value="${esc(a)}">${esc(a)}</option>`).join('');
+}
+
+function populateStoreSelect(area) {
+  const list = storesByArea[area] || [];
+  el('storeSel').innerHTML = list.map(s => `<option value="${esc(s.id)}">${esc(s.name)}</option>`).join('');
+}
+
+// Cari toko by nama di SEMUA area (bukan cuma dropdown). Pilih hasilnya = area + toko
+// otomatis ikut berpindah.
+function renderStoreSearchResults() {
+  const q = el('storeSearch').value.trim().toLowerCase();
+  const box = el('storeSearchResults');
+  if (!q) { box.style.display = 'none'; box.innerHTML = ''; return; }
+  const matches = stores.filter(s => s.name.toLowerCase().includes(q))
+    .sort((a, b) => a.name.localeCompare(b.name));
+  const MAX = 30;
+  box.innerHTML = matches.length
+    ? matches.slice(0, MAX).map(s => `<button type="button" class="store-search-item" data-store-id="${esc(s.id)}"><span>${esc(s.name)}</span><small>${esc(s.area)}</small></button>`).join('')
+      + (matches.length > MAX ? `<div class="store-search-empty">+${matches.length - MAX} toko lain, persempit pencarian.</div>` : '')
+    : '<div class="store-search-empty">Toko tidak ditemukan.</div>';
+  box.style.display = 'block';
+  box.querySelectorAll('.store-search-item').forEach(btn => {
+    btn.addEventListener('click', () => pickStoreFromSearch(btn.dataset.storeId));
+  });
+}
+
+async function pickStoreFromSearch(storeId) {
+  const store = stores.find(s => s.id === storeId);
+  if (!store) return;
+  el('areaSel').value = store.area;
+  populateStoreSelect(store.area);
+  el('storeSel').value = store.id;
+  el('storeSearch').value = '';
+  renderStoreSearchResults();
+  await onStoreOrMonthChange();
 }
 
 function populateMonthSelect() {
@@ -147,9 +192,10 @@ function mergeProducts(wajibList, promoDoc) {
 }
 
 async function onStoreOrMonthChange() {
-  currentStore = ecBigStores.find(s => s.id === el('storeSel').value);
+  currentStore = stores.find(s => s.id === el('storeSel').value);
   currentPeriodKey = el('monthSel').value; // format YYYY-MM
   if (!currentStore) return;
+  el('scopeInfo').textContent = `Scope channel: ${currentStore.scopeChannel} (${currentStore.subChannel})`;
 
   const [wajibList, promoDoc, entry] = await Promise.all([
     loadSkuList(currentStore.scopeSlug),
@@ -784,7 +830,7 @@ async function exportOneStorePrice() {
   }
 }
 
-// Export semua toko (10 toko survei harga): cuma untuk bulan yang sedang dipilih.
+// Export semua toko yang boleh dilihat akun ini: cuma untuk bulan yang sedang dipilih.
 async function exportAllStoresPrice() {
   const btn = el('exportAllPriceBtn');
   const original = btn.textContent;
@@ -797,7 +843,7 @@ async function exportAllStoresPrice() {
     const lookupCache = {};
     for (const d of snap.docs) {
       const data = d.data();
-      const store = ecBigStores.find(s => s.id === data.storeId);
+      const store = stores.find(s => s.id === data.storeId);
       if (!store) continue;
       if (!lookupCache[store.scopeSlug]) {
         const wajib = await loadSkuList(store.scopeSlug);

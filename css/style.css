@@ -810,3 +810,54 @@ details.dt-codes summary { cursor: pointer; font-size: 12px; color: var(--accent
 .store-search-item:last-child { border-bottom: none; }
 .store-search-item small { color: var(--text-muted); font-size: 11px; white-space: nowrap; }
 .store-search-empty { padding: 9px 11px; font-size: 12.5px; color: var(--text-muted); }
+
+/* ---- Navigasi bawah (bottom nav) -- pindah halaman tanpa lewat link di pojok kanan atas ---- */
+:root { --bottom-nav-h: 64px; }
+.bottom-nav {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 40; /* di bawah popup/modal (50), toast (200) dan layar pilih akun (500) */
+  background: var(--surface);
+  border-top: 1px solid var(--border);
+  padding-bottom: env(safe-area-inset-bottom);
+}
+.bottom-nav-inner {
+  display: flex;
+  max-width: 560px;
+  margin: 0 auto;
+  height: var(--bottom-nav-h);
+}
+.bottom-nav-item {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
+  color: var(--text-muted);
+  text-decoration: none;
+  font-size: 10.5px;
+  font-weight: 500;
+  -webkit-tap-highlight-color: transparent;
+}
+.bottom-nav-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 28px;
+  padding: 0 18px;
+  border-radius: 999px;
+  transition: background-color .15s ease, color .15s ease;
+}
+.bottom-nav-item.active { color: var(--accent); font-weight: 650; }
+.bottom-nav-item.active .bottom-nav-icon { background: var(--accent-bg); }
+.bottom-nav-item:not(.active):hover .bottom-nav-icon { background: var(--surface-muted); }
+.bottom-nav-item:focus-visible { outline: 2px solid var(--accent); outline-offset: -3px; border-radius: 12px; }
+@media (min-width: 700px) {
+  .bottom-nav-label { font-size: 12px; }
+}
+/* ruang di bawah konten supaya tidak tertutup bar; toast naik di atas bar */
+body.has-bottom-nav .app { padding-bottom: calc(var(--bottom-nav-h) + 32px + env(safe-area-inset-bottom)); }
+body.has-bottom-nav .toast { bottom: calc(var(--bottom-nav-h) + 16px + env(safe-area-inset-bottom)); }

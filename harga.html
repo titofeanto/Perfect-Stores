@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="color-scheme" content="light dark">
 <title>Survei Harga - Logbook Perfect Stores</title>
-<link rel="stylesheet" href="css/style.css?v=7">
+<link rel="stylesheet" href="css/style.css?v=20">
 </head>
 <body>
 <div class="app">
@@ -14,10 +14,9 @@
     <div style="display:flex; justify-content:space-between; align-items:center;">
       <div>
         <h1>Survei Harga</h1>
-        <p>Bulanan - 8 toko LMT SPM (EC BIG) + 2 toko Beauty</p>
+        <p>Bulanan - semua toko, per area</p>
       </div>
       <div style="text-align:right;">
-        <a href="index.html" style="font-size:12px; color:var(--accent); text-decoration:none;">&larr; Input SKU</a>
         <p style="font-size:11px; color:var(--text-muted); margin:6px 0 0;">
           <span id="loggedInAs"></span> &middot; <button id="logoutBtn" type="button" style="font-size:11px; padding:2px 8px; border:none; background:none; color:var(--accent); text-decoration:underline; cursor:pointer;">Ganti akun</button>
         </p>
@@ -25,17 +24,28 @@
     </div>
   </header>
 
+  <div class="card-row-desktop">
   <div class="card">
+    <label class="field-label">Cari toko (semua area)</label>
+    <input id="storeSearch" type="text" placeholder="Ketik nama toko" autocomplete="off" style="margin-bottom:10px;">
+    <div id="storeSearchResults" class="store-search-results" style="display:none;"></div>
     <div class="row2">
+      <div>
+        <label class="field-label">Area</label>
+        <select id="areaSel"></select>
+      </div>
       <div>
         <label class="field-label">Toko</label>
         <select id="storeSel"></select>
       </div>
-      <div>
-        <label class="field-label">Bulan</label>
-        <select id="monthSel"></select>
-      </div>
     </div>
+    <p id="scopeInfo" class="upload-status"></p>
+  </div>
+
+  <div class="card">
+    <label class="field-label">Bulan</label>
+    <select id="monthSel"></select>
+  </div>
   </div>
 
   <div class="card">
@@ -130,5 +140,6 @@
 </div>
 <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
 <script type="module" src="js/harga.js?v=12"></script>
+<script type="module" src="js/bottom-nav.js?v=1"></script>
 </body>
 </html>
