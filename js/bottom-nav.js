@@ -1,6 +1,11 @@
-// Navigasi pindah halaman di BAWAH layar (bottom nav, seperti aplikasi HP): Input, Survei Harga,
-// Dashboard, Akun. Dipasang otomatis di semua halaman; halaman yang sedang dibuka ditandai.
+// Navigasi pindah halaman di BAWAH layar: kapsul kaca mengambang (Liquid Glass) berisi Input,
+// Survei Harga, Dashboard, Akun. Dipasang otomatis di semua halaman; halaman aktif ditandai lensa kaca.
 // Styling ada di css/style.css (.bottom-nav). Tidak bergantung Firebase, jadi tampil segera.
+//
+// Antar halaman adalah pindah halaman penuh (bukan SPA), jadi lensa tidak bisa "hidup terus".
+// Triknya: halaman sebelumnya menyimpan posisi tab aktifnya di sessionStorage; di halaman baru lensa
+// dimulai dari posisi itu lalu meluncur ke tab yang benar dengan pegas. Klik tidak ditunda sedikit pun --
+// pindah halaman langsung, animasinya menyusul.
 
 const ICONS = {
   input: '<path d="M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2"/><rect x="9" y="3" width="6" height="4" rx="2"/><path d="M9 12h6M9 16h4"/>',
@@ -16,26 +21,67 @@ const ITEMS = [
   { href: 'mapping.html', label: 'Akun', icon: 'akun' },
 ];
 
+const STORE_KEY = 'bnav_prev_index';
+
 function currentPage() {
   const last = location.pathname.split('/').pop();
   return last || 'index.html';
 }
 
+// Respons pegas (damping 0.8 = sedikit memantul karena ada "momentum" dari sentuhan, response 0.42s)
+// dijadikan easing CSS linear(): lensa dianimasikan dari nilai SAAT INI ke target, bukan durasi kaku.
+function springEasing(damping = 0.8, response = 0.42) {
+  const w = (2 * Math.PI) / response;
+  const wd = w * Math.sqrt(1 - damping * damping);
+  const T = response * 2.4;
+  const pts = [];
+  const N = 36;
+  for (let k = 0; k <= N; k++) {
+    const t = (k / N) * T;
+    const x = 1 - Math.exp(-damping * w * t) * (Math.cos(wd * t) + (damping * w / wd) * Math.sin(wd * t));
+    pts.push((k === N ? 1 : x).toFixed(4));
+  }
+  return { easing: `linear(${pts.join(', ')})`, duration: Math.round(T * 1000) };
+}
+
+function safeStorage(fn) {
+  try { return fn(); } catch (e) { return null; }
+}
+
 function mount() {
   if (document.getElementById('bottomNav')) return;
   const page = currentPage();
+  const activeIdx = Math.max(0, ITEMS.findIndex(it => it.href === page));
   const nav = document.createElement('nav');
   nav.id = 'bottomNav';
   nav.className = 'bottom-nav';
   nav.setAttribute('aria-label', 'Navigasi halaman');
-  nav.innerHTML = '<div class="bottom-nav-inner">' + ITEMS.map(it => {
-    const active = it.href === page;
-    return `<a href="${it.href}" class="bottom-nav-item${active ? ' active' : ''}"${active ? ' aria-current="page"' : ''}>`
-      + `<span class="bottom-nav-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${ICONS[it.icon]}</svg></span>`
-      + `<span class="bottom-nav-label">${it.label}</span></a>`;
-  }).join('') + '</div>';
+  nav.innerHTML = '<div class="bottom-nav-inner"><span class="bottom-nav-lens" aria-hidden="true"></span>'
+    + ITEMS.map((it, i) => {
+      const active = i === activeIdx;
+      return `<a href="${it.href}" class="bottom-nav-item${active ? ' active' : ''}"${active ? ' aria-current="page"' : ''}>`
+        + `<span class="bottom-nav-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${ICONS[it.icon]}</svg></span>`
+        + `<span class="bottom-nav-label">${it.label}</span></a>`;
+    }).join('') + '</div>';
+  const inner = nav.firstChild;
+  inner.style.setProperty('--n', ITEMS.length);
+  inner.style.setProperty('--i', activeIdx);
   document.body.appendChild(nav);
   document.body.classList.add('has-bottom-nav');
+
+  // Lensa meluncur dari tab halaman sebelumnya ke tab halaman ini
+  const lens = inner.querySelector('.bottom-nav-lens');
+  const prev = safeStorage(() => sessionStorage.getItem(STORE_KEY));
+  const prevIdx = prev === null ? NaN : Number(prev);
+  const reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if (!reduce && Number.isInteger(prevIdx) && prevIdx >= 0 && prevIdx < ITEMS.length && prevIdx !== activeIdx && lens.animate) {
+    const s = springEasing();
+    lens.animate(
+      [{ transform: `translateX(${prevIdx * 100}%)` }, { transform: `translateX(${activeIdx * 100}%)` }],
+      { duration: s.duration, easing: s.easing }
+    );
+  }
+  safeStorage(() => sessionStorage.setItem(STORE_KEY, String(activeIdx)));
 }
 
 if (document.body) mount();
