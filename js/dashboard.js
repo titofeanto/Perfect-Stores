@@ -3,9 +3,10 @@ import { pickAccount, storeIsAllowed, switchAccount } from './store-filter.js?v=
 import { loadStores, loadSkuList } from './store-data.js';
 import { getWeeksForMonth, findWeekContaining, fmtShort, MONTHS_ID } from './weeks.js';
 import { summarizeEntry, buildOosDetail, normalizeField, fieldTotal, fieldIsEmpty } from './entry-utils.js?v=3';
-import { wireOosModal, showOosModal } from './oos-modal.js?v=5';
+import { wireOosModal, showOosModal } from './oos-modal.js?v=6';
 import { downloadAsExcel } from './export-utils.js';
 import { esc, fmtTotal } from './dt-stock.js?v=1';
+import { formatReportDate } from './stock-upload.js?v=2';
 
 const TODAY = new Date();
 const el = (id) => document.getElementById(id);
@@ -14,6 +15,7 @@ let stores = [];
 let skuListCache = {}; // scopeSlug -> sku list
 let currentWeeks = [];
 let distStockByArea = {};
+let distMetaByArea = {}; // area -> {reportDate}
 let rowsByStoreId = {};
 let entriesByStore = null; // hasil fetch minggu terpilih; null = belum dimuat
 // Filter dashboard. Set berisi nilai yang DIPILIH; semua terpilih = tidak ada filter.
@@ -64,13 +66,14 @@ async function loadDistributorStockAll() {
   const results = await Promise.all(areas.map(async area => {
     try {
       const snap = await getDoc(doc(db, 'distributorStock', area));
-      return [area, snap.exists() ? (snap.data().items || {}) : {}];
+      return [area, snap.exists() ? snap.data() : null];
     } catch (err) {
       console.error('Gagal memuat stock distributor', area, err);
-      return [area, {}];
+      return [area, null];
     }
   }));
-  distStockByArea = Object.fromEntries(results);
+  distStockByArea = Object.fromEntries(results.map(([a, d]) => [a, (d && d.items) || {}]));
+  distMetaByArea = Object.fromEntries(results.map(([a, d]) => [a, { reportDate: d && d.reportDate }]));
 }
 
 function populateMonthSelect() {
@@ -569,7 +572,7 @@ async function exportAllStores() {
 function openOosModal(storeId, week) {
   const row = rowsByStoreId[storeId];
   if (!row) return;
-  showOosModal({ store: row.store, week, oosDetail: row.oosDetail });
+  showOosModal({ store: row.store, week, oosDetail: row.oosDetail, dtAsOf: formatReportDate((distMetaByArea[row.store.area] || {}).reportDate) });
 }
 
 init();

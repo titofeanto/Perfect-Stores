@@ -40,7 +40,7 @@ export function wireOosModal() {
 }
 
 // store: {name, area}; week: {label, start, end}; oosDetail: hasil buildOosDetail() (entry-utils.js)
-export function showOosModal({ store, week, oosDetail }) {
+export function showOosModal({ store, week, oosDetail, dtAsOf }) {
   const picked = paginateShareItems(oosDetail);
   currentShare = { store, week, picked, oosDetail };
   const n = picked.pages.length;
@@ -51,7 +51,7 @@ export function showOosModal({ store, week, oosDetail }) {
     ? `${picked.totalOos} SKU kosong dibagi ${MAX_SKU_PER_IMAGE} SKU per gambar = ${n} gambar (format HP 1080x1920), urut dari stock DT terbanyak.`
     : 'Tidak ada SKU kosong di toko ini, jadi tidak ada yang perlu dibagikan.';
   el('oosModalTitle').textContent = `SKU tidak ada di toko - ${store.name}`;
-  el('oosModalSubtitle').innerHTML = `${esc(week.label)} (${fmtShort(week.start)} - ${fmtShort(week.end)}) &middot; dicocokkan ke stock distributor ${esc(store.area)} TERKINI (bukan histori minggu itu)`;
+  el('oosModalSubtitle').innerHTML = `${esc(week.label)} (${fmtShort(week.start)} - ${fmtShort(week.end)}) &middot; dicocokkan ke stock distributor ${esc(store.area)} TERKINI${dtAsOf ? ` (laporan tanggal ${esc(dtAsOf)})` : ''}, bukan histori minggu itu`;
   if (!oosDetail.length) {
     el('oosModalBody').innerHTML = '<p class="upload-status">Tidak ada SKU dengan stock 0 untuk toko ini.</p>';
   } else {

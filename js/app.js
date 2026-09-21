@@ -2,11 +2,11 @@ import { db, doc, getDoc, setDoc, serverTimestamp, authReady } from './firebase-
 import { pickAccount, storeIsAllowed, getCurrentMapping, switchAccount } from './store-filter.js?v=2';
 import { loadStores, loadSkuList, groupStoresByArea } from './store-data.js';
 import { getWeeksForMonth, findWeekContaining, fmtShort, MONTHS_ID, addDays, isoDate } from './weeks.js';
-import { loadDistributorStock, parseDistributorWorkbook, saveDistributorStock } from './stock-upload.js';
+import { loadDistributorStock, parseDistributorWorkbook, saveDistributorStock, formatReportDate } from './stock-upload.js?v=2';
 import { supportsNativeBarcodeDetector, startNativeScan, stopNativeScan, startFallbackScan, stopFallbackScan } from './barcode-scan.js';
 import { parsePurchaseWorkbook } from './purchase-upload.js';
 import { computeDtStock, dtCodesHtml, fmtTotal, hasDistributorData, esc } from './dt-stock.js?v=1';
-import { wireOosModal, showOosModal } from './oos-modal.js?v=5';
+import { wireOosModal, showOosModal } from './oos-modal.js?v=6';
 import { loadPromoSku, loadPriceEntry, savePriceField, loadCompetitors, addCompetitor, updateCompetitor } from './harga-data.js';
 import { FIELDS, EDITABLE_FIELDS, fieldTotal, fieldIsEmpty, normalizeField, statusOf, buildOosDetail } from './entry-utils.js?v=3';
 
@@ -1075,7 +1075,7 @@ async function openRecapOosModal() {
   await ensureDistributorStockLoaded(currentStore.area);
   const dist = distributorCache[currentStore.area];
   const oosDetail = buildOosDetail(currentEntry, currentSkuList, (dist && dist.items) || {});
-  showOosModal({ store: currentStore, week: currentWeek, oosDetail });
+  showOosModal({ store: currentStore, week: currentWeek, oosDetail, dtAsOf: formatReportDate(dist && dist.reportDate) });
 }
 
 function renderRecapFlagChips() {
@@ -1369,7 +1369,8 @@ async function refreshStockTab() {
     distributorCache[area] = existing;
     const count = Object.keys(existing.items || {}).length;
     const ts = existing.uploadedAt && existing.uploadedAt.toDate ? existing.uploadedAt.toDate().toLocaleString('id-ID') : '-';
-    el('stockCurrentInfo').textContent = `Data tersimpan: ${count} produk. Terakhir diupload: ${ts}. File: ${existing.sourceFileName || '-'}`;
+    const rd = formatReportDate(existing.reportDate);
+    el('stockCurrentInfo').textContent = `Data tersimpan: ${count} produk${rd ? `, laporan tanggal ${rd}` : ''}. Diupload: ${ts}. File: ${existing.sourceFileName || '-'}. Unggahan baru akan MENIMPA semua data ini.`;
   } else {
     el('stockCurrentInfo').textContent = 'Belum ada data stock distributor untuk area ini.';
   }
@@ -1383,10 +1384,21 @@ function onStockFileSelected(e) {
     try {
       const parsed = parseDistributorWorkbook(ev.target.result);
       pendingStockParse = { ...parsed, fileName: file.name };
-      el('stockParsePreview').textContent = `Berhasil dibaca: ${parsed.rowCount} produk terdeteksi (${parsed.skipped} baris dilewati).`;
+      const area = el('stockAreaSel').value;
+      const old = distributorCache[area];
+      const rd = formatReportDate(parsed.reportDate);
+      let msg = `Berhasil dibaca: ${parsed.rowCount} produk${rd ? `, laporan tanggal ${rd}` : ''}${parsed.distributorName ? ` (${parsed.distributorName})` : ''}.`;
+      if (parsed.duplicates) msg += ` ${parsed.duplicates} PCODE ganda (yang terakhir dipakai).`;
+      msg += old
+        ? ` Simpan akan MENIMPA seluruh data stock ${area} sebelumnya (${Object.keys(old.items || {}).length} produk${old.reportDate ? `, laporan ${formatReportDate(old.reportDate)}` : ''}).`
+        : ` Ini data pertama untuk ${area}.`;
+      if (old && old.reportDate && parsed.reportDate && parsed.reportDate < old.reportDate) {
+        msg += ` PERHATIAN: laporan ini LEBIH LAMA dari data tersimpan.`;
+      }
+      el('stockParsePreview').textContent = msg;
       el('stockSaveBtn').disabled = false;
     } catch (err) {
-      el('stockParsePreview').textContent = 'Gagal membaca file. Pastikan formatnya sesuai template.';
+      el('stockParsePreview').textContent = `Gagal membaca file: ${err.message || 'format tidak dikenali'} Pastikan file adalah UID Distributor Stock Report (kolom PCODE, Karton, Lusin, PCs).`;
       el('stockSaveBtn').disabled = true;
       console.error(err);
     }
@@ -1400,8 +1412,9 @@ async function onStockSave() {
   el('stockSaveBtn').disabled = true;
   el('stockSaveBtn').textContent = 'Menyimpan...';
   try {
-    await saveDistributorStock(area, pendingStockParse.items, pendingStockParse.fileName);
-    distributorCache[area] = { items: pendingStockParse.items, sourceFileName: pendingStockParse.fileName, uploadedAt: { toDate: () => new Date() } };
+    const meta = { reportDate: pendingStockParse.reportDate, distributorName: pendingStockParse.distributorName };
+    await saveDistributorStock(area, pendingStockParse.items, pendingStockParse.fileName, meta);
+    distributorCache[area] = { items: pendingStockParse.items, sourceFileName: pendingStockParse.fileName, ...meta, uploadedAt: { toDate: () => new Date() } };
     showToast(`Stock distributor ${area} berhasil disimpan (${Object.keys(pendingStockParse.items).length} produk)`, 'success');
     await refreshStockTab();
     renderSkuList();
