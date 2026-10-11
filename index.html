@@ -13,7 +13,7 @@
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="SBA COTC">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
-<title>Logbook Perfect Stores</title>
+<title>Logbook Perfect Stores - Availability</title>
 <link rel="stylesheet" href="css/style.css?v=22">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tabler-icons/2.44.0/iconfont/tabler-icons.min.css">
 </head>
@@ -23,7 +23,7 @@
   <header class="appbar">
     <div style="display:flex; justify-content:space-between; align-items:center;">
       <div>
-        <h1>Logbook Perfect Stores</h1>
+        <h1>Logbook Perfect Stores - Availability</h1>
         <p>Input mingguan untuk SBA</p>
       </div>
       <div style="text-align:right;">
@@ -39,6 +39,8 @@
     <label class="field-label">Cari toko (semua area)</label>
     <input id="storeSearch" type="text" placeholder="Ketik nama toko" autocomplete="off" style="margin-bottom:10px;">
     <div id="storeSearchResults" class="store-search-results" style="display:none;"></div>
+    <label class="field-label">Channel toko</label>
+    <select id="channelSel" style="margin-bottom:10px;"></select>
     <div class="row2">
       <div>
         <label class="field-label">Area</label>
@@ -201,7 +203,7 @@
 
 </div>
 <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
-<script type="module" src="js/app.js?v=31"></script>
+<script type="module" src="js/app.js?v=32"></script>
 <script type="module" src="js/bottom-nav.js?v=3"></script>
 </body>
 </html>

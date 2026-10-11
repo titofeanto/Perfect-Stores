@@ -1,3 +1,5 @@
+import { loadMaster } from './master-data.js';
+
 const SKU_FILES = {
   'lmt-spm': 'data/sku-lmt-spm.json',
   'local-minis': 'data/sku-local-minis.json',
@@ -10,6 +12,8 @@ let hargaProdukCache = null;
 
 export async function loadStores() {
   if (storesCache) return storesCache;
+  const master = await loadMaster();   // null bila Google Sheets tidak diaktifkan / tidak terjangkau
+  if (master) { storesCache = master.stores; return storesCache; }
   const res = await fetch('data/stores.json');
   storesCache = await res.json();
   return storesCache;
@@ -17,6 +21,8 @@ export async function loadStores() {
 
 export async function loadSkuList(scopeSlug) {
   if (skuCache[scopeSlug]) return skuCache[scopeSlug];
+  const master = await loadMaster();
+  if (master && master.skus[scopeSlug]) { skuCache[scopeSlug] = master.skus[scopeSlug]; return skuCache[scopeSlug]; }
   const path = SKU_FILES[scopeSlug];
   if (!path) throw new Error('Scope channel tidak dikenal: ' + scopeSlug);
   const res = await fetch(path);

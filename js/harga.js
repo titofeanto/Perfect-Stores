@@ -1,5 +1,5 @@
 import { db, collection, query, where, getDocs, authReady } from './firebase-init.js';
-import { pickAccount, storeIsAllowed, switchAccount } from './store-filter.js?v=2';
+import { pickAccount, storeIsAllowed, switchAccount } from './store-filter.js?v=1';
 import { loadStores, loadSkuList, groupStoresByArea } from './store-data.js';
 import { MONTHS_ID } from './weeks.js';
 import { loadCompetitors, addCompetitor, updateCompetitor, loadPriceEntry, savePriceField, saveBulkPriceEntries, loadPromoSku, savePromoSku } from './harga-data.js';
@@ -42,9 +42,10 @@ function rp(n) {
   return 'Rp' + num.toLocaleString('id-ID');
 }
 
-// Kunci penyimpanan harga: barcode, bukan PC Code. 1 PC Code kadang menaungi beberapa
-// barcode/varian, jadi kalau dipakai sebagai kunci bisa menggabung 2 varian jadi 1 harga.
-// Fallback ke PC Code (dengan prefix) hanya untuk produk tanpa barcode.
+// Kunci penyimpanan harga: pakai BARCODE (bukan PC Code) -- data harga dari toko
+// biasanya per barcode/varian, sedangkan 1 PC Code kadang menaungi beberapa barcode
+// sekaligus, jadi kalau dipakai kunci harga bisa salah gabung 2 varian jadi 1 harga.
+// Fallback ke PC Code (dengan prefix) cuma untuk kasus langka produk tanpa barcode.
 function priceKey(p) {
   return p.barcode || ('PC-' + p.pcode);
 }
@@ -53,7 +54,7 @@ async function init() {
   await authReady;
   const { mapping } = await pickAccount();
   const allStores = await loadStores();
-  // Survei harga tersedia untuk semua toko (dulu cuma 10 toko EC BIG + Beauty), disaring sesuai
+  // Survei harga tersedia untuk SEMUA toko (dulu cuma 10 toko EC BIG + Beauty), disaring sesuai
   // mapping akun yang dipilih (isMaster = semua toko). Pilihan toko: cari nama / Area -> Toko,
   // sama persis dengan halaman input.
   stores = allStores.filter(s => storeIsAllowed(s.id));
@@ -170,8 +171,8 @@ function populateMonthSelect() {
 }
 
 // Gabungkan SKU wajib scope toko itu (flag dipertahankan) dengan SKU Promo channel yang
-// sama untuk bulan yang dipilih (flag=null, ditandai "Promo"). SKU wajib selalu jadi acuan
-// utama: kalau ada tumpang tindih pcode, data SKU wajib yang menang, RSP-nya hanya
+// sama untuk bulan yang dipilih (flag=null, ditandai "Promo"). SKU wajib SELALU jadi acuan
+// utama -- kalau ada tumpang tindih pcode, data SKU wajib yang menang, cuma RSP-nya
 // dilengkapi dari data promo kalau ada.
 function mergeProducts(wajibList, promoDoc) {
   const merged = {};
@@ -207,7 +208,7 @@ async function onStoreOrMonthChange() {
 
   // Produk ad-hoc (di luar SKU wajib/promo, ditambahkan lewat upload harga manual)
   // dimunculkan lagi dari data yang sudah tersimpan, pakai productName yang disimpan
-  // bareng harganya waktu itu, supaya tidak hilang begitu ganti toko/minggu lalu balik lagi.
+  // bareng harganya waktu itu -- supaya tidak hilang begitu ganti toko/minggu lalu balik lagi.
   const knownKeys = new Set(allProducts.map(p => priceKey(p)));
   for (const [key, val] of Object.entries(currentEntry)) {
     if (knownKeys.has(key)) continue;
@@ -458,7 +459,7 @@ function renderProductList() {
   filtered = filtered.sort((a, b) => hgSortOrder === 'asc' ? a.name.localeCompare(b.name) : b.name.localeCompare(a.name));
 
   if (flagFilter !== 'all') {
-    // Sudah tersaring ke 1 kategori lewat chip, tampil flat, tidak perlu dikelompokkan lagi.
+    // Sudah tersaring ke 1 kategori lewat chip -- tampil flat, tidak perlu dikelompokkan lagi.
     el('productList').innerHTML = filtered.map(productCardHtml).join('')
       || '<p class="upload-status">Tidak ada produk yang cocok.</p>';
     wireProductListEvents();
@@ -544,7 +545,7 @@ function wireProductListEvents() {
         if (!competitors[key]) competitors[key] = {};
         competitors[key][cid] = { brand, productName, packSize };
         openAddForm = null;
-        showToast(`Kompetitor "${brand}" ditambahkan, langsung terlihat di semua toko lain.`, 'success');
+        showToast(`Kompetitor "${brand}" ditambahkan -- langsung terlihat di semua toko lain.`, 'success');
         renderProductList();
       } catch (err) {
         console.error('Gagal menambah kompetitor:', err);
@@ -582,7 +583,7 @@ function wireProductListEvents() {
         await updateCompetitor(key, cid, { brand, productName, packSize });
         competitors[key][cid] = { ...competitors[key][cid], brand, productName, packSize };
         editingCompetitor = null;
-        showToast(`Data kompetitor "${brand}" dikoreksi, langsung berubah di semua toko.`, 'success');
+        showToast(`Data kompetitor "${brand}" dikoreksi -- langsung berubah di semua toko.`, 'success');
         renderProductList();
       } catch (err) {
         console.error('Gagal mengoreksi kompetitor:', err);
@@ -679,7 +680,7 @@ function onPriceFileSelected(e) {
       pendingPriceParse = result;
       el('priceParsePreview').textContent = `${rows.length} baris dibaca untuk ${currentStore.name}: ${result.unileverCount} harga Unilever, ${result.competitorCount} harga kompetitor siap disimpan.`;
       let detail = '';
-      if (result.adHocCount > 0) detail += `<p class="upload-status">${result.adHocCount} produk belum ada di daftar SKU wajib/promo toko ini, jadi otomatis ditambahkan sebagai produk tidak wajib.</p>`;
+      if (result.adHocCount > 0) detail += `<p class="upload-status">${result.adHocCount} produk belum ada di daftar SKU wajib/promo toko ini -- otomatis ditambahkan sebagai produk tidak wajib.</p>`;
       if (result.tokoFilteredOut > 0) detail += `<p class="upload-status">${result.tokoFilteredOut} baris diabaikan karena kolom Toko tidak cocok dengan toko yang sedang dipilih.</p>`;
       if (result.unmatchedCompetitor > 0) detail += `<p class="upload-status">${result.unmatchedCompetitor} baris kompetitor diabaikan, nama kompetitornya belum terdaftar untuk produk itu (tambah dulu lewat "+ Tambah kompetitor" di daftar produk).</p>`;
       if (result.invalidRow > 0) detail += `<p class="upload-status">${result.invalidRow} baris diabaikan, tidak ada Barcode maupun PCCode.</p>`;
@@ -693,8 +694,8 @@ function onPriceFileSelected(e) {
   reader.readAsArrayBuffer(file);
 }
 
-// Cocokkan baris mentah ke produk toko ini (by Barcode). Kalau barcode-nya belum ada di
-// daftar produk toko ini (di luar SKU wajib/promo), produk itu tetap diterima, otomatis
+// Cocokkan baris mentah ke produk toko ini (by Barcode). Kalau barcode-nya BELUM ada di
+// daftar produk toko ini (di luar SKU wajib/promo), produk itu tetap DITERIMA -- otomatis
 // ditambahkan sebagai produk "tidak wajib" (flag=null, sama seperti SKU Promo), supaya
 // survei harga bisa mencakup produk apa saja yang memang dilaporkan tokonya, bukan cuma
 // yang sudah resmi terdaftar. NamaProduk dari file disimpan bareng harganya supaya
@@ -794,8 +795,8 @@ function showToast(message, type) {
   toastTimer = setTimeout(() => { t.classList.remove('show'); }, 3200);
 }
 
-// Export 1 toko: semua bulan yang pernah diisi. Nama/flag/RSP produk dicocokkan dari
-// daftar produk yang sedang termuat (allProducts). Untuk SKU wajib selalu akurat,
+// Export 1 toko: SEMUA bulan yang pernah diisi. Nama/flag/RSP produk dicocokkan dari
+// daftar produk yang sedang termuat (allProducts) -- untuk SKU wajib selalu akurat,
 // untuk SKU promo dari bulan LAIN yang sudah beda daftar promo-nya bisa kosong namanya
 // (PC Code tetap ada sebagai identitas).
 async function exportOneStorePrice() {
@@ -870,7 +871,7 @@ async function exportAllStoresPrice() {
   }
 }
 
-// Tambahkan baris mentah (1 baris per harga: Unilever atau tiap kompetitor) ke array rows.
+// Tambahkan baris mentah (1 baris per harga -- Unilever atau tiap kompetitor) ke array rows.
 function appendPriceRows(rows, store, periodKey, key, it, meta) {
   meta = meta || {};
   if (it.unileverPrice !== undefined && it.unileverPrice !== '' && it.unileverPrice !== null) {

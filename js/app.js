@@ -1,5 +1,5 @@
 import { db, doc, getDoc, setDoc, serverTimestamp, authReady } from './firebase-init.js';
-import { pickAccount, storeIsAllowed, getCurrentMapping, switchAccount } from './store-filter.js?v=2';
+import { pickAccount, storeIsAllowed, getCurrentMapping, switchAccount } from './store-filter.js?v=1';
 import { loadStores, loadSkuList, groupStoresByArea } from './store-data.js';
 import { getWeeksForMonth, findWeekContaining, fmtShort, MONTHS_ID, addDays, isoDate } from './weeks.js';
 import { loadDistributorStock, parseDistributorWorkbook, saveDistributorStock, formatReportDate } from './stock-upload.js?v=2';
@@ -18,6 +18,13 @@ const TODAY = new Date(); // tanggal perangkat SBA saat app dibuka
 
 let stores = [];
 let storesByArea = {};
+// Filter channel (LMT SPM / Local Minis / Haba DT) untuk daftar Area & Toko. 'all' = tanpa filter.
+const CHANNEL_ORDER = ['lmt-spm', 'local-minis', 'haba-dt'];
+const CHANNEL_LABELS = { 'lmt-spm': 'LMT SPM', 'local-minis': 'Local Minis', 'haba-dt': 'Haba DT' };
+const channelLabel = slug => CHANNEL_LABELS[slug] || slug;
+let channelFilter = 'all';
+function channelStores() { return channelFilter === 'all' ? stores : stores.filter(s => s.scopeSlug === channelFilter); }
+function channelStoresByArea() { return groupStoresByArea(channelStores()); }
 let currentStore = null;
 let currentSkuList = [];
 let currentEntry = {}; // { [barcode]: {stock,order,masuk,jual} }
@@ -40,8 +47,8 @@ let recapCategory = 'all';
 let recapBrand = 'all';
 let recapExpanded = {}; // kunci: 'oos' / 'belum' (section) atau 'oos|<BU>' / 'belum|<BU>' (grup BU)
 let priceEligible = false; // sekarang selalu true (semua toko) setelah onStoreChange jalan
-let currentPriceEntry = {}; // barcode -> {unileverPrice, competitorPrices:{id:price}}, data harga bulan ini
-let priceCompetitors = {}; // barcode -> {competitorId: {brand, productName, packSize}}, master kompetitor global
+let currentPriceEntry = {}; // barcode -> {unileverPrice, competitorPrices:{id:price}} -- data harga bulan ini
+let priceCompetitors = {}; // barcode -> {competitorId: {brand, productName, packSize}} -- master kompetitor global
 let expandedPriceCompetitor = {}; // barcode -> bool, collapsed by default
 let openPriceAddForm = null; // barcode yang sedang buka form "+ Tambah kompetitor"
 let editingPriceCompetitor = null; // {barcode, competitorId} yang sedang diedit
@@ -84,7 +91,7 @@ function badgeHtml(sku, item) {
   return html;
 }
 
-// Init
+// ---------- Init ----------
 
 async function init() {
   await authReady;
@@ -103,6 +110,7 @@ async function init() {
     return;
   }
 
+  populateChannelSelect();
   populateAreaSelect();
   populateMonthSelect();
   attachStaticHandlers();
@@ -118,6 +126,7 @@ async function applyUrlParamsAndLoad() {
   const paramPeriod = params.get('period');
 
   if (paramStore) {
+    setChannelFilter('all');
     el('areaSel').value = paramStore.area;
     populateStoreSelect(paramStore.area);
     el('storeSel').value = paramStore.id;
@@ -143,17 +152,40 @@ async function applyUrlParamsAndLoad() {
   if (paramStore) showToast(`Dibuka dari dashboard: ${paramStore.name}`, 'success');
 }
 
-function populateAreaSelect() {
-  const areas = Object.keys(storesByArea).sort();
+function populateChannelSelect() {
+  const slugs = [...new Set(stores.map(s => s.scopeSlug))].sort((a, b) => {
+    const ia = CHANNEL_ORDER.indexOf(a), ib = CHANNEL_ORDER.indexOf(b);
+    return (ia === -1 ? 99 : ia) - (ib === -1 ? 99 : ib) || a.localeCompare(b);
+  });
+  const saved = localStorage.getItem('sba_channel_filter');
+  channelFilter = (saved && slugs.includes(saved)) ? saved : 'all';
+  el('channelSel').innerHTML = `<option value="all">Semua channel (${stores.length} toko)</option>`
+    + slugs.map(sl => `<option value="${sl}">${channelLabel(sl)} (${stores.filter(s => s.scopeSlug === sl).length} toko)</option>`).join('');
+  el('channelSel').value = channelFilter;
+}
+
+function setChannelFilter(value) {
+  channelFilter = value;
+  el('channelSel').value = value;
+  if (value === 'all') localStorage.removeItem('sba_channel_filter');
+  else localStorage.setItem('sba_channel_filter', value);
+  populateAreaSelect(true);
+}
+
+function populateAreaSelect(keepCurrent) {
+  const prev = keepCurrent ? el('areaSel').value : '';
+  const areas = Object.keys(channelStoresByArea()).sort();
   el('areaSel').innerHTML = areas.map(a => `<option value="${a}">${a}</option>`).join('');
-  // Upload stock distributor: 1 file per Area (semua area yang bisa dilihat akun ini)
-  el('stockAreaSel').innerHTML = areas.map(a => `<option value="${a}">${a}</option>`).join('');
+  if (prev && areas.includes(prev)) el('areaSel').value = prev;
+  // Upload stock distributor: 1 file per Area (semua area yang bisa dilihat akun ini, tanpa filter channel)
+  el('stockAreaSel').innerHTML = Object.keys(storesByArea).sort().map(a => `<option value="${a}">${a}</option>`).join('');
 }
 
 function populateStoreSelect(area) {
-  const list = storesByArea[area] || [];
+  const list = channelStoresByArea()[area] || [];
+  const tag = channelFilter === 'all';
   el('storeSel').innerHTML = list
-    .map(s => `<option value="${s.id}">${s.name}</option>`)
+    .map(s => `<option value="${s.id}">${s.name}${tag ? ' \u00b7 ' + channelLabel(s.scopeSlug) : ''}</option>`)
     .join('');
 }
 
@@ -186,9 +218,10 @@ function populateWeekSelect(preferPeriodKey) {
   currentWeek = currentWeeks[idx];
 }
 
-// Event wiring
+// ---------- Event wiring ----------
 
 function attachStaticHandlers() {
+  el('channelSel').addEventListener('change', onChannelChange);
   el('areaSel').addEventListener('change', onAreaChange);
   el('storeSearch').addEventListener('input', renderStoreSearchResults);
   el('storeSearch').addEventListener('keydown', (e) => {
@@ -243,11 +276,11 @@ function renderStoreSearchResults() {
   const q = el('storeSearch').value.trim().toLowerCase();
   const box = el('storeSearchResults');
   if (!q) { box.style.display = 'none'; box.innerHTML = ''; return; }
-  const matches = stores.filter(s => s.name.toLowerCase().includes(q))
+  const matches = channelStores().filter(s => s.name.toLowerCase().includes(q))
     .sort((a, b) => a.name.localeCompare(b.name));
   const MAX = 30;
   box.innerHTML = matches.length
-    ? matches.slice(0, MAX).map(s => `<button type="button" class="store-search-item" data-store-id="${esc(s.id)}"><span>${esc(s.name)}</span><small>${esc(s.area)}</small></button>`).join('')
+    ? matches.slice(0, MAX).map(s => `<button type="button" class="store-search-item" data-store-id="${esc(s.id)}"><span>${esc(s.name)}</span><small>${esc(s.area)} &middot; ${esc(channelLabel(s.scopeSlug))}</small></button>`).join('')
       + (matches.length > MAX ? `<div class="store-search-empty">+${matches.length - MAX} toko lain, persempit pencarian.</div>` : '')
     : '<div class="store-search-empty">Toko tidak ditemukan.</div>';
   box.style.display = 'block';
@@ -259,11 +292,18 @@ function renderStoreSearchResults() {
 async function pickStoreFromSearch(storeId) {
   const store = stores.find(s => s.id === storeId);
   if (!store) return;
+  if (channelFilter !== 'all' && store.scopeSlug !== channelFilter) setChannelFilter('all');
   el('areaSel').value = store.area;
   populateStoreSelect(store.area);
   el('storeSel').value = store.id;
   el('storeSearch').value = '';
   renderStoreSearchResults();
+  await onStoreChange();
+}
+
+async function onChannelChange() {
+  setChannelFilter(el('channelSel').value);
+  populateStoreSelect(el('areaSel').value);
   await onStoreChange();
 }
 
@@ -289,7 +329,8 @@ async function onStoreChange(preferPeriodKey) {
   recapCategory = 'all';
   recapBrand = 'all';
   recapExpanded = {};
-  // Harga jual (+ kompetitor) tersedia untuk semua toko.
+  // Harga jual (+ kompetitor) sekarang tersedia utk SEMUA toko (sebelumnya cuma
+  // scope Survei Harga LMT SPM "EC BIG" + Beauty).
   priceEligible = true;
   expandedPriceCompetitor = {};
   if (priceEligible && !Object.keys(priceCompetitors).length) {
@@ -306,7 +347,9 @@ async function onStoreChange(preferPeriodKey) {
 }
 
 // Data stock distributor dimuat sekali per area lalu di-cache di memori.
-// Dimuat otomatis begitu toko dipilih, supaya info stock distributor langsung tampil di tab Input.
+// Dulu ini cuma dimuat kalau tab "Stock distributor" dibuka -- akibatnya
+// SBA yang langsung ke tab Input tidak pernah melihat info stock distributor
+// walau datanya sudah ada di database. Sekarang dimuat otomatis begitu toko dipilih.
 async function ensureDistributorStockLoaded(area) {
   if (distributorCache[area] !== undefined) return;
   try {
@@ -323,8 +366,10 @@ async function onMonthChange() {
 }
 
 async function onWeekChange() {
-  // Jangan panggil populateWeekSelect() di sini: fungsi itu membangun ulang <option> dan
-  // kembali ke minggu hari ini, sehingga pilihan manual di dropdown Minggu ketimpa.
+  // PENTING: jangan panggil populateWeekSelect() di sini. Fungsi itu membangun ulang
+  // seluruh daftar <option> dan (kalau tidak dikasih preferPeriodKey) otomatis balik
+  // ke minggu yang mengandung tanggal HARI INI -- efeknya pilihan manual user di
+  // dropdown Minggu langsung ketimpa detik itu juga. Cukup baca index yang baru dipilih.
   const idx = Number(el('weekSel').value);
   if (currentWeeks[idx]) currentWeek = currentWeeks[idx];
   await afterPeriodDataChange();
@@ -333,8 +378,9 @@ async function onWeekChange() {
 async function afterPeriodDataChange() {
   await loadEntryForCurrentPeriod();
   renderAll();
-  // Kalau sedang di tab Stock distributor / Barang Masuk, refresh juga supaya
-  // ganti Minggu langsung terlihat di tab itu.
+  // Kalau sedang di tab Stock distributor / Barang Masuk, refresh juga -- dulu cuma
+  // ke-refresh kalau pindah tab lalu balik lagi, jadi kelihatan seperti "Minggu tidak
+  // bisa diganti" waktu masih di tab yang sama.
   if (currentTab === 'stock') refreshStockTab();
   if (currentTab === 'masuk') refreshMasukTab();
 }
@@ -356,7 +402,7 @@ function switchTab(tab) {
   if (tab === 'masuk') refreshMasukTab();
 }
 
-// Firestore load/save for entries
+// ---------- Firestore load/save for entries ----------
 
 function entryDocId(store, week) {
   return `${store.id}__${week.periodKey}`;
@@ -428,8 +474,9 @@ function scheduleSaveField(barcode) {
 async function saveField(barcode) {
   const sku = currentSkuList.find(s => s.barcode === barcode);
   const itemToSave = {};
-  // Hanya Stock & Order yang ditulis dari sini. Masuk & Jual tidak disentuh supaya tidak
-  // menimpa data dari upload pembelian toko (Supervisor) atau hasil hitung otomatis.
+  // Cuma Stock & Order yang ditulis dari sini -- Masuk & Jual sengaja TIDAK disentuh
+  // supaya tidak menimpa data yang nanti diisi lewat upload pembelian toko oleh Supervisor
+  // atau hasil hitung otomatis.
   for (const f of EDITABLE_FIELDS) {
     const fo = currentEntry[barcode][f];
     itemToSave[f] = { karton: fo.karton, lusin: fo.lusin, pcs: fo.pcs, total: fieldTotal(fo, sku.isi) };
@@ -458,8 +505,8 @@ async function submitAllZeroFilled() {
   for (const sku of currentSkuList) {
     const item = currentEntry[sku.barcode];
     const filled = {};
-    // Hanya Stock & Order yang di-zero-fill dan dikirim. Masuk & Jual dibiarkan
-    // (diisi dari upload Supervisor / hitung otomatis).
+    // Cuma Stock & Order yang di-zero-fill dan dikirim -- Masuk & Jual dibiarkan
+    // apa adanya (diisi dari sumber lain: upload Supervisor / hitung otomatis).
     for (const f of EDITABLE_FIELDS) {
       const fo = item[f];
       const normalized = {
@@ -617,8 +664,9 @@ function skuCardHtml(sku, distStock) {
   `;
 }
 
-// Harga jual (+ kompetitor). Datanya sama dengan halaman Survei Harga (kunci barcode,
-// per bulan), jadi diisi dari mana pun hasilnya nyambung.
+// Harga jual (+ kompetitor) -- cuma utk toko yang termasuk scope Survei Harga.
+// Data harga ini SAMA dengan yang dipakai halaman Survei Harga (kunci barcode,
+// per bulan) -- isi dari sini atau dari sana, hasilnya nyambung, tidak dobel kerja.
 function priceSectionHtml(sku) {
   const barcode = sku.barcode;
   const priceItem = currentPriceEntry[barcode] || {};
@@ -736,7 +784,8 @@ function renderSkuList() {
   }
 
   // Dikelompokkan per BU, collapsible, dengan ringkasan (lengkap/tidak ada) di tiap
-  // header grup, supaya daftar SKU wajib yang panjang tidak perlu di-scroll semuanya.
+  // header grup -- supaya daftar SKU wajib yang panjang lebih rapi dan tidak perlu
+  // scroll semuanya cuma untuk lihat progress per kelompok.
   const groups = {};
   const groupOrderSeen = [];
   for (const sku of filtered) {
@@ -923,8 +972,8 @@ function scheduleSavePriceField(barcode, kind, competitorId, value) {
   }, 600);
 }
 
-// SKU Promo: opsional, tidak dihitung ke progress/lengkap SKU wajib sama sekali.
-// Cuma 1 kolom Stock sederhana (bukan karton/lusin/pcs), ini murni cek availability,
+// SKU Promo: opsional, TIDAK dihitung ke progress/lengkap SKU wajib sama sekali.
+// Cuma 1 kolom Stock sederhana (bukan karton/lusin/pcs) -- ini murni cek availability,
 // bukan pencatatan operasional selengkap SKU wajib.
 function promoBadgeHtml(val) {
   const isAda = val !== '' && Number(val) > 0;
@@ -1209,7 +1258,7 @@ async function onConfirmSubmit() {
     renderAll();
     renderRecap();
     showToast(`Berhasil dikirim untuk ${currentWeek.label}, ${currentStore.name}`, 'success');
-    // Setelah stock minggu ini tersimpan, coba hitung ulang Jual minggu sebelumnya
+    // Setelah stock minggu ini tersimpan, coba hitung ulang Jual minggu SEBELUMNYA
     // (kalau minggu sebelumnya sudah ada datanya).
     const prevWeekStart = addDays(currentWeek.start, -7);
     computeAndSaveJualForStorePeriod(currentStore.id, prevWeekStart, currentSkuList).catch(err => {
@@ -1300,7 +1349,7 @@ function onBarcodeDetected(rawValue) {
 // Rumus: Jual minggu N = Stock minggu N + Barang Masuk minggu N - Stock minggu N+1.
 // Baru bisa dihitung setelah Stock minggu N+1 (minggu depannya) sudah diisi.
 // Dipanggil dari 2 arah: (1) setelah SBA submit stock minggu ini -> hitung ulang
-// Jual minggu sebelumnya, dan (2) setelah Supervisor upload Barang Masuk untuk
+// Jual minggu SEBELUMNYA, dan (2) setelah Supervisor upload Barang Masuk untuk
 // suatu minggu -> hitung ulang Jual minggu itu (kalau stock minggu depannya sudah ada).
 async function computeAndSaveJualForStorePeriod(storeId, weekStart, skuList) {
   const periodKey = isoDate(weekStart);
@@ -1430,14 +1479,14 @@ async function onStockSave() {
 // ---------- Upload Extract (data pembelian toko dari distributor -> Barang Masuk, oleh Supervisor) ----------
 
 let pendingMasukResult = null;
-let lastMasukFile = null; // File terakhir yang dipilih, dipakai untuk baca ulang otomatis kalau Minggu diganti
+let lastMasukFile = null; // File terakhir yang dipilih -- dipakai untuk baca ulang otomatis kalau Minggu diganti
 
 function refreshMasukTab() {
   if (!currentWeek) return;
   el('masukPeriodInfo').textContent = `Periode target: ${currentWeek.label} (${fmtShort(currentWeek.start)} - ${fmtShort(currentWeek.end)})`;
   if (lastMasukFile) {
-    // File sudah pernah dipilih: baca ulang otomatis untuk periode yang baru,
-    // supaya ganti Minggu tidak perlu memilih file lagi.
+    // File sudah pernah dipilih sebelumnya -- baca ulang otomatis utk periode yang baru
+    // dipilih, supaya ganti Minggu tidak perlu klik "Choose File" lagi dari nol.
     processMasukFile(lastMasukFile);
   } else {
     el('masukParsePreview').textContent = '';
@@ -1519,7 +1568,7 @@ function processMasukFile(file) {
       if (result.outOfRange > 0) detail += `<p class="upload-status">${result.outOfRange} baris di luar rentang ${currentWeek.label} diabaikan.</p>`;
       if (result.unmatchedStores.length) {
         const shown = result.unmatchedStores.slice(0, 8).join(', ');
-        const more = result.unmatchedStores.length > 8 ? ` &middot; dan ${result.unmatchedStores.length - 8} kode outlet lain (di luar 36 toko di app ini)` : '';
+        const more = result.unmatchedStores.length > 8 ? ` &middot; dan ${result.unmatchedStores.length - 8} kode outlet lain (di luar 36 toko SBA COTC)` : '';
         detail += `<p class="upload-status">${result.unmatchedStores.length} kode outlet tidak dikenal diabaikan: ${shown}${more}</p>`;
       }
       if (result.nonWajibCount > 0) detail += `<p class="upload-status">${result.nonWajibCount} baris di luar SKU wajib toko terkait diabaikan.</p>`;
@@ -1552,7 +1601,7 @@ async function onMasukSave() {
   const periodKey = currentWeek.periodKey;
   const storeIds = Object.keys(result.perStoreQty);
 
-  // Simpan ke Firestore. Hanya langkah ini yang menentukan toast sukses/gagal.
+  // Langkah 1: simpan ke Firestore. INI SATU-SATUNYA yang menentukan toast sukses/gagal.
   try {
     await Promise.all(storeIds.map(storeId => {
       const store = stores.find(s => s.id === storeId);
@@ -1590,7 +1639,7 @@ async function onMasukSave() {
   btn.textContent = 'Simpan ke database';
   btn.disabled = true;
 
-  // Hitung ulang Jual (best-effort, tidak boleh mengubah toast di atas kalau gagal)
+  // Langkah 2: hitung ulang Jual (best-effort, tidak boleh mengubah toast di atas kalau gagal)
   Promise.all(storeIds.map(async storeId => {
     const store = stores.find(s => s.id === storeId);
     if (!store) return;
@@ -1598,8 +1647,8 @@ async function onMasukSave() {
     return computeAndSaveJualForStorePeriod(storeId, currentWeek.start, skuList);
   })).catch(err => console.error('Gagal hitung ulang Jual setelah upload Masuk:', err));
 
-  // Refresh tampilan toko yang sedang dibuka kalau termasuk yang baru diupdate
-  // (best-effort: data sudah tersimpan di atas).
+  // Langkah 3: refresh tampilan toko yang sedang dibuka, kalau termasuk yang baru diupdate
+  // (best-effort juga -- data sudah AMAN tersimpan di langkah 1, ini cuma soal tampilan).
   if (currentStore && result.perStoreQty[currentStore.id]) {
     try {
       await loadEntryForCurrentPeriod();

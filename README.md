@@ -1,4 +1,4 @@
-# Logbook Perfect Stores
+# SBA COTC - Input SKU Wajib
 
 App sederhana untuk SBA (Sahabat Belanja Anda) mengisi data SKU wajib (COTC:
 Stock, Order, Barang Masuk Toko, Penjualan) per toko, per minggu kalender
@@ -106,7 +106,7 @@ Lalu buka `http://localhost:8080` (atau port yang muncul) di browser.
 ```
 git init
 git add .
-git commit -m "Initial commit: Logbook Perfect Stores app"
+git commit -m "Initial commit: SBA COTC app"
 git branch -M main
 git remote add origin <URL_REPO_GITHUB_ANDA>
 git push -u origin main
@@ -182,3 +182,9 @@ belum tentu sesuai kebutuhan operasional Anda sebenarnya:
 6. Belum ada testing di HP/browser sungguhan (saya cek logika perhitungan
    minggu dan sintaks kode saja) - sebaiknya dites langsung setelah
    Firebase disetel, sebelum dipakai tim SBA di lapangan.
+
+## Sumber data: Google Sheets (opsional)
+
+Data master (toko, SKU wajib, kode SKU, mapping akun) dan data submit bisa dipindah ke Google Sheets tanpa mengubah
+hosting GitHub Pages. Saklarnya ada di `backend-config.js` (default = perilaku lama). Panduan pasang, isi tab, batas, dan
+keamanan: folder `sheets-backend/` (di luar folder aplikasi ini).

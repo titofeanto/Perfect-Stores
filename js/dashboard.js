@@ -1,5 +1,5 @@
 import { db, doc, getDoc, collection, query, where, getDocs, authReady } from './firebase-init.js';
-import { pickAccount, storeIsAllowed, switchAccount } from './store-filter.js?v=2';
+import { pickAccount, storeIsAllowed, switchAccount } from './store-filter.js?v=1';
 import { loadStores, loadSkuList } from './store-data.js';
 import { getWeeksForMonth, findWeekContaining, fmtShort, MONTHS_ID } from './weeks.js';
 import { summarizeEntry, buildOosDetail, normalizeField, fieldTotal, fieldIsEmpty } from './entry-utils.js?v=3';
@@ -20,6 +20,11 @@ let rowsByStoreId = {};
 let entriesByStore = null; // hasil fetch minggu terpilih; null = belum dimuat
 // Filter dashboard. Set berisi nilai yang DIPILIH; semua terpilih = tidak ada filter.
 const NO_BU = 'Lainnya';
+const CHANNEL_ORDER = ['lmt-spm', 'local-minis', 'haba-dt'];
+const CHANNEL_LABELS = { 'lmt-spm': 'LMT SPM', 'local-minis': 'Local Minis', 'haba-dt': 'Haba DT' };
+const channelLabel = slug => CHANNEL_LABELS[slug] || slug;
+let allChannels = [];
+let selectedChannels = new Set();
 let allAreas = [];
 let allBus = [];
 let selectedAreas = new Set();
@@ -59,8 +64,8 @@ async function init() {
   await loadAndRender();
 }
 
-// distributorStock hanya menyimpan snapshot terbaru (bukan histori per minggu),
-// jadi dimuat sekali saja, tidak tergantung minggu yang dipilih.
+// distributorStock cuma menyimpan snapshot TERBARU (bukan histori per minggu) --
+// dimuat sekali saja, bukan tergantung minggu yang dipilih.
 async function loadDistributorStockAll() {
   const areas = [...new Set(stores.map(s => s.area))]; // semua area toko yang bisa dilihat akun ini
   const results = await Promise.all(areas.map(async area => {
@@ -151,6 +156,7 @@ function renderDashboard() {
 
   renderMetrics(rows);
   renderAreaSummary(rows);
+  renderChannelSummary(rows);
   renderFlagAvailability(rows);
   renderOpportunities(rows);
   renderTable(rows, week);
@@ -160,6 +166,10 @@ function renderDashboard() {
 // ---------- Filter (Area / Bisnis Unit / Toko) ----------
 
 function initFilters() {
+  allChannels = [...new Set(stores.map(s => s.scopeSlug))].sort((a, b) => {
+    const ia = CHANNEL_ORDER.indexOf(a), ib = CHANNEL_ORDER.indexOf(b);
+    return (ia === -1 ? 99 : ia) - (ib === -1 ? 99 : ib) || a.localeCompare(b);
+  });
   allAreas = [...new Set(stores.map(s => s.area))].sort();
   const buSet = new Set();
   for (const list of Object.values(skuListCache)) for (const sku of list) buSet.add(sku.bu || NO_BU);
@@ -180,6 +190,7 @@ function initFilters() {
 }
 
 function resetFilters(rerender) {
+  selectedChannels = new Set(allChannels);
   selectedAreas = new Set(allAreas);
   selectedBus = new Set(allBus);
   selectedFlags = new Set(allFlags);
@@ -207,6 +218,17 @@ function chipRowHtml(all, set, dataAttr, labelOf) {
 }
 
 function renderFilterChips() {
+  const channelCount = slug => stores.filter(s => s.scopeSlug === slug).length;
+  el('channelChips').innerHTML = chipRowHtml(allChannels, selectedChannels, 'data-channel', slug => `${channelLabel(slug)} (${channelCount(slug)})`);
+  el('channelChips').querySelectorAll('.chip').forEach(chip => {
+    chip.addEventListener('click', () => {
+      const v = chip.dataset.channel;
+      if (v === '__all__') selectedChannels = new Set(allChannels); else toggleChoice(selectedChannels, allChannels, v);
+      renderFilterChips();
+      renderStoreChecklist();
+      renderDashboard();
+    });
+  });
   el('areaChips').innerHTML = chipRowHtml(allAreas, selectedAreas, 'data-area');
   el('flagChips').innerHTML = chipRowHtml(allFlags, selectedFlags, 'data-flag', f => FLAG_LABELS[f] || f);
   el('buChips').innerHTML = chipRowHtml(allBus, selectedBus, 'data-bu');
@@ -241,7 +263,7 @@ function renderFilterChips() {
 // Toko yang lolos filter Area + kotak cari (dasar untuk daftar centang di bawah).
 function visibleStores() {
   const q = storeQuery.trim().toLowerCase();
-  return stores.filter(s => selectedAreas.has(s.area) && (!q || s.name.toLowerCase().includes(q)));
+  return stores.filter(s => selectedChannels.has(s.scopeSlug) && selectedAreas.has(s.area) && (!q || s.name.toLowerCase().includes(q)));
 }
 
 // Toko yang benar-benar ditampilkan di dashboard: lolos filter Area + cari + dicentang.
@@ -256,7 +278,7 @@ function renderStoreChecklist() {
       <label class="store-check">
         <input type="checkbox" data-store-id="${esc(s.id)}" ${selectedStoreIds.has(s.id) ? 'checked' : ''}>
         <span>${esc(s.name)}</span>
-        <span class="store-check-area">${esc(s.area)}</span>
+        <span class="store-check-area">${esc(s.area)} &middot; ${esc(channelLabel(s.scopeSlug))}</span>
       </label>`).join('')
     : '<p class="upload-status" style="margin:8px 0;">Tidak ada toko yang cocok.</p>';
   el('storeChecklist').querySelectorAll('input[type=checkbox]').forEach(cb => {
@@ -303,6 +325,19 @@ function renderAreaSummary(rows) {
   }).join('');
 }
 
+function renderChannelSummary(rows) {
+  const slugs = allChannels.filter(slug => rows.some(r => r.store.scopeSlug === slug));
+  el('channelSummary').innerHTML = slugs.length ? slugs.map(slug => {
+    const chRows = rows.filter(r => r.store.scopeSlug === slug);
+    const submitted = chRows.filter(r => r.status === 'submitted').length;
+    const avgPct = Math.round(chRows.reduce((s, r) => s + r.summary.pct, 0) / chRows.length);
+    return `<div style="display:flex; justify-content:space-between; padding:6px 0; border-top:1px solid var(--border);">
+      <span style="font-size:13px;">${esc(channelLabel(slug))} (${chRows.length} toko)</span>
+      <span style="font-size:12px; color:var(--text-secondary);">${submitted}/${chRows.length} kirim &middot; rata-rata ${avgPct}%</span>
+    </div>`;
+  }).join('') : '<p class="upload-status" style="margin:4px 0;">Tidak ada data.</p>';
+}
+
 function statusPillHtml(status) {
   if (status === 'submitted') return '<span class="status-pill submitted">Sudah kirim</span>';
   if (status === 'progress') return '<span class="status-pill progress">Sedang diisi</span>';
@@ -313,7 +348,7 @@ const FLAG_LABELS = { 'COTC': 'COTC', 'MARKET MAKING': 'Market making', 'NPD': '
 const FLAG_ORDER = ['COTC', 'MARKET MAKING', 'NPD'];
 
 // Persentase SKU yang stock-nya > 0 (tersedia di toko), diagregasi lintas semua toko, per flag.
-// "Belum diisi" tidak dihitung sebagai tersedia maupun tidak tersedia, hanya dikeluarkan
+// "Belum diisi" tidak dihitung sebagai tersedia maupun tidak tersedia -- cuma dikeluarkan
 // dari pembilang, supaya persentase tidak salah tafsir sebelum data lengkap semua.
 function renderFlagAvailability(rows) {
   const agg = {};
@@ -410,7 +445,7 @@ function renderOpportunities(rows) {
 }
 
 function renderTable(rows, week) {
-  // Toko yang sudah diisi ditampilkan lebih dulu, lalu
+  // Toko yang sudah diisi ditampilkan lebih dulu (kebalikan dari sebelumnya), lalu
   // di dalam grup yang sama, yang paling lengkap duluan.
   const statusPriority = { submitted: 0, progress: 1, notstarted: 2 };
   const sorted = [...rows].sort((a, b) => {
@@ -468,7 +503,7 @@ function fieldValue(raw, isi) {
   return fieldIsEmpty(f) ? '' : fieldTotal(f, isi);
 }
 
-// Export 1 toko: semua periode/minggu yang pernah diisi (bukan cuma bulan yang sedang dipilih).
+// Export 1 toko: SEMUA periode/minggu yang pernah diisi (bukan cuma bulan yang sedang dipilih).
 async function exportOneStore(storeId, triggerEl) {
   const store = stores.find(s => s.id === storeId);
   if (!store) return;

@@ -1,18 +1,18 @@
-// Firebase initialization.
-// Fill in your project's config in firebase-config.js (see README.md for setup steps).
-import { firebaseConfig } from '../firebase-config.js';
-import { initializeApp } from 'https://www.gstatic.com/firebasejs/12.16.0/firebase-app.js';
-import {
-  getFirestore, doc, getDoc, setDoc, collection, serverTimestamp, query, where, getDocs
-} from 'https://www.gstatic.com/firebasejs/12.16.0/firebase-firestore.js';
-import { getAuth, signInAnonymously } from 'https://www.gstatic.com/firebasejs/12.16.0/firebase-auth.js';
+// Pintu tunggal akses data transaksi. Semua modul mengimpor dari sini (doc, getDoc, setDoc, ...).
+// Implementasinya dipilih lewat backend-config.js: Firestore (default) atau Google Sheets.
+import { BACKEND } from '../backend-config.js';
 
-const app = initializeApp(firebaseConfig);
-export const db = getFirestore(app);
-const auth = getAuth(app);
+const impl = BACKEND.transactions === 'sheets' && BACKEND.endpoint
+  ? await import('./backend-sheets.js')
+  : await import('./backend-firebase.js');
 
-export const authReady = signInAnonymously(auth).catch((err) => {
-  console.error('Gagal sign-in anonim:', err);
-});
-
-export { doc, getDoc, setDoc, collection, serverTimestamp, query, where, getDocs };
+export const db = impl.db;
+export const authReady = impl.authReady;
+export const doc = impl.doc;
+export const getDoc = impl.getDoc;
+export const setDoc = impl.setDoc;
+export const collection = impl.collection;
+export const serverTimestamp = impl.serverTimestamp;
+export const query = impl.query;
+export const where = impl.where;
+export const getDocs = impl.getDocs;

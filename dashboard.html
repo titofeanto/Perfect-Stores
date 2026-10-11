@@ -13,7 +13,7 @@
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="SBA COTC">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
-<title>Dashboard Rekap - Logbook Perfect Stores</title>
+<title>Dashboard Rekap - SBA COTC</title>
 <link rel="stylesheet" href="css/style.css?v=22">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tabler-icons/2.44.0/iconfont/tabler-icons.min.css">
 <style>
@@ -100,6 +100,8 @@
   </header>
 
   <div class="card" id="filterCard">
+    <span class="filter-label">Channel toko (LMT SPM / Local Minis / Haba DT)</span>
+    <div class="chip-row" id="channelChips" style="margin-bottom:0;"></div>
     <span class="filter-label">Area</span>
     <div class="chip-row" id="areaChips" style="margin-bottom:0;"></div>
     <span class="filter-label">Flag SKU (COTC / Market making / NPD)</span>
@@ -157,6 +159,8 @@
     <div class="card">
       <p class="section-title" style="margin:0 0 8px;">Per area</p>
       <div id="areaSummary"></div>
+      <p class="section-title" style="margin:14px 0 8px;">Per channel</p>
+      <div id="channelSummary"></div>
     </div>
 
     <div class="card">
@@ -217,7 +221,7 @@
 
 </div>
 <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
-<script type="module" src="js/dashboard.js?v=16"></script>
+<script type="module" src="js/dashboard.js?v=17"></script>
 <script type="module" src="js/bottom-nav.js?v=3"></script>
 </body>
 </html>
