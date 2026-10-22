@@ -6,7 +6,7 @@ import { summarizeEntry, buildOosDetail, normalizeField, fieldTotal, fieldIsEmpt
 import { wireOosModal, showOosModal } from './oos-modal.js?v=6';
 import { downloadAsExcel } from './export-utils.js';
 import { esc, fmtTotal } from './dt-stock.js?v=1';
-import { formatReportDate } from './stock-upload.js?v=2';
+import { formatReportDate, decodeDistributorDoc } from './stock-upload.js?v=3';
 
 const TODAY = new Date();
 const el = (id) => document.getElementById(id);
@@ -77,7 +77,7 @@ async function loadDistributorStockAll() {
   const results = await Promise.all(areas.map(async area => {
     try {
       const snap = await getDoc(doc(db, 'distributorStock', area));
-      return [area, snap.exists() ? snap.data() : null];
+      return [area, snap.exists() ? decodeDistributorDoc(snap.data()) : null];
     } catch (err) {
       console.error('Gagal memuat stock distributor', area, err);
       return [area, null];

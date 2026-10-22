@@ -2,7 +2,7 @@ import { db, doc, getDoc, setDoc, serverTimestamp, authReady } from './firebase-
 import { pickAccount, storeIsAllowed, getCurrentMapping, switchAccount } from './store-filter.js?v=1';
 import { loadStores, loadSkuList, groupStoresByArea, loadVersionsMeta, loadVersion, resolveListVersion, skuListForStore } from './store-data.js?v=2';
 import { getWeeksForMonth, findWeekContaining, fmtShort, MONTHS_ID, addDays, isoDate } from './weeks.js';
-import { loadDistributorStock, parseDistributorWorkbook, saveDistributorStock, formatReportDate } from './stock-upload.js?v=2';
+import { loadDistributorStock, parseDistributorWorkbook, saveDistributorStock, formatReportDate } from './stock-upload.js?v=3';
 import { supportsNativeBarcodeDetector, startNativeScan, stopNativeScan, startFallbackScan, stopFallbackScan } from './barcode-scan.js';
 import { parsePurchaseWorkbook } from './purchase-upload.js';
 import { computeDtStock, dtCodesHtml, fmtTotal, hasDistributorData, esc } from './dt-stock.js?v=1';
@@ -1514,7 +1514,7 @@ async function onStockSave() {
     renderSkuList();
   } catch (err) {
     console.error('Gagal menyimpan stock distributor:', err);
-    showToast('Gagal menyimpan. Cek koneksi internet lalu coba lagi.', 'danger');
+    showToast(`Gagal menyimpan stock (${err.code || err.message || 'error tidak diketahui'}).`, 'danger');
   } finally {
     el('stockSaveBtn').textContent = 'Simpan ke database';
     el('stockSaveBtn').disabled = false;

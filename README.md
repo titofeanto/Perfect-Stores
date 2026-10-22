@@ -166,7 +166,8 @@ diperbarui, dan perubahan dibanding versi sebelumnya.
   `StockDT_saat_kirim_*` pada export dashboard dan di tab `Detail` (Sheets). Rekap yang dikirim sebelum
   fitur ini tidak punya snapshot, jadi kolomnya berisi keterangan "Tidak tercatat".
 - Koleksi `distributorStock`, satu dokumen per area (`Sorong` / `Timika`),
-  berisi hasil parsing file upload terakhir.
+  berisi hasil parsing file upload terakhir. Stock disimpan sebagai satu string JSON (`itemsJson`), bukan map
+  bersarang, karena Firestore membatasi 40.000 index entry per dokumen dan laporan ~3.600 produk melewatinya.
 
 ## Keterbatasan & yang masih perlu diputuskan
 

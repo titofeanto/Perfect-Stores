@@ -90,13 +90,37 @@ export function formatReportDate(iso) {
 }
 
 // Unggahan baru MENIMPA seluruh dokumen area ini: setDoc tanpa { merge: true } mengganti semua field,
-// termasuk seluruh isi `items`. Produk yang tidak ada di file baru ikut hilang; tidak ada stock lama
+// termasuk seluruh isi stock. Produk yang tidak ada di file baru ikut hilang; tidak ada stock lama
 // yang tersisa atau dijumlahkan. Stock bergerak tiap hari, jadi yang disimpan hanya snapshot terakhir.
+//
+// Stock disimpan sebagai SATU string JSON (`itemsJson`), bukan map bersarang. Firestore membuat index
+// untuk setiap sub-field map, dan batasnya 40.000 index entry per dokumen: laporan ~3.600 produk x 5
+// field sudah melewati batas itu dan simpan gagal. String panjang hanya jadi 1 index entry.
+// Format ringkas: { pcode: [karton, lusin, pcs, isi] }. Dokumen lama (field `items`) tetap terbaca.
+function packItems(items) {
+  const out = {};
+  for (const [code, it] of Object.entries(items)) out[code] = [it.karton || 0, it.lusin || 0, it.pcs || 0, it.isi || 0];
+  return JSON.stringify(out);
+}
+
+// Ubah dokumen Firestore ke bentuk yang dipakai app: data.items = { pcode: {karton, lusin, pcs, isi} }.
+export function decodeDistributorDoc(data) {
+  if (!data) return null;
+  if (data.itemsJson) {
+    const packed = JSON.parse(data.itemsJson);
+    const items = {};
+    for (const [code, a] of Object.entries(packed)) items[code] = { karton: a[0], lusin: a[1], pcs: a[2], isi: a[3] || null };
+    return { ...data, items };
+  }
+  return data;
+}
+
 export async function saveDistributorStock(area, items, sourceFileName, meta = {}) {
   const ref = doc(db, 'distributorStock', area);
   await setDoc(ref, {
     area,
-    items,
+    itemsJson: packItems(items),
+    itemCount: Object.keys(items).length,
     sourceFileName: sourceFileName || null,
     reportDate: meta.reportDate || null,
     distributorName: meta.distributorName || null,
@@ -107,5 +131,5 @@ export async function saveDistributorStock(area, items, sourceFileName, meta = {
 export async function loadDistributorStock(area) {
   const ref = doc(db, 'distributorStock', area);
   const snap = await getDoc(ref);
-  return snap.exists() ? snap.data() : null;
+  return snap.exists() ? decodeDistributorDoc(snap.data()) : null;
 }
