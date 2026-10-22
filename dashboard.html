@@ -138,6 +138,7 @@
   <div id="loadingNote" class="upload-status">Memuat data...</div>
 
   <div id="dashboardContent" style="display:none;">
+    <p class="upload-status" id="listVersionInfo" style="margin:0 0 10px;"></p>
 
     <div class="metric-grid">
       <div class="metric-card"><div class="label">Total toko</div><div class="value" id="mTotal">-</div></div>
@@ -169,13 +170,6 @@
     </div>
     </div>
 
-    <div class="card" id="opportunityCard">
-      <p class="section-title" style="margin:0 0 4px;" id="oppTitle">Peluang order</p>
-      <p class="upload-status" id="oppSummary" style="margin:0 0 10px;"></p>
-      <div id="oppList"></div>
-      <button type="button" id="oppMore" style="display:none; width:100%; margin-top:8px;"></button>
-    </div>
-
     <div class="card">
       <p class="section-title" style="margin:0 0 8px;">Semua toko (yang sudah diisi ditampilkan lebih dulu)</p>
       <button id="exportAllBtn" class="primary" style="width:100%; margin-bottom:10px;">Export rekap semua toko (bulan ini, format mentah .xlsx)</button>
@@ -195,6 +189,13 @@
           <tbody id="recapTableBody"></tbody>
         </table>
       </div>
+    </div>
+
+    <div class="card" id="opportunityCard">
+      <p class="section-title" style="margin:0 0 4px;" id="oppTitle">Peluang order</p>
+      <p class="upload-status" id="oppSummary" style="margin:0 0 10px;"></p>
+      <div id="oppList"></div>
+      <button type="button" id="oppMore" style="display:none; width:100%; margin-top:8px;"></button>
     </div>
 
   </div>
@@ -221,7 +222,7 @@
 
 </div>
 <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
-<script type="module" src="js/dashboard.js?v=18"></script>
+<script type="module" src="js/dashboard.js?v=19"></script>
 <script type="module" src="js/bottom-nav.js?v=3"></script>
 </body>
 </html>

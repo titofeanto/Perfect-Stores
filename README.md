@@ -139,6 +139,21 @@ Tanpa langkah ini, dashboard hanya mengecek 1 kode per barcode:
 python3 scripts/build_sku_codes.py "/path/ke/20260825_Product Hierarchy.xlsx"
 ```
 
+## Versi daftar toko dan SKU
+
+Daftar toko dan SKU wajib (COTC / Market making / NPD) berversi supaya perubahan bulanan tidak mengubah
+data yang sudah terisi. Halaman `versi.html` menampilkan versi yang berlaku, tanggal berlaku, tanggal
+diperbarui, dan perubahan dibanding versi sebelumnya.
+
+- `data/versions.json` daftar versi, `data/ver/<id>.json` isi tiap versi (toko, SKU per channel, SKU per toko).
+- Aturan memilih versi (js/store-data.js): entry yang sudah punya `listVersion` memakai versi itu; entry lama
+  yang sudah terisi tanpa `listVersion` memakai versi paling awal; entry kosong atau belum ada memakai versi
+  terbaru dengan tanggal berlaku <= Senin minggu itu. `listVersion` dicatat tiap kali SBA menyimpan.
+- Perbarui daftar dengan `scripts/build_versions.py` (contoh perintah ada di docstring dan di versi.html),
+  lalu upload folder `data/`. Versi lama tidak berubah. File `data/stores.json` dan `data/sku-*.json` tetap
+  ada sebagai data awal (v1) dan cadangan mode Google Sheets.
+- Mode Google Sheets (`master: 'sheets'`) belum berversi: master dari Sheet dipakai sebagai satu versi.
+
 ## Model data di Firestore
 
 - Koleksi `entries`, satu dokumen per toko per minggu, id:

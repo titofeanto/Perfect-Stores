@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="color-scheme" content="light dark">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" type="image/png" sizes="192x192" href="assets/icons/icon-192.png">
+<link rel="apple-touch-icon" href="assets/icons/apple-touch-icon.png">
+<meta name="theme-color" content="#f4f7fc" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0a0c11" media="(prefers-color-scheme: dark)">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="SBA COTC">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<title>Versi Daftar SKU - Perfect Stores</title>
+<link rel="stylesheet" href="css/style.css?v=22">
+<style>
+  .ver-meta { display: flex; flex-wrap: wrap; gap: 6px 14px; margin: 6px 0 0; font-size: 12px; color: var(--text-secondary); }
+  .ver-stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(110px, 1fr)); gap: 8px; margin-top: 10px; }
+  .ver-stat { background: var(--surface-muted); border-radius: 10px; padding: 8px 10px; }
+  .ver-stat b { display: block; font-size: 18px; }
+  .ver-stat span { font-size: 11px; color: var(--text-secondary); }
+  .ver-now { display: inline-block; font-size: 11px; padding: 2px 8px; border-radius: 999px; background: var(--success-bg); color: var(--success); margin-left: 6px; vertical-align: middle; }
+  .ver-list { margin: 6px 0 0; padding: 0; list-style: none; font-size: 13px; }
+  .ver-list li { padding: 6px 0; border-top: 1px solid var(--border, rgba(128,128,128,.2)); display: flex; justify-content: space-between; gap: 10px; }
+  .ver-list li:first-child { border-top: 0; }
+  .ver-list .sub { color: var(--text-secondary); font-size: 12px; text-align: right; flex-shrink: 0; max-width: 52%; }
+  .ver-list.ver-rules li { flex-direction: column; gap: 2px; }
+  .ver-list.ver-rules .sub { text-align: left; max-width: none; }
+  details.ver-block { margin-top: 10px; }
+  details.ver-block summary { cursor: pointer; font-weight: 600; font-size: 14px; }
+  .ver-more { width: 100%; margin-top: 6px; font-size: 12px; padding: 6px 10px; }
+  code.ver-cmd { display: block; white-space: pre-wrap; word-break: break-word; font-size: 11px; padding: 8px 10px; border-radius: 8px; background: var(--surface-muted); }
+</style>
+</head>
+<body>
+<div class="app">
+
+  <header class="appbar">
+    <div style="display:flex; justify-content:space-between; align-items:center;">
+      <div>
+        <h1>Versi Daftar SKU &amp; Toko</h1>
+        <p>Sejak kapan daftar COTC, NPD, Market making dan toko diperbarui</p>
+      </div>
+      <div style="text-align:right;">
+        <p style="font-size:11px; color:var(--text-muted); margin:6px 0 0;"><a href="dashboard.html" style="color:var(--accent);">Kembali ke Dashboard</a></p>
+      </div>
+    </div>
+  </header>
+
+  <div id="verLoading" class="upload-status">Memuat riwayat versi...</div>
+  <div id="verContent" style="display:none;">
+
+    <div class="card" id="nowCard"></div>
+
+    <div class="card">
+      <p class="section-title" style="margin:0 0 6px;">Cara perubahan diterapkan</p>
+      <p class="upload-status" style="margin:0 0 6px;">Setiap perubahan disimpan sebagai versi baru dengan tanggal berlaku. Versi lama tidak dihapus.</p>
+      <ul class="ver-list ver-rules">
+        <li><span>Minggu / toko yang <b>sudah terisi</b></span><span class="sub">tetap memakai daftar lamanya</span></li>
+        <li><span>Minggu / toko yang <b>masih kosong</b></span><span class="sub">memakai versi yang berlaku untuk minggu itu</span></li>
+        <li><span>Versi mana yang berlaku</span><span class="sub">versi terbaru dengan tanggal berlaku &le; tanggal Senin minggu tersebut</span></li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <p class="section-title" style="margin:0 0 4px;">Riwayat versi</p>
+      <div id="verHistory"></div>
+    </div>
+
+    <div class="card">
+      <p class="section-title" style="margin:0 0 6px;">Cara memperbarui daftar (admin)</p>
+      <p class="upload-status" style="margin:0 0 6px;">Siapkan file SKU Audit terbaru, lalu jalankan perintah ini di folder project. Hasilnya berupa versi baru; versi lama tidak berubah. Upload folder <b>data</b> ke GitHub.</p>
+      <code class="ver-cmd">python3 scripts/build_versions.py --audit "SKU AUDIT.xlsx" --hierarchy "Product Hierarchy.xlsx" --id v3 --label "Nama versi" --effective 2026-11-01 --updated 2026-11-05</code>
+    </div>
+
+  </div>
+</div>
+
+<script type="module">
+const el = (id) => document.getElementById(id);
+const esc = (s) => String(s == null ? '' : s).replace(/[&<>"]/g, ch => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[ch]));
+const CHANNELS = { 'lmt-spm': 'LMT SPM', 'local-minis': 'Local Minis', 'haba-dt': 'Haba DT' };
+const FLAGS = [['COTC', 'COTC'], ['MARKET MAKING', 'Market making'], ['NPD', 'NPD']];
+const PREVIEW = 8;
+const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Agu', 'Sep', 'Okt', 'Nov', 'Des'];
+
+function fmtDate(iso) {
+  if (!iso) return '-';
+  if (iso <= '2000-01-01') return 'awal';
+  const [y, m, d] = iso.split('-').map(Number);
+  return `${d} ${MONTHS[m - 1]} ${y}`;
+}
+
+function todayIso() {
+  const d = new Date();
+  const p = n => String(n).padStart(2, '0');
+  return `${d.getFullYear()}-${p(d.getMonth() + 1)}-${p(d.getDate())}`;
+}
+
+function stat(value, label) {
+  return `<div class="ver-stat"><b>${esc(value)}</b><span>${esc(label)}</span></div>`;
+}
+
+function summaryHtml(s) {
+  if (!s || !s.toko) return '';
+  const ch = Object.entries(s.tokoPerChannel || {}).map(([k, n]) => stat(n, `toko ${CHANNELS[k] || k}`)).join('');
+  const fl = FLAGS.map(([k, label]) => stat((s.skuPerFlag || {})[k] || 0, `${label} (toko-SKU)`)).join('');
+  return `<div class="ver-stats">${stat(s.toko, 'toko dimonitor')}${ch}</div><div class="ver-stats">${fl}</div>`;
+}
+
+// Daftar dengan pratinjau PREVIEW baris dan tombol "tampilkan semua".
+function listBlock(title, items, rowHtml) {
+  if (!items || !items.length) return '';
+  const rows = items.map(rowHtml);
+  const rest = rows.slice(PREVIEW);
+  const more = rest.length
+    ? `<ul class="ver-list ver-rest" style="display:none;">${rest.join('')}</ul>
+       <button type="button" class="ver-more" data-count="${rest.length}">Tampilkan ${rest.length} lainnya</button>` : '';
+  return `<p class="section-title" style="margin:14px 0 2px;">${esc(title)} (${items.length})</p>
+    <ul class="ver-list">${rows.slice(0, PREVIEW).join('')}</ul>${more}`;
+}
+
+const tokoRow = t => `<li><span>${esc(t.name)}</span><span class="sub">${esc(t.area)}</span></li>`;
+const skuRow = t => `<li><span>${esc(t.name || t.barcode)}</span><span class="sub">${t.toko} toko</span></li>`;
+const flagRow = t => `<li><span>${esc(t.name || t.barcode)}</span><span class="sub">${Object.entries(t.perubahan).map(([k, n]) => `${esc(k)} (${n} toko)`).join(', ')}</span></li>`;
+
+function changesHtml(v, prevLabel) {
+  const c = v.changes || {};
+  if (!c.vsVersion) return '<p class="upload-status" style="margin-top:8px;">Versi dasar, tidak ada pembanding sebelumnya.</p>';
+  const blocks = [
+    listBlock('Toko baru', c.tokoBaru, tokoRow),
+    listBlock('Toko dikeluarkan', c.tokoHilang, tokoRow),
+    listBlock('SKU baru ditambahkan', c.skuBaru, skuRow),
+    listBlock('SKU dihapus', c.skuDihapus, skuRow),
+    listBlock('Flag berubah (COTC / Market making / NPD)', c.flagBerubah, flagRow),
+  ].join('');
+  return `<p class="upload-status" style="margin:8px 0 0;">Dibandingkan dengan ${esc(prevLabel)}. Angka "toko" = jumlah toko yang daftarnya berubah.</p>${blocks || '<p class="upload-status">Tidak ada perubahan.</p>'}`;
+}
+
+function render(meta) {
+  const versions = [...meta.versions].sort((a, b) => a.effectiveFrom.localeCompare(b.effectiveFrom));
+  const today = todayIso();
+  let nowId = versions[0].id;
+  for (const v of versions) if (v.effectiveFrom <= today) nowId = v.id;
+  const now = versions.find(v => v.id === nowId);
+
+  el('nowCard').innerHTML = `
+    <p class="section-title" style="margin:0 0 2px;">Daftar yang berlaku sekarang</p>
+    <p style="margin:0; font-size:16px; font-weight:600;">${esc(now.label)}</p>
+    <div class="ver-meta">
+      <span>Berlaku sejak <b>${fmtDate(now.effectiveFrom)}</b></span>
+      <span>Diperbarui <b>${fmtDate(now.updatedAt)}</b></span>
+      <span>Kode versi <b>${esc(now.id)}</b></span>
+    </div>
+    ${summaryHtml(now.summary)}`;
+
+  el('verHistory').innerHTML = [...versions].reverse().map((v, i, arr) => {
+    const prev = versions[versions.findIndex(x => x.id === v.id) - 1];
+    return `
+      <details class="ver-block" ${i === 0 ? 'open' : ''}>
+        <summary>${esc(v.label)}${v.id === nowId ? '<span class="ver-now">berlaku sekarang</span>' : ''}</summary>
+        <div class="ver-meta">
+          <span>Berlaku sejak <b>${fmtDate(v.effectiveFrom)}</b></span>
+          <span>Diperbarui <b>${fmtDate(v.updatedAt)}</b></span>
+          <span>Kode versi <b>${esc(v.id)}</b></span>
+        </div>
+        ${summaryHtml(v.summary)}
+        ${changesHtml(v, prev ? prev.label : '')}
+      </details>`;
+  }).join('');
+
+  document.querySelectorAll('.ver-more').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const rest = btn.previousElementSibling;
+      const open = rest.style.display === 'none';
+      rest.style.display = open ? '' : 'none';
+      btn.textContent = open ? 'Sembunyikan' : `Tampilkan ${btn.dataset.count} lainnya`;
+    });
+  });
+  el('verLoading').style.display = 'none';
+  el('verContent').style.display = 'block';
+}
+
+fetch('data/versions.json')
+  .then(r => { if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); })
+  .then(render)
+  .catch(err => {
+    console.error('Gagal memuat riwayat versi:', err);
+    el('verLoading').textContent = 'Gagal memuat riwayat versi. Cek koneksi internet lalu muat ulang halaman.';
+  });
+</script>
+<script type="module" src="js/bottom-nav.js?v=3"></script>
+</body>
+</html>

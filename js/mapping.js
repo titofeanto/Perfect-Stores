@@ -1,6 +1,6 @@
 import { authReady } from './firebase-init.js';
 import { pickAccount, switchAccount } from './store-filter.js?v=1';
-import { loadStores } from './store-data.js';
+import { loadStores } from './store-data.js?v=2';
 
 const el = (id) => document.getElementById(id);
 let stores = [];

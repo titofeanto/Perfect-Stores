@@ -1,6 +1,6 @@
 import { db, collection, query, where, getDocs, authReady } from './firebase-init.js';
 import { pickAccount, storeIsAllowed, switchAccount } from './store-filter.js?v=1';
-import { loadStores, loadSkuList, groupStoresByArea } from './store-data.js';
+import { loadStores, loadSkuList, groupStoresByArea } from './store-data.js?v=2';
 import { MONTHS_ID } from './weeks.js';
 import { loadCompetitors, addCompetitor, updateCompetitor, loadPriceEntry, savePriceField, saveBulkPriceEntries, loadPromoSku, savePromoSku } from './harga-data.js';
 import { supportsNativeBarcodeDetector, startNativeScan, stopNativeScan, startFallbackScan, stopFallbackScan } from './barcode-scan.js';

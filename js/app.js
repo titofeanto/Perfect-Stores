@@ -1,6 +1,6 @@
 import { db, doc, getDoc, setDoc, serverTimestamp, authReady } from './firebase-init.js';
 import { pickAccount, storeIsAllowed, getCurrentMapping, switchAccount } from './store-filter.js?v=1';
-import { loadStores, loadSkuList, groupStoresByArea } from './store-data.js';
+import { loadStores, loadSkuList, groupStoresByArea, loadVersionsMeta, loadVersion, resolveListVersion, skuListForStore } from './store-data.js?v=2';
 import { getWeeksForMonth, findWeekContaining, fmtShort, MONTHS_ID, addDays, isoDate } from './weeks.js';
 import { loadDistributorStock, parseDistributorWorkbook, saveDistributorStock, formatReportDate } from './stock-upload.js?v=2';
 import { supportsNativeBarcodeDetector, startNativeScan, stopNativeScan, startFallbackScan, stopFallbackScan } from './barcode-scan.js';
@@ -27,6 +27,7 @@ function channelStores() { return channelFilter === 'all' ? stores : stores.filt
 function channelStoresByArea() { return groupStoresByArea(channelStores()); }
 let currentStore = null;
 let currentSkuList = [];
+let currentListVersion = null; // id versi daftar toko/SKU yang dipakai entry minggu ini (dicatat di entry.listVersion)
 let currentEntry = {}; // { [barcode]: {stock,order,masuk,jual} }
 let currentEntryDocId = null;
 let currentWeeks = [];
@@ -436,6 +437,13 @@ async function loadEntryForCurrentPeriod() {
     console.error('Gagal memuat data harga bulan ini:', err);
     return {};
   }) : {};
+  // Daftar SKU mengikuti versi entry (data yang sudah terisi tidak berubah saat daftar diperbarui),
+  // atau versi yang berlaku untuk minggu ini kalau entry masih kosong. Lihat store-data.js.
+  const savedDoc = snap && snap.exists() ? snap.data() : null;
+  const versionsMeta = await loadVersionsMeta();
+  currentListVersion = resolveListVersion(versionsMeta, savedDoc, currentWeek.periodKey);
+  currentSkuList = skuListForStore(await loadVersion(currentListVersion), currentStore);
+  populateSkuFilterDropdowns();
   const saved = snap && snap.exists() ? (snap.data().items || {}) : {};
   const savedPromo = snap && snap.exists() ? (snap.data().promoItems || {}) : {};
   previousWeekItems = prevSnap && prevSnap.exists() ? (prevSnap.data().items || {}) : {};
@@ -492,6 +500,7 @@ async function saveField(barcode) {
       weekStart: currentWeek.start.toISOString(),
       weekEnd: currentWeek.end.toISOString(),
       items: { [barcode]: itemToSave },
+      listVersion: currentListVersion,
       updatedAt: serverTimestamp()
     }, { merge: true });
   } catch (err) {
@@ -548,6 +557,7 @@ async function submitAllZeroFilled() {
     weekEnd: currentWeek.end.toISOString(),
     items: itemsToSave,
     dtSnapshot,
+    listVersion: currentListVersion,
     submitted: true,
     submittedAt: serverTimestamp(),
     updatedAt: serverTimestamp()
@@ -1063,6 +1073,7 @@ async function savePromoStock(pcode, value) {
       storeId: currentStore.id,
       periodKey: currentWeek.periodKey,
       promoItems: { [pcode]: { stock: value === '' ? '' : Number(value) } },
+      listVersion: currentListVersion,
       updatedAt: serverTimestamp()
     }, { merge: true });
   } catch (err) {
@@ -1369,6 +1380,22 @@ function onBarcodeDetected(rawValue) {
 // Dipanggil dari 2 arah: (1) setelah SBA submit stock minggu ini -> hitung ulang
 // Jual minggu SEBELUMNYA, dan (2) setelah Supervisor upload Barang Masuk untuk
 // suatu minggu -> hitung ulang Jual minggu itu (kalau stock minggu depannya sudah ada).
+// Versi daftar SKU untuk toko pada minggu tertentu: ikut entry yang sudah ada, atau versi yang berlaku bila masih kosong.
+async function listVersionForStoreWeek(store, periodKey) {
+  let entry = null;
+  try {
+    const snap = await getDoc(doc(db, 'entries', `${store.id}__${periodKey}`));
+    entry = snap.exists() ? snap.data() : null;
+  } catch (err) {
+    console.error('Gagal membaca entry untuk menentukan versi daftar SKU:', err);
+  }
+  return resolveListVersion(await loadVersionsMeta(), entry, periodKey);
+}
+
+async function skuListForStoreWeek(store, periodKey) {
+  return skuListForStore(await loadVersion(await listVersionForStoreWeek(store, periodKey)), store);
+}
+
 async function computeAndSaveJualForStorePeriod(storeId, weekStart, skuList) {
   const periodKey = isoDate(weekStart);
   const nextPeriodKey = isoDate(addDays(weekStart, 7));
@@ -1524,7 +1551,7 @@ async function processPurchaseRows(rows) {
   const unmatchedStoreSet = new Set();
   let nonWajibCount = 0;
   const perStoreQty = {}; // storeId -> { barcode: totalQty }
-  const codeMapCache = {}; // scopeSlug -> Map(skuCode -> barcode)
+  const codeMapCache = {}; // storeId -> Map(skuCode -> barcode)
 
   for (const row of rows) {
     if (row.invDate && (row.invDate < weekStart || row.invDate > weekEnd)) {
@@ -1536,17 +1563,17 @@ async function processPurchaseRows(rows) {
       unmatchedStoreSet.add(row.outlet);
       continue;
     }
-    if (!codeMapCache[store.scopeSlug]) {
-      const skuList = await loadSkuList(store.scopeSlug);
+    if (!codeMapCache[store.id]) {
+      const skuList = await skuListForStoreWeek(store, currentWeek.periodKey);
       const map = new Map();
       for (const s of skuList) {
         for (const c of (s.codes || [])) map.set(c.code, s.barcode);
       }
       // pcode selalu dipakai sebagai cadangan (data lama tanpa daftar codes)
       for (const s of skuList) if (s.pcode && !map.has(s.pcode)) map.set(s.pcode, s.barcode);
-      codeMapCache[store.scopeSlug] = map;
+      codeMapCache[store.id] = map;
     }
-    const barcode = codeMapCache[store.scopeSlug].get(row.skuCode);
+    const barcode = codeMapCache[store.id].get(row.skuCode);
     if (!barcode) {
       nonWajibCount++;
       continue;
@@ -1621,8 +1648,9 @@ async function onMasukSave() {
 
   // Langkah 1: simpan ke Firestore. INI SATU-SATUNYA yang menentukan toast sukses/gagal.
   try {
-    await Promise.all(storeIds.map(storeId => {
+    await Promise.all(storeIds.map(async storeId => {
       const store = stores.find(s => s.id === storeId);
+      const listVersion = store ? await listVersionForStoreWeek(store, periodKey) : null;
       const items = {};
       for (const [barcode, qty] of Object.entries(result.perStoreQty[storeId])) {
         items[barcode] = { masuk: { karton: '0', lusin: '0', pcs: String(qty) } };
@@ -1637,6 +1665,7 @@ async function onMasukSave() {
         weekStart: currentWeek.start.toISOString(),
         weekEnd: currentWeek.end.toISOString(),
         items,
+        ...(listVersion ? { listVersion } : {}),
         masukUpdatedAt: serverTimestamp()
       }, { merge: true });
     }));
@@ -1661,7 +1690,7 @@ async function onMasukSave() {
   Promise.all(storeIds.map(async storeId => {
     const store = stores.find(s => s.id === storeId);
     if (!store) return;
-    const skuList = await loadSkuList(store.scopeSlug);
+    const skuList = await skuListForStoreWeek(store, currentWeek.periodKey);
     return computeAndSaveJualForStorePeriod(storeId, currentWeek.start, skuList);
   })).catch(err => console.error('Gagal hitung ulang Jual setelah upload Masuk:', err));
 

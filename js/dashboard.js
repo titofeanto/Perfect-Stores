@@ -1,6 +1,6 @@
 import { db, doc, getDoc, collection, query, where, getDocs, authReady } from './firebase-init.js';
 import { pickAccount, storeIsAllowed, switchAccount } from './store-filter.js?v=1';
-import { loadStores, loadSkuList } from './store-data.js';
+import { loadAllStores, loadAllVersions, versionIdForPeriod, resolveListVersion, skuListForStore } from './store-data.js?v=2';
 import { getWeeksForMonth, findWeekContaining, fmtShort, MONTHS_ID } from './weeks.js';
 import { summarizeEntry, buildOosDetail, normalizeField, fieldTotal, fieldIsEmpty } from './entry-utils.js?v=3';
 import { wireOosModal, showOosModal } from './oos-modal.js?v=6';
@@ -12,7 +12,9 @@ const TODAY = new Date();
 const el = (id) => document.getElementById(id);
 
 let stores = [];
-let skuListCache = {}; // scopeSlug -> sku list
+let skuListCache = {}; // `${versi}:${scopeSlug}` -> daftar SKU (semua versi, untuk pilihan filter)
+let versionsMeta = null; // data/versions.json
+let versionData = {};    // id versi -> isi versi (stores, skus, sets)
 let currentWeeks = [];
 let distStockByArea = {};
 let distMetaByArea = {}; // area -> {reportDate}
@@ -38,7 +40,10 @@ let storeQuery = '';
 async function init() {
   await authReady;
   const { mapping } = await pickAccount();
-  const allStores = await loadStores();
+  const loaded = await loadAllVersions();
+  versionsMeta = loaded.meta;
+  versionData = loaded.versions;
+  const allStores = await loadAllStores();   // gabungan semua versi: minggu lama masih menampilkan toko yang sudah dikeluarkan
   stores = allStores.filter(s => storeIsAllowed(s.id));
   const nameLabel = document.getElementById('loggedInAs');
   if (nameLabel) nameLabel.textContent = mapping ? (mapping.name + (mapping.isMaster ? ' (semua toko)' : '')) : 'Semua toko';
@@ -48,9 +53,10 @@ async function init() {
     document.querySelector('.app').innerHTML = '<div class="card" style="margin-top:40px;"><p>Akun ini belum ter-mapping ke toko mana pun. Hubungi admin.</p></div>';
     return;
   }
-  // Preload semua daftar SKU wajib (cuma 3 file kecil) supaya perhitungan % per toko tidak perlu fetch berulang
-  const uniqueSlugs = [...new Set(stores.map(s => s.scopeSlug))];
-  await Promise.all(uniqueSlugs.map(async slug => { skuListCache[slug] = await loadSkuList(slug); }));
+  // Semua versi sudah dimuat: daftar SKU tiap toko dipilih per minggu (lihat store-data.js).
+  for (const [vid, v] of Object.entries(versionData)) {
+    for (const [slug, list] of Object.entries(v.skus)) skuListCache[`${vid}:${slug}`] = list;
+  }
   await loadDistributorStockAll();
   initFilters();
 
@@ -140,20 +146,25 @@ function renderDashboard() {
   if (!entriesByStore) return;
   const week = currentWeeks[+el('weekSel').value];
   const rows = [];
+  // Toko minggu ini: toko di daftar yang berlaku untuk minggu itu + toko yang sudah punya entry (mis. toko lama).
+  const weekStoreIds = new Set(versionData[versionIdForPeriod(versionsMeta, week.periodKey)].stores.map(s => s.id));
   for (const store of activeStores()) {
-    const skuList = (skuListCache[store.scopeSlug] || []).filter(sku =>
+    const entry = entriesByStore[store.id] || null;
+    if (!weekStoreIds.has(store.id) && !entry) continue;
+    const listVersion = resolveListVersion(versionsMeta, entry, week.periodKey);
+    const skuList = skuListFor(store, listVersion).filter(sku =>
       selectedBus.has(sku.bu || NO_BU) && selectedFlags.has(sku.flag || 'COTC'));
     if (!skuList.length) continue;
-    const entry = entriesByStore[store.id] || null;
     const summary = summarizeEntry(entry ? entry.items : null, skuList);
     const oosDetail = buildOosDetail(entry ? entry.items : null, skuList, distStockByArea[store.area] || {});
     let status = 'notstarted';
     if (entry && entry.submitted) status = 'submitted';
     else if (entry) status = 'progress';
-    rows.push({ store, entry, summary, status, oosDetail });
+    rows.push({ store, entry, summary, status, oosDetail, listVersion });
   }
   rowsByStoreId = Object.fromEntries(rows.map(r => [r.store.id, r]));
 
+  renderListVersionInfo(rows);
   renderMetrics(rows);
   renderAreaSummary(rows);
   renderChannelSummary(rows);
@@ -161,6 +172,26 @@ function renderDashboard() {
   renderOpportunities(rows);
   renderTable(rows, week);
   renderFilterInfo(rows.length);
+}
+
+// Versi daftar toko/SKU yang dipakai rekap minggu ini (toko yang datanya sudah terisi bisa masih memakai versi lama).
+function renderListVersionInfo(rows) {
+  const counts = {};
+  for (const r of rows) counts[r.listVersion] = (counts[r.listVersion] || 0) + 1;
+  const byId = Object.fromEntries(versionsMeta.versions.map(v => [v.id, v]));
+  const parts = Object.entries(counts).sort((a, b) => b[1] - a[1]).map(([id, n]) => {
+    const v = byId[id];
+    const since = v.effectiveFrom <= '2000-01-01' ? 'daftar awal' : `berlaku ${formatReportDate(v.effectiveFrom)}`;
+    const upd = v.updatedAt ? `, diperbarui ${formatReportDate(v.updatedAt)}` : '';
+    return `${n} toko: ${esc(v.label)} (${since}${upd})`;
+  });
+  el('listVersionInfo').innerHTML = `Daftar SKU &amp; toko yang dipakai: ${parts.join(' &middot; ') || '-'}. <a href="versi.html" style="color:var(--accent);">Lihat riwayat versi</a>`;
+}
+
+// Daftar SKU wajib 1 toko pada 1 versi; kosong bila toko tidak ada di versi itu.
+function skuListFor(store, versionId) {
+  const v = versionData[versionId];
+  return v && v.storeSet[store.id] ? skuListForStore(v, store) : [];
 }
 
 // ---------- Filter (Area / Bisnis Unit / Toko) ----------
@@ -377,7 +408,7 @@ function renderFlagAvailability(rows) {
 }
 
 const FLAG_BADGE_CLASS = { 'COTC': 'flag-cotc', 'MARKET MAKING': 'flag-market', 'NPD': 'flag-npd' };
-const OPP_LIMIT = 30;
+const OPP_LIMIT = 5;
 
 // Peluang order: SKU yang kosong di toko (stock 0) dirangkum lintas toko yang lolos filter, lengkap dengan
 // stock DT per area -- supaya jelas SKU mana (mis. flag COTC) yang bisa dikejar ordernya sekarang.
@@ -532,14 +563,14 @@ async function exportOneStore(storeId, triggerEl) {
   const original = triggerEl ? triggerEl.textContent : null;
   if (triggerEl) { triggerEl.textContent = '...'; triggerEl.style.pointerEvents = 'none'; }
   try {
-    const skuList = skuListCache[store.scopeSlug] || [];
     const q = query(collection(db, 'entries'), where('storeId', '==', storeId));
     const snap = await getDocs(q);
     const rows = [];
     snap.forEach(d => {
       const data = d.data();
       const items = data.items || {};
-      for (const sku of skuList) {
+      const listVersion = resolveListVersion(versionsMeta, data, data.periodKey);
+      for (const sku of skuListFor(store, listVersion)) {
         const it = items[sku.barcode] || {};
         rows.push({
           Toko: store.name,
@@ -557,6 +588,7 @@ async function exportOneStore(storeId, triggerEl) {
           Masuk_pcs: fieldValue(it.masuk, sku.isi),
           Jual_pcs: fieldValue(it.jual, sku.isi),
           SudahKirim: data.submitted ? 'Ya' : 'Tidak',
+          VersiDaftarSKU: listVersion,
           ...dtExportColumns(data, sku)
         });
       }
@@ -589,9 +621,9 @@ async function exportAllStores() {
         const data = d.data();
         const store = stores.find(s => s.id === data.storeId);
         if (!store) return;
-        const skuList = skuListCache[store.scopeSlug] || [];
+        const listVersion = resolveListVersion(versionsMeta, data, week.periodKey);
         const items = data.items || {};
-        for (const sku of skuList) {
+        for (const sku of skuListFor(store, listVersion)) {
           const it = items[sku.barcode] || {};
           allRows.push({
             Toko: store.name,
@@ -609,6 +641,7 @@ async function exportAllStores() {
             Masuk_pcs: fieldValue(it.masuk, sku.isi),
             Jual_pcs: fieldValue(it.jual, sku.isi),
             SudahKirim: data.submitted ? 'Ya' : 'Tidak',
+            VersiDaftarSKU: listVersion,
             ...dtExportColumns(data, sku)
           });
         }
