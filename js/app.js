@@ -500,6 +500,19 @@ async function saveField(barcode) {
   }
 }
 
+// Stock DT per barcode (pcs) pada saat rekap dikirim. hasData=false kalau laporan DT area ini belum di-upload.
+function buildDtSnapshot(skuList, distStock) {
+  if (!distStock || !hasDistributorData(distStock.items)) return { hasData: false };
+  const pcs = {};
+  for (const sku of skuList) pcs[sku.barcode] = computeDtStock(sku, distStock.items).dtQty;
+  return {
+    hasData: true,
+    reportDate: distStock.reportDate || null,
+    distributorName: distStock.distributorName || null,
+    pcs
+  };
+}
+
 async function submitAllZeroFilled() {
   const itemsToSave = {};
   for (const sku of currentSkuList) {
@@ -520,6 +533,10 @@ async function submitAllZeroFilled() {
     }
     itemsToSave[sku.barcode] = filled;
   }
+  // distributorStock cuma menyimpan snapshot terbaru, jadi stock DT dicatat di entry saat dikirim
+  // supaya export tetap menunjukkan kondisi DT pada waktu SBA mengirim rekap.
+  await ensureDistributorStockLoaded(currentStore.area);
+  const dtSnapshot = buildDtSnapshot(currentSkuList, distributorCache[currentStore.area]);
   const ref = doc(db, 'entries', currentEntryDocId);
   await setDoc(ref, {
     storeId: currentStore.id,
@@ -530,6 +547,7 @@ async function submitAllZeroFilled() {
     weekStart: currentWeek.start.toISOString(),
     weekEnd: currentWeek.end.toISOString(),
     items: itemsToSave,
+    dtSnapshot,
     submitted: true,
     submittedAt: serverTimestamp(),
     updatedAt: serverTimestamp()

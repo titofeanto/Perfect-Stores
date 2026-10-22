@@ -503,6 +503,28 @@ function fieldValue(raw, isi) {
   return fieldIsEmpty(f) ? '' : fieldTotal(f, isi);
 }
 
+// Kolom stock distributor pada saat SBA mengirim rekap (dari entry.dtSnapshot, diisi app.js saat kirim).
+// Rekap lama yang dikirim sebelum fitur ini tidak punya snapshot, jadi kolomnya diberi keterangan.
+function dtExportColumns(data, sku) {
+  const snap = data.dtSnapshot;
+  const sentAt = data.submittedAt && data.submittedAt.toDate ? data.submittedAt.toDate() : null;
+  const cols = {
+    WaktuKirim: data.submitted && sentAt ? sentAt.toLocaleString('id-ID') : '',
+    StockDT_saat_kirim_pcs: '',
+    StockDT_saat_kirim: '',
+    TanggalLaporanDT: ''
+  };
+  if (snap && snap.hasData) {
+    const pcs = Number(snap.pcs && snap.pcs[sku.barcode]) || 0;
+    cols.StockDT_saat_kirim_pcs = pcs;
+    cols.StockDT_saat_kirim = fmtTotal(pcs, sku.isi);
+    cols.TanggalLaporanDT = snap.reportDate ? formatReportDate(snap.reportDate) : '';
+  } else if (data.submitted) {
+    cols.StockDT_saat_kirim = snap ? 'Laporan DT belum di-upload' : 'Tidak tercatat (dikirim sebelum fitur ini)';
+  }
+  return cols;
+}
+
 // Export 1 toko: SEMUA periode/minggu yang pernah diisi (bukan cuma bulan yang sedang dipilih).
 async function exportOneStore(storeId, triggerEl) {
   const store = stores.find(s => s.id === storeId);
@@ -534,7 +556,8 @@ async function exportOneStore(storeId, triggerEl) {
           Order_pcs: fieldValue(it.order, sku.isi),
           Masuk_pcs: fieldValue(it.masuk, sku.isi),
           Jual_pcs: fieldValue(it.jual, sku.isi),
-          SudahKirim: data.submitted ? 'Ya' : 'Tidak'
+          SudahKirim: data.submitted ? 'Ya' : 'Tidak',
+          ...dtExportColumns(data, sku)
         });
       }
     });
@@ -585,7 +608,8 @@ async function exportAllStores() {
             Order_pcs: fieldValue(it.order, sku.isi),
             Masuk_pcs: fieldValue(it.masuk, sku.isi),
             Jual_pcs: fieldValue(it.jual, sku.isi),
-            SudahKirim: data.submitted ? 'Ya' : 'Tidak'
+            SudahKirim: data.submitted ? 'Ya' : 'Tidak',
+            ...dtExportColumns(data, sku)
           });
         }
       });

@@ -146,6 +146,10 @@ python3 scripts/build_sku_codes.py "/path/ke/20260825_Product Hierarchy.xlsx"
   `910717000401263480__2026-07-27`). Isinya field `items` berupa map per
   barcode dengan `stock/order/masuk/jual`, plus `submitted` dan
   `submittedAt` setelah SBA klik "Konfirmasi dan kirim".
+- Saat SBA klik "Konfirmasi dan kirim", entry juga menyimpan `dtSnapshot`: stock distributor
+  (pcs per barcode) pada saat itu, plus `reportDate` laporan DT yang dipakai. Ini yang muncul di kolom
+  `StockDT_saat_kirim_*` pada export dashboard dan di tab `Detail` (Sheets). Rekap yang dikirim sebelum
+  fitur ini tidak punya snapshot, jadi kolomnya berisi keterangan "Tidak tercatat".
 - Koleksi `distributorStock`, satu dokumen per area (`Sorong` / `Timika`),
   berisi hasil parsing file upload terakhir.
 
