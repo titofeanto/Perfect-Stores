@@ -31,8 +31,9 @@ function injectPickerMarkup(usernames) {
   div.className = 'login-gate';
   div.innerHTML = `
     <div class="login-box">
-      <h1 style="font-size:19px; font-weight:650; margin:0 0 4px;">Perfect Stores</h1>
-      <p style="font-size:13px; color:var(--text-secondary); margin:0 0 16px;">Pilih akun Anda supaya daftar toko lebih ringkas (opsional).</p>
+      <span class="brand-mark" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M4 7l2-3h12l2 3"/><path d="M5 7v12a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V7"/><path d="M9 14l2 2 4-4"/></svg></span>
+      <h1>Perfect Stores</h1>
+      <p style="margin:0 0 18px;">Pilih akun Anda supaya daftar toko lebih ringkas (opsional).</p>
       <label class="field-label">Akun</label>
       <select id="accountSelect" style="margin-bottom:14px;">
         <option value="">-- Tampilkan semua toko --</option>
@@ -42,21 +43,6 @@ function injectPickerMarkup(usernames) {
     </div>
   `;
   document.body.appendChild(div);
-
-  const style = document.createElement('style');
-  style.textContent = `
-    .login-gate {
-      position: fixed; inset: 0; background: var(--bg);
-      display: flex; align-items: center; justify-content: center;
-      z-index: 500; padding: 20px;
-    }
-    .login-box {
-      background: var(--surface); border: 1px solid var(--border);
-      border-radius: var(--radius-lg); padding: 28px 24px; width: 100%; max-width: 360px;
-      box-shadow: 0 12px 40px rgba(0,0,0,0.12);
-    }
-  `;
-  document.head.appendChild(style);
 
   document.getElementById('accountContinueBtn').addEventListener('click', () => {
     const chosen = document.getElementById('accountSelect').value;

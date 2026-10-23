@@ -1,5 +1,6 @@
 import { db, doc, getDoc, setDoc, serverTimestamp, authReady } from './firebase-init.js';
-import { pickAccount, storeIsAllowed, getCurrentMapping, switchAccount } from './store-filter.js?v=1';
+import { setupStoreGate } from './store-gate.js?v=1';
+import { pickAccount, storeIsAllowed, getCurrentMapping, switchAccount } from './store-filter.js?v=2';
 import { loadStores, loadSkuList, groupStoresByArea, loadVersionsMeta, loadVersion, resolveListVersion, skuListForStore } from './store-data.js?v=2';
 import { getWeeksForMonth, findWeekContaining, fmtShort, MONTHS_ID, addDays, isoDate } from './weeks.js';
 import { loadDistributorStock, parseDistributorWorkbook, saveDistributorStock, formatReportDate } from './stock-upload.js?v=3';
@@ -18,6 +19,7 @@ const TODAY = new Date(); // tanggal perangkat SBA saat app dibuka
 
 let stores = [];
 let storesByArea = {};
+let storeGate = null;
 // Filter channel (LMT SPM / Local Minis / Haba DT) untuk daftar Area & Toko. 'all' = tanpa filter.
 const CHANNEL_ORDER = ['lmt-spm', 'local-minis', 'haba-dt'];
 const CHANNEL_LABELS = { 'lmt-spm': 'LMT SPM', 'local-minis': 'Local Minis', 'haba-dt': 'Haba DT' };
@@ -116,6 +118,7 @@ async function init() {
   populateMonthSelect();
   attachStaticHandlers();
 
+  storeGate = setupStoreGate({ pageKey: 'input', stores, channelLabel, onPick: s => pickStoreFromSearch(s.id) });
   await applyUrlParamsAndLoad();
 }
 
@@ -133,6 +136,11 @@ async function applyUrlParamsAndLoad() {
     el('storeSel').value = paramStore.id;
   } else {
     populateStoreSelect(el('areaSel').value);
+    // Tanpa link dashboard: pakai toko yang sudah dikonfirmasi di sesi ini (refresh), atau minta SBA memilih dulu.
+    const resumed = storeGate.resume();
+    if (resumed) await storeGate.setActive(resumed);
+    else storeGate.open();
+    return;
   }
 
   if (paramPeriod) {
@@ -150,6 +158,7 @@ async function applyUrlParamsAndLoad() {
   }
 
   await onStoreChange(paramPeriod || undefined);
+  if (currentStore) storeGate.remember(currentStore);
   if (paramStore) showToast(`Dibuka dari dashboard: ${paramStore.name}`, 'success');
 }
 
@@ -1269,9 +1278,9 @@ function onSubmitClick() {
     return n + EDITABLE_FIELDS.filter(f => fieldIsEmpty(item[f])).length;
   }, 0);
   if (missing > 0) {
-    el('modalBody').textContent = `${missing} dari ${total} SKU wajib untuk ${currentWeek.label} belum lengkap, dengan total ${emptyFields} kolom kosong. Kolom kosong akan otomatis tercatat 0 jika Anda kirim sekarang.`;
+    el('modalBody').textContent = `Toko: ${currentStore.name} (${currentStore.area}). ${missing} dari ${total} SKU wajib untuk ${currentWeek.label} belum lengkap, dengan total ${emptyFields} kolom kosong. Kolom kosong akan otomatis tercatat 0 jika Anda kirim sekarang.`;
   } else {
-    el('modalBody').textContent = `Semua SKU wajib untuk ${currentWeek.label} sudah lengkap. Data siap dikirim.`;
+    el('modalBody').textContent = `Toko: ${currentStore.name} (${currentStore.area}). Semua SKU wajib untuk ${currentWeek.label} sudah lengkap. Data siap dikirim.`;
   }
   showModal();
 }

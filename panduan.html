@@ -7,8 +7,8 @@
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" type="image/png" sizes="192x192" href="assets/icons/icon-192.png">
 <link rel="apple-touch-icon" href="assets/icons/apple-touch-icon.png">
-<meta name="theme-color" content="#f4f8fb" media="(prefers-color-scheme: light)">
-<meta name="theme-color" content="#071a2c" media="(prefers-color-scheme: dark)">
+<meta name="theme-color" content="#F4F2FF" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#060813" media="(prefers-color-scheme: dark)">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="SBA COTC">
@@ -16,49 +16,53 @@
 <title>Panduan SBA COTC</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Mulish:wght@400;500;600;700;800&family=Outfit:wght@500;600;700&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap">
 <style>
 body { margin: 0; }
 img { max-width: 100%; }
 :root {
-  /* Palet: laut, bukan korporat kaku. Biru laut + navy sebagai fondasi, oranye matahari hanya untuk penanda. */
-  --ink: #0a2540;          /* navy: teks utama, latar hero */
-  --ocean: #006aaf;        /* biru laut: tautan, tombol, garis */
-  --ocean-deep: #00507f;
-  --tide: #e4f0f9;         /* biru pasang: latar lembut */
-  --foam: #f4f8fb;         /* busa: latar halaman (putih condong biru) */
-  --surface: #ffffff;
-  --slate: #56708a;        /* teks sekunder */
-  --line: #d5e1ec;
-  --sun: #f37125;          /* oranye: penanda / angka besar */
-  --sun-text: #b83f05;     /* oranye untuk teks kecil (kontras cukup) */
-  --sun-tint: #fff0e6;
-  --good: #0d7a4d;
-  --good-tint: #ddf4e8;
-  --warn-tint: #fdeccb;
-  --bad: #b3261e;
-  --bad-tint: #fde5e2;
-  --hero-a: #0a2540;
-  --hero-b: #0b3a63;
+  /* Palet Aurora: ungu-indigo sebagai aksen, anggrek untuk penanda, latar gradien aurora (sama dengan aplikasi). */
+  --ink: #1A1646;
+  --ocean: #5B3DF5;
+  --ocean-deep: #3E24C9;
+  --tide: rgb(110 90 220 / .10);
+  --foam: #F4F2FF;
+  --surface: rgb(255 255 255 / .72);
+  --slate: #4B4676;
+  --line: rgb(88 70 170 / .18);
+  --sun: #C026D3;
+  --sun-text: #A21CAF;
+  --sun-tint: rgb(217 70 239 / .12);
+  --good: #077A4B;
+  --good-tint: rgb(16 185 129 / .16);
+  --warn-tint: rgb(251 191 36 / .25);
+  --bad: #B81D4B;
+  --bad-tint: rgb(244 63 94 / .14);
+  --hero-a: #1B1050;
+  --hero-b: #3A22A6;
   --on-hero: #ffffff;
-  --on-hero-soft: #b9cfe3;
-  --radius: 14px;
-  --font-display: "Outfit", "Mulish", system-ui, -apple-system, "Segoe UI", sans-serif;
-  --font-body: "Mulish", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --on-hero-soft: #D3CCFF;
+  --au-a: rgb(45 212 191 / .42); --au-b: rgb(139 92 246 / .40); --au-c: rgb(244 114 182 / .30); --au-d: rgb(56 189 248 / .34);
+  --accent-grad: linear-gradient(135deg, #8E6FFF 0%, #5B3DF5 55%, #3A6BFF 100%);
+  --radius: 18px;
+  --font-display: "Plus Jakarta Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-body: "Plus Jakarta Sans", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
 }
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
-    --ink: #e8f1f8; --ocean: #62b6ee; --ocean-deep: #8ccbf5; --tide: #0f2d47; --foam: #071a2c;
-    --surface: #0c2338; --slate: #93aec6; --line: #1c3a55; --sun: #ff8f4d; --sun-text: #ffa46e; --sun-tint: #3a2314;
-    --good: #59d39b; --good-tint: #0e3a2a; --warn-tint: #3c2f10; --bad: #ff8a80; --bad-tint: #3e1a18;
-    --hero-a: #061626; --hero-b: #0a2c4b; --on-hero: #ffffff; --on-hero-soft: #a9c4db;
+    --ink: #EEEBFF; --ocean: #AA9CFF; --ocean-deep: #C9BFFF; --tide: rgb(255 255 255 / .06); --foam: #060813;
+    --surface: rgb(22 26 52 / .6); --slate: #BAB6DE; --line: rgb(255 255 255 / .13); --sun: #F0ABFC; --sun-text: #F0ABFC; --sun-tint: rgb(217 70 239 / .2);
+    --good: #5EE0A8; --good-tint: rgb(16 185 129 / .2); --warn-tint: rgb(251 191 36 / .18); --bad: #FF8BA3; --bad-tint: rgb(244 63 94 / .2);
+    --hero-a: #0A0626; --hero-b: #1B1060; --on-hero: #ffffff; --on-hero-soft: #CFC8FF;
+    --au-a: rgb(16 230 170 / .42); --au-b: rgb(124 92 255 / .58); --au-c: rgb(236 72 200 / .36); --au-d: rgb(56 189 248 / .32);
   }
 }
 :root[data-theme="dark"] {
-  --ink: #e8f1f8; --ocean: #62b6ee; --ocean-deep: #8ccbf5; --tide: #0f2d47; --foam: #071a2c;
-  --surface: #0c2338; --slate: #93aec6; --line: #1c3a55; --sun: #ff8f4d; --sun-text: #ffa46e; --sun-tint: #3a2314;
-  --good: #59d39b; --good-tint: #0e3a2a; --warn-tint: #3c2f10; --bad: #ff8a80; --bad-tint: #3e1a18;
-  --hero-a: #061626; --hero-b: #0a2c4b; --on-hero: #ffffff; --on-hero-soft: #a9c4db;
+  --ink: #EEEBFF; --ocean: #AA9CFF; --ocean-deep: #C9BFFF; --tide: rgb(255 255 255 / .06); --foam: #060813;
+  --surface: rgb(22 26 52 / .6); --slate: #BAB6DE; --line: rgb(255 255 255 / .13); --sun: #F0ABFC; --sun-text: #F0ABFC; --sun-tint: rgb(217 70 239 / .2);
+  --good: #5EE0A8; --good-tint: rgb(16 185 129 / .2); --warn-tint: rgb(251 191 36 / .18); --bad: #FF8BA3; --bad-tint: rgb(244 63 94 / .2);
+  --hero-a: #0A0626; --hero-b: #1B1060; --on-hero: #ffffff; --on-hero-soft: #CFC8FF;
+  --au-a: rgb(16 230 170 / .42); --au-b: rgb(124 92 255 / .58); --au-c: rgb(236 72 200 / .36); --au-d: rgb(56 189 248 / .32);
 }
 
 * { box-sizing: border-box; }
@@ -107,7 +111,7 @@ a:focus-visible, summary:focus-visible, input:focus-visible, button:focus-visibl
 .hero .sub { margin-top: 22px; font-size: 1.12rem; color: var(--on-hero-soft); max-width: 58ch; }
 .cta { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 30px; }
 .btn { display: inline-flex; align-items: center; min-height: 46px; padding: 0 22px; border-radius: 999px; font-weight: 700; text-decoration: none; font-size: .96rem; }
-.btn.primary { background: var(--sun); color: #2b1100; }
+.btn.primary { background: var(--sun); color: #ffffff; }
 .btn.ghost { border: 1.5px solid rgb(255 255 255 / .45); color: #fff; }
 .btn:hover { filter: brightness(1.06); }
 .hero-stats { display: flex; flex-wrap: wrap; gap: 14px 40px; margin-top: 46px; padding-bottom: 96px; }
@@ -140,7 +144,7 @@ a:focus-visible, summary:focus-visible, input:focus-visible, button:focus-visibl
 .timeline li:last-child { padding-bottom: 0; }
 .timeline .dot { position: absolute; left: 0; top: 0; width: 40px; height: 40px; border-radius: 50%; background: var(--ocean); color: #fff; font: 700 1rem var(--font-display); display: grid; place-items: center; box-shadow: 0 0 0 6px var(--foam); }
 .section.tint .timeline .dot { box-shadow: 0 0 0 6px var(--tide); }
-.timeline li.loop .dot { background: var(--sun); color: #2b1100; }
+.timeline li.loop .dot { background: var(--sun); color: #ffffff; }
 .timeline h3 { font-size: 1.18rem; margin-bottom: 2px; }
 .timeline p { color: var(--slate); max-width: 62ch; }
 .who { display: inline-block; font-size: .74rem; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; color: var(--ocean-deep); margin-bottom: 4px; }
@@ -313,10 +317,10 @@ details .ans { padding: 0 4px 20px; color: var(--slate); max-width: 68ch; }
 
 /* penanda: cincin oranye + label */
 .hl { position: relative; }
-.hl::after { content: ""; position: absolute; inset: -2cqw; border: 1cqw solid #f37125; border-radius: 3.4cqw; pointer-events: none; }
+.hl::after { content: ""; position: absolute; inset: -2cqw; border: 1cqw solid #C026D3; border-radius: 3.4cqw; pointer-events: none; }
 .hl.rd::after { border-radius: 50%; }
-.tip { position: absolute; z-index: 9; background: #f37125; color: #2b1100; font-weight: 800; font-size: 3cqw; padding: .9cqw 2.6cqw; border-radius: 2cqw; white-space: nowrap; }
-.tip::after { content: ""; position: absolute; left: 50%; bottom: -1.2cqw; margin-left: -1.2cqw; border: 1.2cqw solid transparent; border-top-color: #f37125; border-bottom: 0; }
+.tip { position: absolute; z-index: 9; background: #C026D3; color: #ffffff; font-weight: 800; font-size: 3cqw; padding: .9cqw 2.6cqw; border-radius: 2cqw; white-space: nowrap; }
+.tip::after { content: ""; position: absolute; left: 50%; bottom: -1.2cqw; margin-left: -1.2cqw; border: 1.2cqw solid transparent; border-top-color: #C026D3; border-bottom: 0; }
 
 /* Safari (iOS) */
 .sf { position: absolute; z-index: 3; left: 0; right: 0; bottom: 0; height: 21cqw; background: #eef0f4; border-top: .3cqw solid #d3d8df; padding: 2.4cqw 4cqw 0; }
@@ -335,7 +339,7 @@ details .ans { padding: 0 4px 20px; color: var(--slate); max-width: 68ch; }
 .lst .rw { height: 9.4cqw; padding: 0 3.6cqw; display: flex; align-items: center; justify-content: space-between; font-size: 3.4cqw; border-bottom: .3cqw solid #e6e9ee; }
 .lst .rw:last-child { border-bottom: 0; }
 .lst .rw i { width: 4.6cqw; height: 4.6cqw; border: .5cqw solid #a2a9b4; border-radius: 1.2cqw; display: block; }
-.lst .rw.hl2 { background: #fff2e8; box-shadow: inset 0 0 0 1cqw #f37125; border-radius: 2.4cqw; font-weight: 700; }
+.lst .rw.hl2 { background: #FBEAFF; box-shadow: inset 0 0 0 1cqw #C026D3; border-radius: 2.4cqw; font-weight: 700; }
 /* dialog tambah (iOS) */
 .dl { position: absolute; z-index: 4; inset: 0; background: #f1f2f6; padding: 11cqw 4cqw 0; }
 .dl .nb { display: flex; justify-content: space-between; align-items: center; font-size: 3.5cqw; color: #2f7bf5; }
@@ -364,7 +368,7 @@ details .ans { padding: 0 4px 20px; color: var(--slate); max-width: 68ch; }
 .pg.and { padding-top: 22cqw; }
 .mnu { position: absolute; z-index: 6; top: 13cqw; right: 2.5cqw; width: 66%; background: #fff; border-radius: 3cqw; box-shadow: 0 2cqw 5cqw rgb(0 0 0 / .32); padding: 1.5cqw 0; }
 .mnu .it { height: 8.8cqw; padding: 0 4cqw; display: flex; align-items: center; font-size: 3.3cqw; color: #222; }
-.mnu .it.hl2 { background: #fff2e8; box-shadow: inset 0 0 0 1cqw #f37125; border-radius: 2cqw; margin: 0 1cqw; font-weight: 700; }
+.mnu .it.hl2 { background: #FBEAFF; box-shadow: inset 0 0 0 1cqw #C026D3; border-radius: 2cqw; margin: 0 1cqw; font-weight: 700; }
 .ad-dlg { position: absolute; z-index: 7; left: 6cqw; right: 6cqw; top: 34%; background: #fff; border-radius: 5cqw; padding: 5cqw; box-shadow: 0 3cqw 9cqw rgb(0 0 0 / .4); }
 .ad-dlg h5 { margin: 0; font: 600 4cqw/1.2 system-ui, Roboto, sans-serif; }
 .ad-dlg .fl { display: flex; align-items: center; gap: 3cqw; margin-top: 4.5cqw; }
@@ -373,6 +377,44 @@ details .ans { padding: 0 4px 20px; color: var(--slate); max-width: 68ch; }
 .ad-dlg .bt { display: flex; justify-content: flex-end; gap: 5cqw; margin-top: 6cqw; font-size: 3.4cqw; font-weight: 700; color: #1a6ee0; }
 .ad-dlg .bt .ok { padding: 1.4cqw 2.4cqw; }
 .gs { position: absolute; left: 5cqw; right: 5cqw; bottom: 6cqw; height: 10cqw; border-radius: 5cqw; background: rgb(255 255 255 / .9); font-size: 3.4cqw; color: #4b5563; display: flex; align-items: center; padding-left: 4cqw; }
+
+/* ---------- tema Aurora: latar, kaca, hero ---------- */
+body::before, body::after { content: ""; position: fixed; z-index: -1; pointer-events: none; }
+body::before {
+  inset: -25% -20% -15% -20%;
+  background:
+    radial-gradient(48% 38% at 14% 12%, var(--au-a), transparent 70%),
+    radial-gradient(44% 36% at 88% 8%, var(--au-b), transparent 70%),
+    radial-gradient(50% 40% at 80% 58%, var(--au-c), transparent 72%),
+    radial-gradient(54% 44% at 8% 86%, var(--au-d), transparent 72%);
+  filter: blur(36px) saturate(1.25); will-change: transform; animation: auroraDrift 26s ease-in-out infinite alternate;
+}
+body::after {
+  inset: -10% -30%;
+  background: linear-gradient(104deg, transparent 30%, var(--au-a) 44%, var(--au-b) 52%, var(--au-c) 60%, transparent 72%);
+  opacity: .5; filter: blur(60px); transform: translateX(-12%) skewX(-8deg); will-change: transform; animation: auroraRibbon 34s ease-in-out infinite alternate;
+}
+@keyframes auroraDrift { from { transform: translate3d(-3%, -2%, 0) scale(1); } to { transform: translate3d(4%, 3%, 0) scale(1.08); } }
+@keyframes auroraRibbon { from { transform: translateX(-14%) skewX(-8deg); } to { transform: translateX(14%) skewX(-4deg); } }
+@media (prefers-reduced-motion: reduce) { body::before, body::after { animation: none; } }
+.hero, .closing, .hs {
+  background:
+    radial-gradient(60% 50% at 14% 8%, rgb(45 212 191 / .38), transparent 70%),
+    radial-gradient(55% 50% at 92% 18%, rgb(244 114 182 / .30), transparent 70%),
+    radial-gradient(60% 60% at 68% 96%, rgb(56 189 248 / .28), transparent 70%),
+    linear-gradient(170deg, var(--hero-a), var(--hero-b));
+}
+.hero h1 em, .closing h2 em { background: linear-gradient(100deg, #5EEAD4, #C4B5FD 55%, #F0ABFC); -webkit-background-clip: text; background-clip: text; color: transparent; }
+.eyebrow { color: var(--sun-text); }
+.hero .eyebrow { color: #F0ABFC; }
+.btn.primary { background: var(--accent-grad); color: #fff; box-shadow: 0 12px 26px -10px rgb(91 61 245 / .7); }
+.brand i { background: var(--accent-grad); box-shadow: 0 0 0 3px rgb(139 92 246 / .25); }
+.topbar { background: color-mix(in srgb, var(--foam) 55%, transparent); -webkit-backdrop-filter: blur(18px) saturate(170%); backdrop-filter: blur(18px) saturate(170%); }
+.calc, .mock, .state, .role, .upl > div, .check > div, .navdemo > div, .formula { -webkit-backdrop-filter: blur(16px) saturate(160%); backdrop-filter: blur(16px) saturate(160%); border-radius: var(--radius); }
+.mission > div { border-top-color: transparent; border-image: linear-gradient(90deg, #2DD4BF, #8B5CF6, #F472B6) 1; border-top-width: 3px; border-top-style: solid; }
+.section.tint { background: color-mix(in srgb, var(--tide) 100%, transparent); }
+.timeline li.loop .dot { background: var(--sun); color: #fff; }
+.timeline .dot { background: var(--accent-grad); }
 </style>
 
 </head>
@@ -582,7 +624,7 @@ details .ans { padding: 0 4px 20px; color: var(--slate); max-width: 68ch; }
       <ol class="steps" style="margin-top:0;">
         <li><div>
           <h3>Pilih toko dan minggu</h3>
-          <p>Ketik nama toko di kolom <b>Cari toko</b>, atau pilih <b>Area</b> lalu <b>Toko</b>. Lalu pilih <b>Bulan</b> dan <b>Minggu</b> (Senin sampai Minggu). Banner di atas mengingatkan kalau minggu itu belum lengkap.</p>
+          <p>Saat aplikasi dibuka, layar <b>Pilih toko</b> muncul lebih dulu. Ketik nama toko, atau pilih <b>Area</b> lalu ketuk nama toko. Sebelum masuk, cek nama toko dan areanya di layar konfirmasi, lalu ketuk <b>Ya, buka toko ini</b>. Toko terakhir Anda ditawarkan di atas supaya tinggal satu ketukan. Di dalam aplikasi, bar <b>Toko aktif</b> selalu terlihat di atas, dan tombol <b>Ganti</b> membuka layar yang sama kalau Anda pindah toko. Lalu pilih <b>Bulan</b> dan <b>Minggu</b> (Senin sampai Minggu). Banner di atas mengingatkan kalau minggu itu belum lengkap.</p>
         </div></li>
         <li><div>
           <h3>Cari SKU dengan cepat</h3>

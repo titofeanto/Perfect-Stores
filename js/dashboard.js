@@ -1,5 +1,5 @@
 import { db, doc, getDoc, collection, query, where, getDocs, authReady } from './firebase-init.js';
-import { pickAccount, storeIsAllowed, switchAccount } from './store-filter.js?v=1';
+import { pickAccount, storeIsAllowed, switchAccount } from './store-filter.js?v=2';
 import { loadAllStores, loadAllVersions, versionIdForPeriod, resolveListVersion, skuListForStore } from './store-data.js?v=2';
 import { getWeeksForMonth, findWeekContaining, fmtShort, MONTHS_ID } from './weeks.js';
 import { summarizeEntry, buildOosDetail, normalizeField, fieldTotal, fieldIsEmpty } from './entry-utils.js?v=3';

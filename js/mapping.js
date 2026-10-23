@@ -1,5 +1,5 @@
 import { authReady } from './firebase-init.js';
-import { pickAccount, switchAccount } from './store-filter.js?v=1';
+import { pickAccount, switchAccount } from './store-filter.js?v=2';
 import { loadStores } from './store-data.js?v=2';
 
 const el = (id) => document.getElementById(id);

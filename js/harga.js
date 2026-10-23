@@ -1,11 +1,12 @@
 import { db, collection, query, where, getDocs, authReady } from './firebase-init.js';
-import { pickAccount, storeIsAllowed, switchAccount } from './store-filter.js?v=1';
+import { pickAccount, storeIsAllowed, switchAccount } from './store-filter.js?v=2';
 import { loadStores, loadSkuList, groupStoresByArea } from './store-data.js?v=2';
 import { MONTHS_ID } from './weeks.js';
 import { loadCompetitors, addCompetitor, updateCompetitor, loadPriceEntry, savePriceField, saveBulkPriceEntries, loadPromoSku, savePromoSku } from './harga-data.js';
 import { supportsNativeBarcodeDetector, startNativeScan, stopNativeScan, startFallbackScan, stopFallbackScan } from './barcode-scan.js';
 import { parsePromoWorkbook } from './promo-upload.js';
 import { parsePriceWorkbook } from './price-upload.js';
+import { setupStoreGate } from './store-gate.js?v=1';
 import { downloadAsExcel } from './export-utils.js';
 
 const TODAY = new Date();
@@ -105,7 +106,9 @@ async function init() {
   el('exportStoreBtn').addEventListener('click', exportOneStorePrice);
   el('exportAllPriceBtn').addEventListener('click', exportAllStoresPrice);
 
-  await onStoreOrMonthChange();
+  const gate = setupStoreGate({ pageKey: 'harga', stores, channelLabel: slug => CHANNEL_LABELS[slug] || slug, onPick: s => pickStoreFromSearch(s.id) });
+  const resumed = gate.resume();
+  if (resumed) await gate.setActive(resumed); else gate.open();
 }
 
 function populateChannelSelect() {

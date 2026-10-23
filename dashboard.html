@@ -7,15 +7,17 @@
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" type="image/png" sizes="192x192" href="assets/icons/icon-192.png">
 <link rel="apple-touch-icon" href="assets/icons/apple-touch-icon.png">
-<meta name="theme-color" content="#f4f7fc" media="(prefers-color-scheme: light)">
-<meta name="theme-color" content="#0a0c11" media="(prefers-color-scheme: dark)">
+<meta name="theme-color" content="#F4F2FF" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#060813" media="(prefers-color-scheme: dark)">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="SBA COTC">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <title>Dashboard Rekap - SBA COTC</title>
-<link rel="stylesheet" href="css/style.css?v=22">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tabler-icons/2.44.0/iconfont/tabler-icons.min.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap">
+<link rel="stylesheet" href="css/style.css?v=23">
 <style>
   table.recap-table { width: 100%; border-collapse: collapse; font-size: 12.5px; }
   table.recap-table th, table.recap-table td { text-align: left; padding: 8px 6px; border-bottom: 1px solid var(--border); white-space: nowrap; }
@@ -24,12 +26,12 @@
   table.recap-table { --c1w: 112px; --c2w: 72px; }
   table.recap-table td.name-cell { white-space: normal; }
   .table-wrap { overflow: auto; max-height: 75vh; }
-  table.recap-table th { position: sticky; top: 0; z-index: 2; background: var(--surface); }
+  table.recap-table th { position: sticky; top: 0; z-index: 2; background: var(--surface-solid); }
   table.recap-table th:nth-child(1), table.recap-table td:nth-child(1) {
-    position: sticky; left: 0; width: var(--c1w); min-width: var(--c1w); max-width: var(--c1w); background: var(--surface); z-index: 1;
+    position: sticky; left: 0; width: var(--c1w); min-width: var(--c1w); max-width: var(--c1w); background: var(--surface-solid); z-index: 1;
   }
   table.recap-table th:nth-child(2), table.recap-table td:nth-child(2) {
-    position: sticky; left: var(--c1w); width: var(--c2w); min-width: var(--c2w); max-width: var(--c2w); background: var(--surface); z-index: 1;
+    position: sticky; left: var(--c1w); width: var(--c2w); min-width: var(--c2w); max-width: var(--c2w); background: var(--surface-solid); z-index: 1;
     box-shadow: 2px 0 3px -1px rgb(var(--shadow-rgb) / 0.18);
   }
   table.recap-table th:nth-child(1), table.recap-table th:nth-child(2) { z-index: 3; }
@@ -86,17 +88,18 @@
 <div class="app">
 
   <header class="appbar">
-    <div style="display:flex; justify-content:space-between; align-items:center;">
-      <div>
+    <div class="appbar-head">
+      <span class="brand-mark" aria-hidden="true"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7l2-3h12l2 3"/><path d="M5 7v12a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V7"/><path d="M9 14l2 2 4-4"/></svg></span>
+      <div class="appbar-title">
         <h1>Dashboard Rekap</h1>
         <p>Rekap seluruh toko - Papua</p>
       </div>
-      <div style="text-align:right;">
-        <p style="font-size:11px; color:var(--text-muted); margin:6px 0 0;">
-          <span id="loggedInAs"></span> &middot; <button id="logoutBtn" type="button" style="font-size:11px; padding:2px 8px; border:none; background:none; color:var(--accent); text-decoration:underline; cursor:pointer;">Ganti akun</button> &middot; <a href="panduan.html" style="font-size:11px; color:var(--accent);">Panduan &amp; FAQ</a>
-        </p>
-      </div>
     </div>
+    <nav class="appbar-pills" aria-label="Akun dan bantuan">
+      <span class="pill who"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="3.5"/><path d="M5 20a7 7 0 0 1 14 0"/></svg><span id="loggedInAs"></span></span>
+      <button id="logoutBtn" type="button" class="pill">Ganti akun</button>
+      <a class="pill" href="panduan.html">Panduan &amp; FAQ</a>
+    </nav>
   </header>
 
   <div class="card" id="filterCard">
@@ -222,7 +225,7 @@
 
 </div>
 <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
-<script type="module" src="js/dashboard.js?v=20"></script>
+<script type="module" src="js/dashboard.js?v=21"></script>
 <script type="module" src="js/bottom-nav.js?v=3"></script>
 </body>
 </html>
