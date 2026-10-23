@@ -19,7 +19,7 @@ function excelSerialToIso(serial) {
 // Tanggal laporan + nama distributor ada di sheet "Selected Parameters" (kalau ada).
 function readReportMeta(wb) {
   const name = wb.SheetNames.find(n => n.toLowerCase() === 'selected parameters');
-  const meta = { reportDate: null, distributorName: null };
+  const meta = { reportDate: null, distributorName: null, distributorCode: null };
   if (!name) return meta;
   const rows = XLSX.utils.sheet_to_json(wb.Sheets[name], { header: 1, defval: null });
   for (const r of rows) {
@@ -30,8 +30,8 @@ function readReportMeta(wb) {
       if (serial) meta.reportDate = excelSerialToIso(serial);
     }
     for (const c of r) {
-      const m = typeof c === 'string' ? c.match(/^\d+~(.+)$/) : null;
-      if (m && !meta.distributorName) meta.distributorName = m[1].trim();
+      const m = typeof c === 'string' ? c.match(/^(\d+)~(.+)$/) : null;
+      if (m && !meta.distributorName) { meta.distributorName = m[2].trim(); meta.distributorCode = m[1]; }
     }
   }
   return meta;
@@ -115,10 +115,38 @@ export function decodeDistributorDoc(data) {
   return data;
 }
 
-export async function saveDistributorStock(area, items, sourceFileName, meta = {}) {
-  const ref = doc(db, 'distributorStock', area);
+// ---------- Tujuan stock: area + distributor ----------
+// Satu area bisa dilayani lebih dari satu distributor (mis. Jayapura, Timika). Data toko membawa
+// `distributor` berformat "kode-nama" ("15261006-CV AMAN JAYA ANUGRAH ABEPURA"). Stock disimpan per
+// distributor di dokumen `distributorStock/{area}__{kode}`; toko tanpa data distributor memakai
+// dokumen lama `distributorStock/{area}`.
+export function distCodeOf(store) {
+  const d = store && store.distributor ? String(store.distributor) : '';
+  const i = d.indexOf('-');
+  return i > 0 ? d.slice(0, i).trim() : '';
+}
+export function distNameOf(store) {
+  const d = store && store.distributor ? String(store.distributor) : '';
+  const i = d.indexOf('-');
+  return i > 0 ? d.slice(i + 1).trim() : d.trim();
+}
+export const stockKey = (area, distCode) => (distCode ? `${area}__${distCode}` : area);
+export const stockKeyOf = (store) => stockKey(store.area, distCodeOf(store));
+
+const normName = (v) => String(v == null ? '' : v).toUpperCase().replace(/[^A-Z0-9]+/g, '');
+// Nama di laporan distributor sering sedikit beda (singkatan, tanda baca) dari nama di daftar toko.
+export function sameDistributor(a, b) {
+  const x = normName(a), y = normName(b);
+  return !!x && !!y && (x === y || x.includes(y) || y.includes(x));
+}
+
+export async function saveDistributorStock(area, dist, items, sourceFileName, meta = {}) {
+  const key = stockKey(area, dist && dist.code);
+  const ref = doc(db, 'distributorStock', key);
   await setDoc(ref, {
     area,
+    distributorCode: (dist && dist.code) || null,
+    distributorTarget: (dist && dist.name) || null,
     itemsJson: packItems(items),
     itemCount: Object.keys(items).length,
     sourceFileName: sourceFileName || null,
@@ -126,10 +154,22 @@ export async function saveDistributorStock(area, items, sourceFileName, meta = {
     distributorName: meta.distributorName || null,
     uploadedAt: serverTimestamp()
   });
+  return key;
 }
 
-export async function loadDistributorStock(area) {
-  const ref = doc(db, 'distributorStock', area);
-  const snap = await getDoc(ref);
+// Muat stock untuk satu area + distributor. Dokumen lama per area hanya dipakai kalau nama distributor
+// di dalamnya cocok, supaya stock distributor lain di area yang sama tidak salah terbaca.
+export async function loadDistributorStock(area, dist) {
+  if (dist && dist.code) {
+    const snap = await getDoc(doc(db, 'distributorStock', stockKey(area, dist.code)));
+    if (snap.exists()) return decodeDistributorDoc(snap.data());
+    const legacy = await getDoc(doc(db, 'distributorStock', area));
+    if (legacy.exists()) {
+      const d = decodeDistributorDoc(legacy.data());
+      if (!d.distributorName || sameDistributor(d.distributorName, dist.name)) return d;
+    }
+    return null;
+  }
+  const snap = await getDoc(doc(db, 'distributorStock', area));
   return snap.exists() ? decodeDistributorDoc(snap.data()) : null;
 }

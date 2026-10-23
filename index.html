@@ -17,7 +17,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap">
-<link rel="stylesheet" href="css/style.css?v=23">
+<link rel="stylesheet" href="css/style.css?v=24">
 </head>
 <body>
 <div class="app">
@@ -124,20 +124,33 @@
   <div id="viewRecap" class="view hidden"></div>
 
   <div id="viewStock" class="view hidden">
+    <div class="card" id="stockTargetBox">
+      <p class="section-title" style="margin:0 0 4px;">Stock distributor</p>
+      <p class="upload-status" style="margin:0 0 12px;">Pilih dulu stock ini untuk area dan distributor mana. Pilihan tidak diingat, supaya tidak ada yang lupa mengganti.</p>
+      <p class="section-title" style="margin:0 0 8px;">1. Pilih area</p>
+      <div class="area-grid" id="stockAreaGrid"></div>
+      <div id="stockDistWrap" hidden>
+        <p class="section-title" id="stockDistTitle" style="margin:16px 0 8px;">2. Pilih distributor</p>
+        <div class="store-list" id="stockDistList"></div>
+      </div>
+      <div id="stockTargetCard" class="target-card"></div>
+    </div>
+
     <div class="card">
-      <label class="field-label">Sumber stock untuk area</label>
-      <select id="stockAreaSel"></select>
-      <p id="stockCurrentInfo" class="upload-status">Belum ada data.</p>
+      <p class="section-title" style="margin:0 0 6px;">3. Upload file</p>
+      <p id="stockFileHint" class="upload-status" style="margin:0 0 8px;">Pilih area dan distributor di atas dulu. Kolom upload terbuka setelah itu.</p>
+      <p id="stockCurrentInfo" class="upload-status">Pilih area dan distributor dulu.</p>
       <a href="assets/template_upload_stock_distributor.xlsx" download class="template-link">
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
           <path d="M12 3v12m0 0l-4-4m4 4l4-4M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
         </svg>
         Download contoh template
       </a>
-      <label class="field-label" style="margin-top:10px;">Upload file (format UID Distributor Stock Report)</label>
-      <input id="stockFileInput" type="file" accept=".xlsx,.xls">
+      <label class="field-label" style="margin-top:12px;">File (format UID Distributor Stock Report)</label>
+      <input id="stockFileInput" type="file" accept=".xlsx,.xls" disabled>
       <p id="stockParsePreview" class="upload-status"></p>
-      <button id="stockSaveBtn" class="primary" style="margin-top:8px; width:100%;" disabled>Simpan ke database</button>
+      <div id="stockMatch"></div>
+      <button id="stockSaveBtn" class="primary" style="margin-top:10px; width:100%;" disabled>Simpan ke database</button>
     </div>
   </div>
 
@@ -167,6 +180,18 @@
       <div class="modal-actions">
         <button id="modalReview">Tinjau ulang</button>
         <button id="modalConfirm" class="danger-outline">Kirim, isi 0</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="stockConfirmBackdrop" class="modal-backdrop">
+    <div class="modal-box">
+      <h3>Simpan stock ke tujuan ini?</h3>
+      <p class="confirm-target" id="stockConfirmTarget"></p>
+      <p id="stockConfirmCount"></p>
+      <div class="modal-actions">
+        <button id="stockConfirmNo" type="button">Periksa lagi</button>
+        <button id="stockConfirmYes" type="button" class="primary">Ya, simpan</button>
       </div>
     </div>
   </div>
@@ -207,7 +232,7 @@
 
 </div>
 <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
-<script type="module" src="js/app.js?v=36"></script>
+<script type="module" src="js/app.js?v=37"></script>
 <script type="module" src="js/bottom-nav.js?v=3"></script>
 </body>
 </html>

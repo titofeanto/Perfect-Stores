@@ -150,8 +150,7 @@ def main():
         else:
             st['area'] = 'Belum diketahui'
             unknown.append(sid)
-    for st in stores.values():
-        st.pop('distributor', None)
+    # 'distributor' (kode-nama) tetap disimpan di data toko: dipakai halaman Stock dist. untuk memilih tujuan unggah.
 
     barcodes = {b for it in items.values() for b in it}
     new_barcodes = {b for b in barcodes if b not in old_meta}

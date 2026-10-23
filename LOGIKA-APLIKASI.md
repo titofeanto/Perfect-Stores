@@ -115,6 +115,15 @@ data awal dan cadangan.
   Rekap yang dikirim sebelum fitur ini diberi keterangan "Tidak tercatat".
 - Angka DT di layar dashboard dan popup adalah kondisi **terkini**, bukan kondisi saat rekap dikirim.
 
+- Tujuan unggah dipilih lebih dulu: Area, lalu Distributor (tanpa nilai awal, tidak diingat). Distributor tiap toko ada di
+  data toko (`distributor` = "kode-nama", dari kolom Distributor Code&Name di file SKU Audit; di mode Sheets dari kolom
+  `Distributor` tab Toko). Area dengan satu distributor langsung terpilih; area dengan dua distributor (mis. Jayapura,
+  Timika, Manokwari) memaksa pilihan.
+- Stock disimpan per distributor: `distributorStock/{area}__{kodeDistributor}`. Toko tanpa data distributor memakai dokumen lama
+  `distributorStock/{area}`. Dokumen lama per area hanya dipakai toko berdistributor kalau nama distributor di dokumen itu cocok.
+- Nama distributor di file (sheet "Selected Parameters", format `kode~nama`) dicocokkan dengan tujuan. Kalau beda, simpan
+  diblokir sampai tujuan dipindahkan (tombol saran) atau SBA mencentang "Saya yakin". Simpan selalu lewat konfirmasi tujuan.
+
 ## 9. Peluang order
 
 Di dashboard, setelah tabel "Semua toko" (`renderOpportunities` di `js/dashboard.js`):

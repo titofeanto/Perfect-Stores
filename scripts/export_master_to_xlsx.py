@@ -94,9 +94,9 @@ def main():
     ws.column_dimensions['A'].width = 130
 
     # ---- Toko
-    rows = [[s['id'], s['name'], s['area'], s['scopeChannel'], s['scopeSlug'], s.get('subChannel') or '', 'YA'] for s in stores]
-    ws = sheet(wb, 'Toko', ['ID Toko', 'Nama Toko', 'Area', 'Scope Channel', 'Scope Slug', 'Sub Channel', 'Aktif'], rows,
-               [22, 34, 14, 16, 14, 30, 8])
+    rows = [[s['id'], s['name'], s['area'], s['scopeChannel'], s['scopeSlug'], s.get('subChannel') or '', 'YA', s.get('distributor') or ''] for s in stores]
+    ws = sheet(wb, 'Toko', ['ID Toko', 'Nama Toko', 'Area', 'Scope Channel', 'Scope Slug', 'Sub Channel', 'Aktif', 'Distributor'], rows,
+               [22, 34, 14, 16, 14, 30, 8, 44])
     dropdown(ws, 'E', SCOPES, len(rows) + 1)
     dropdown(ws, 'G', ['YA', 'TIDAK'], len(rows) + 1)
 

@@ -3,7 +3,7 @@ import { setupStoreGate } from './store-gate.js?v=1';
 import { pickAccount, storeIsAllowed, getCurrentMapping, switchAccount } from './store-filter.js?v=2';
 import { loadStores, loadSkuList, groupStoresByArea, loadVersionsMeta, loadVersion, resolveListVersion, skuListForStore } from './store-data.js?v=2';
 import { getWeeksForMonth, findWeekContaining, fmtShort, MONTHS_ID, addDays, isoDate } from './weeks.js';
-import { loadDistributorStock, parseDistributorWorkbook, saveDistributorStock, formatReportDate } from './stock-upload.js?v=3';
+import { loadDistributorStock, parseDistributorWorkbook, saveDistributorStock, formatReportDate, stockKeyOf, stockKey, distCodeOf, distNameOf, sameDistributor } from './stock-upload.js?v=4';
 import { supportsNativeBarcodeDetector, startNativeScan, stopNativeScan, startFallbackScan, stopFallbackScan } from './barcode-scan.js';
 import { parsePurchaseWorkbook } from './purchase-upload.js';
 import { computeDtStock, dtCodesHtml, fmtTotal, hasDistributorData, esc } from './dt-stock.js?v=1';
@@ -187,8 +187,6 @@ function populateAreaSelect(keepCurrent) {
   const areas = Object.keys(channelStoresByArea()).sort();
   el('areaSel').innerHTML = areas.map(a => `<option value="${a}">${a}</option>`).join('');
   if (prev && areas.includes(prev)) el('areaSel').value = prev;
-  // Upload stock distributor: 1 file per Area (semua area yang bisa dilihat akun ini, tanpa filter channel)
-  el('stockAreaSel').innerHTML = Object.keys(storesByArea).sort().map(a => `<option value="${a}">${a}</option>`).join('');
 }
 
 function populateStoreSelect(area) {
@@ -270,7 +268,10 @@ function attachStaticHandlers() {
   el('modalReview').addEventListener('click', () => { hideModal(); switchTab('input'); });
   el('modalConfirm').addEventListener('click', onConfirmSubmit);
 
-  el('stockAreaSel').addEventListener('change', refreshStockTab);
+  el('stockTargetBox').addEventListener('click', onStockTargetClick);
+  el('stockMatch').addEventListener('click', onStockMatchClick);
+  el('stockConfirmYes').addEventListener('click', onStockConfirmYes);
+  el('stockConfirmNo').addEventListener('click', () => el('stockConfirmBackdrop').classList.remove('show'));
   el('stockFileInput').addEventListener('change', onStockFileSelected);
   el('stockSaveBtn').addEventListener('click', onStockSave);
   el('masukFileInput').addEventListener('change', onMasukFileSelected);
@@ -349,7 +350,7 @@ async function onStoreChange(preferPeriodKey) {
   populateWeekSelect(preferPeriodKey);
   await Promise.all([
     loadEntryForCurrentPeriod(),
-    ensureDistributorStockLoaded(currentStore.area)
+    ensureDistributorStockLoaded(currentStore)
   ]);
   renderAll();
   if (currentTab === 'stock') refreshStockTab();
@@ -360,13 +361,14 @@ async function onStoreChange(preferPeriodKey) {
 // Dulu ini cuma dimuat kalau tab "Stock distributor" dibuka -- akibatnya
 // SBA yang langsung ke tab Input tidak pernah melihat info stock distributor
 // walau datanya sudah ada di database. Sekarang dimuat otomatis begitu toko dipilih.
-async function ensureDistributorStockLoaded(area) {
-  if (distributorCache[area] !== undefined) return;
+async function ensureDistributorStockLoaded(store) {
+  const key = stockKeyOf(store);
+  if (distributorCache[key] !== undefined) return;
   try {
-    distributorCache[area] = await loadDistributorStock(area);
+    distributorCache[key] = await loadDistributorStock(store.area, { code: distCodeOf(store), name: distNameOf(store) });
   } catch (err) {
     console.error('Gagal memuat stock distributor:', err);
-    distributorCache[area] = null;
+    distributorCache[key] = null;
   }
 }
 
@@ -397,6 +399,7 @@ async function afterPeriodDataChange() {
 
 function switchTab(tab) {
   currentTab = tab;
+  document.body.dataset.tab = tab;
   el('tabInput').classList.toggle('active', tab === 'input');
   el('tabRecap').classList.toggle('active', tab === 'recap');
   el('tabStock').classList.toggle('active', tab === 'stock');
@@ -553,8 +556,8 @@ async function submitAllZeroFilled() {
   }
   // distributorStock cuma menyimpan snapshot terbaru, jadi stock DT dicatat di entry saat dikirim
   // supaya export tetap menunjukkan kondisi DT pada waktu SBA mengirim rekap.
-  await ensureDistributorStockLoaded(currentStore.area);
-  const dtSnapshot = buildDtSnapshot(currentSkuList, distributorCache[currentStore.area]);
+  await ensureDistributorStockLoaded(currentStore);
+  const dtSnapshot = buildDtSnapshot(currentSkuList, distributorCache[stockKeyOf(currentStore)]);
   const ref = doc(db, 'entries', currentEntryDocId);
   await setDoc(ref, {
     storeId: currentStore.id,
@@ -804,7 +807,7 @@ function skuGroupRecap(list) {
 
 function renderSkuList() {
   const q = searchText.toLowerCase();
-  const distStock = distributorCache[currentStore.area];
+  const distStock = distributorCache[stockKeyOf(currentStore)];
   let filtered = currentSkuList.filter(sku => {
     if (flagFilter !== 'all' && sku.flag !== flagFilter) return false;
     if (buFilter !== 'all' && sku.bu !== buFilter) return false;
@@ -1039,7 +1042,7 @@ function renderPromoSection() {
     !q || p.name.toLowerCase().includes(q) || (p.barcode || '').includes(q) || (p.pcode || '').includes(q)
   );
 
-  const distStock = distributorCache[currentStore.area];
+  const distStock = distributorCache[stockKeyOf(currentStore)];
   el('promoList').innerHTML = filtered.map(p => {
     const val = currentPromoEntry[p.pcode] || '';
     let distHint = '';
@@ -1159,8 +1162,8 @@ function renderRecap() {
 
 // Popup yang sama dengan dashboard: stock DT per SKU + tombol bagikan ke WhatsApp.
 async function openRecapOosModal() {
-  await ensureDistributorStockLoaded(currentStore.area);
-  const dist = distributorCache[currentStore.area];
+  await ensureDistributorStockLoaded(currentStore);
+  const dist = distributorCache[stockKeyOf(currentStore)];
   const oosDetail = buildOosDetail(currentEntry, currentSkuList, (dist && dist.items) || {});
   showOosModal({ store: currentStore, week: currentWeek, oosDetail, dtAsOf: formatReportDate(dist && dist.reportDate) });
 }
@@ -1460,48 +1463,161 @@ function showToast(message, type) {
 // ---------- Stock distributor tab ----------
 
 let pendingStockParse = null;
+let stockTarget = null;      // {area, dist:{code,name}|null, key, count} -- harus dipilih SBA/supervisor sendiri, tanpa nilai awal
+let stockAckMismatch = false;
+
+// Pilihan tujuan unggah: Area -> Distributor, dari data toko (tiap toko tahu distributornya).
+// Satu area bisa dilayani lebih dari satu distributor; toko tanpa data distributor dikelompokkan "Belum terdata".
+function stockOptions() {
+  const areas = {};
+  for (const st of stores) {
+    const a = areas[st.area] = areas[st.area] || { area: st.area, count: 0, dists: {} };
+    a.count++;
+    const code = distCodeOf(st);
+    const d = a.dists[code] = a.dists[code] || { code, name: code ? distNameOf(st) : 'Belum terdata distributornya', count: 0 };
+    d.count++;
+  }
+  return Object.values(areas).sort((x, y) => x.area.localeCompare(y.area, 'id'))
+    .map(a => ({ ...a, dists: Object.values(a.dists).sort((x, y) => y.count - x.count) }));
+}
+
+function renderStockTarget() {
+  const opts = stockOptions();
+  const cur = stockTarget;
+  el('stockAreaGrid').innerHTML = opts.map(a =>
+    `<button type="button" class="area-card${cur && cur.area === a.area ? ' selected' : ''}" data-s-area="${esc(a.area)}"><b>${esc(a.area)}</b><span>${a.count} toko${a.dists.length > 1 ? ` &middot; ${a.dists.length} distributor` : ''}</span></button>`).join('');
+  const area = cur && opts.find(a => a.area === cur.area);
+  el('stockDistWrap').hidden = !area;
+  if (area) {
+    el('stockDistTitle').textContent = area.dists.length > 1 ? `2. Pilih distributor di ${area.area}` : `2. Distributor di ${area.area}`;
+    el('stockDistList').innerHTML = area.dists.map(d =>
+      `<button type="button" class="store-card${cur.dist && cur.dist.code === d.code || (!cur.dist && !d.code) ? ' selected' : ''}" data-s-dist="${esc(d.code)}"><span class="sc-name">${esc(d.name)}</span>` +
+      `<span class="sc-meta"><span>${d.count} toko di ${esc(area.area)}</span>${d.code ? `<span>${esc(d.code)}</span>` : ''}</span></button>`).join('');
+  }
+  const ready = !!(cur && cur.key);
+  el('stockTargetCard').innerHTML = ready
+    ? `<small>Stock akan disimpan untuk</small><b>${esc(cur.area)} &middot; ${esc(cur.dist ? cur.dist.name : 'Belum terdata distributornya')}</b><span>${cur.count} toko memakai data ini</span>`
+    : '<small>Tujuan unggah</small><b>Belum dipilih</b><span>Pilih area, lalu distributor, sebelum mengunggah file.</span>';
+  el('stockTargetCard').classList.toggle('ready', ready);
+  el('stockFileInput').disabled = !ready;
+  el('stockFileHint').hidden = ready;
+}
+
+function onStockTargetClick(e) {
+  const a = e.target.closest('[data-s-area]');
+  const d = e.target.closest('[data-s-dist]');
+  if (a) {
+    const area = stockOptions().find(x => x.area === a.dataset.sArea);
+    if (!area) return;
+    // Satu distributor saja di area ini: langsung terpilih. Lebih dari satu: SBA wajib memilih sendiri.
+    stockTarget = { area: area.area, dist: null, key: '', count: 0 };
+    if (area.dists.length === 1) setStockDist(area, area.dists[0]);
+    else renderStockTarget();
+    resetStockFile();
+    if (area.dists.length === 1) refreshStockTab();
+  } else if (d && stockTarget) {
+    const area = stockOptions().find(x => x.area === stockTarget.area);
+    const dist = area && area.dists.find(x => x.code === d.dataset.sDist);
+    if (dist) { setStockDist(area, dist); resetStockFile(); refreshStockTab(); }
+  }
+}
+function setStockDist(area, d) {
+  stockTarget = { area: area.area, dist: d.code ? { code: d.code, name: d.name } : null, key: stockKey(area.area, d.code), count: d.count };
+  renderStockTarget();
+}
+function resetStockFile() {
+  pendingStockParse = null; stockAckMismatch = false;
+  el('stockFileInput').value = '';
+  el('stockParsePreview').textContent = '';
+  el('stockMatch').innerHTML = '';
+  el('stockSaveBtn').disabled = true;
+}
 
 async function refreshStockTab() {
-  const area = el('stockAreaSel').value;
+  renderStockTarget();
+  const t = stockTarget;
+  if (!t || !t.key) { el('stockCurrentInfo').textContent = 'Pilih area dan distributor dulu.'; return; }
   el('stockSaveBtn').disabled = true;
-  el('stockParsePreview').textContent = '';
-  pendingStockParse = null;
   el('stockCurrentInfo').textContent = 'Memuat...';
-  const existing = distributorCache[area] || await loadDistributorStock(area);
+  const existing = distributorCache[t.key] !== undefined ? distributorCache[t.key] : await loadDistributorStock(t.area, t.dist);
+  if (!stockTarget || stockTarget.key !== t.key) return;   // tujuan berganti saat memuat
+  distributorCache[t.key] = existing;
   if (existing) {
-    distributorCache[area] = existing;
     const count = Object.keys(existing.items || {}).length;
     const ts = existing.uploadedAt && existing.uploadedAt.toDate ? existing.uploadedAt.toDate().toLocaleString('id-ID') : '-';
     const rd = formatReportDate(existing.reportDate);
-    el('stockCurrentInfo').textContent = `Data tersimpan: ${count} produk${rd ? `, laporan tanggal ${rd}` : ''}. Diupload: ${ts}. File: ${existing.sourceFileName || '-'}. Unggahan baru akan MENIMPA semua data ini.`;
+    el('stockCurrentInfo').textContent = `Data tersimpan untuk tujuan ini: ${count} produk${rd ? `, laporan tanggal ${rd}` : ''}. Diupload: ${ts}. File: ${existing.sourceFileName || '-'}. Unggahan baru akan MENIMPA data ini.`;
   } else {
-    el('stockCurrentInfo').textContent = 'Belum ada data stock distributor untuk area ini.';
+    el('stockCurrentInfo').textContent = 'Belum ada data stock untuk tujuan ini.';
+  }
+}
+
+// Cocokkan distributor di file (sheet "Selected Parameters") dengan tujuan yang dipilih.
+function stockMatchState(parsed) {
+  const t = stockTarget;
+  if (!t || !t.dist) return { state: 'unknown' };
+  if (!parsed.distributorName && !parsed.distributorCode) return { state: 'unknown' };
+  const ok = (parsed.distributorCode && parsed.distributorCode === t.dist.code) || sameDistributor(parsed.distributorName, t.dist.name);
+  if (ok) return { state: 'ok' };
+  let suggestion = null;
+  for (const a of stockOptions()) for (const d of a.dists) {
+    if (d.code && ((parsed.distributorCode && parsed.distributorCode === d.code) || sameDistributor(parsed.distributorName, d.name))) suggestion = { area: a, dist: d };
+  }
+  return { state: 'bad', suggestion };
+}
+function renderStockMatch() {
+  const box = el('stockMatch');
+  if (!pendingStockParse) { box.innerHTML = ''; return; }
+  const m = stockMatchState(pendingStockParse), t = stockTarget;
+  const fileDist = pendingStockParse.distributorName ? `${pendingStockParse.distributorName}${pendingStockParse.distributorCode ? ' (' + pendingStockParse.distributorCode + ')' : ''}` : null;
+  if (m.state === 'ok') {
+    box.innerHTML = `<div class="match-box ok"><b>Cocok.</b> File ini dari ${esc(fileDist)}, sama dengan tujuan ${esc(t.area)} &middot; ${esc(t.dist.name)}.</div>`;
+  } else if (m.state === 'bad') {
+    box.innerHTML = `<div class="match-box bad"><b>Distributor tidak cocok.</b> File ini dari <b>${esc(fileDist)}</b>, tetapi tujuan yang Anda pilih <b>${esc(t.area)} &middot; ${esc(t.dist.name)}</b>. Kemungkinan area atau distributor salah pilih.` +
+      (m.suggestion ? `<button type="button" class="primary" data-match-move="1">Pindahkan tujuan ke ${esc(m.suggestion.area.area)} &middot; ${esc(m.suggestion.dist.name)}</button>` : '') +
+      `<label class="ack"><input type="checkbox" data-match-ack${stockAckMismatch ? ' checked' : ''}><span>Saya yakin, tetap simpan ke ${esc(t.area)} &middot; ${esc(t.dist.name)}</span></label></div>`;
+  } else {
+    box.innerHTML = `<div class="match-box warn"><b>Distributor tidak bisa dicek.</b> ${t.dist ? 'File tidak menyebut nama distributor.' : 'Distributor tujuan belum terdata.'} Pastikan tujuan di atas sudah benar sebelum menyimpan.</div>`;
+  }
+  el('stockSaveBtn').disabled = m.state === 'bad' && !stockAckMismatch;
+}
+function onStockMatchClick(e) {
+  if (e.target.closest('[data-match-move]')) {
+    const m = stockMatchState(pendingStockParse);
+    if (m.suggestion) { setStockDist(m.suggestion.area, m.suggestion.dist); stockAckMismatch = false; refreshStockTab(); renderStockMatch(); showToast('Tujuan dipindahkan ke ' + m.suggestion.area.area + ' - ' + m.suggestion.dist.name, 'success'); }
+  } else if (e.target.matches('[data-match-ack]')) {
+    stockAckMismatch = e.target.checked; renderStockMatch();
   }
 }
 
 function onStockFileSelected(e) {
   const file = e.target.files[0];
   if (!file) return;
+  if (!stockTarget || !stockTarget.key) { showToast('Pilih area dan distributor dulu', 'danger'); e.target.value = ''; return; }
   const reader = new FileReader();
   reader.onload = (ev) => {
     try {
       const parsed = parseDistributorWorkbook(ev.target.result);
       pendingStockParse = { ...parsed, fileName: file.name };
-      const area = el('stockAreaSel').value;
-      const old = distributorCache[area];
+      stockAckMismatch = false;
+      const t = stockTarget;
+      const old = distributorCache[t.key];
       const rd = formatReportDate(parsed.reportDate);
+      const label = `${t.area} - ${t.dist ? t.dist.name : 'tanpa distributor'}`;
       let msg = `Berhasil dibaca: ${parsed.rowCount} produk${rd ? `, laporan tanggal ${rd}` : ''}${parsed.distributorName ? ` (${parsed.distributorName})` : ''}.`;
       if (parsed.duplicates) msg += ` ${parsed.duplicates} PCODE ganda (yang terakhir dipakai).`;
       msg += old
-        ? ` Simpan akan MENIMPA seluruh data stock ${area} sebelumnya (${Object.keys(old.items || {}).length} produk${old.reportDate ? `, laporan ${formatReportDate(old.reportDate)}` : ''}).`
-        : ` Ini data pertama untuk ${area}.`;
+        ? ` Simpan akan MENIMPA seluruh data stock ${label} sebelumnya (${Object.keys(old.items || {}).length} produk${old.reportDate ? `, laporan ${formatReportDate(old.reportDate)}` : ''}).`
+        : ` Ini data pertama untuk ${label}.`;
       if (old && old.reportDate && parsed.reportDate && parsed.reportDate < old.reportDate) {
         msg += ` PERHATIAN: laporan ini LEBIH LAMA dari data tersimpan.`;
       }
       el('stockParsePreview').textContent = msg;
       el('stockSaveBtn').disabled = false;
+      renderStockMatch();
     } catch (err) {
       el('stockParsePreview').textContent = `Gagal membaca file: ${err.message || 'format tidak dikenali'} Pastikan file adalah UID Distributor Stock Report (kolom PCODE, Karton, Lusin, PCs).`;
+      el('stockMatch').innerHTML = '';
       el('stockSaveBtn').disabled = true;
       console.error(err);
     }
@@ -1509,24 +1625,35 @@ function onStockFileSelected(e) {
   reader.readAsArrayBuffer(file);
 }
 
-async function onStockSave() {
-  if (!pendingStockParse) return;
-  const area = el('stockAreaSel').value;
+// Tombol Simpan membuka konfirmasi dulu: tujuan ditulis jelas sekali lagi sebelum data menimpa yang lama.
+function onStockSave() {
+  if (!pendingStockParse || !stockTarget || !stockTarget.key) return;
+  const t = stockTarget;
+  el('stockConfirmTarget').textContent = `${t.area} \u00b7 ${t.dist ? t.dist.name : 'Belum terdata distributornya'}`;
+  el('stockConfirmCount').textContent = `${t.count} toko akan memakai data ini. Data stock tujuan ini sebelumnya akan ditimpa.`;
+  el('stockConfirmBackdrop').classList.add('show');
+}
+
+async function onStockConfirmYes() {
+  el('stockConfirmBackdrop').classList.remove('show');
+  if (!pendingStockParse || !stockTarget) return;
+  const t = stockTarget;
   el('stockSaveBtn').disabled = true;
   el('stockSaveBtn').textContent = 'Menyimpan...';
   try {
     const meta = { reportDate: pendingStockParse.reportDate, distributorName: pendingStockParse.distributorName };
-    await saveDistributorStock(area, pendingStockParse.items, pendingStockParse.fileName, meta);
-    distributorCache[area] = { items: pendingStockParse.items, sourceFileName: pendingStockParse.fileName, ...meta, uploadedAt: { toDate: () => new Date() } };
-    showToast(`Stock distributor ${area} berhasil disimpan (${Object.keys(pendingStockParse.items).length} produk)`, 'success');
+    await saveDistributorStock(t.area, t.dist, pendingStockParse.items, pendingStockParse.fileName, meta);
+    distributorCache[t.key] = { items: pendingStockParse.items, sourceFileName: pendingStockParse.fileName, ...meta, uploadedAt: { toDate: () => new Date() } };
+    showToast(`Stock ${t.area}${t.dist ? ' - ' + t.dist.name : ''} berhasil disimpan (${Object.keys(pendingStockParse.items).length} produk)`, 'success');
+    resetStockFile();
     await refreshStockTab();
     renderSkuList();
   } catch (err) {
     console.error('Gagal menyimpan stock distributor:', err);
     showToast(`Gagal menyimpan stock (${err.code || err.message || 'error tidak diketahui'}).`, 'danger');
+    el('stockSaveBtn').disabled = false;
   } finally {
     el('stockSaveBtn').textContent = 'Simpan ke database';
-    el('stockSaveBtn').disabled = false;
   }
 }
 

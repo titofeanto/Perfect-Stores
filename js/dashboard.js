@@ -6,7 +6,7 @@ import { summarizeEntry, buildOosDetail, normalizeField, fieldTotal, fieldIsEmpt
 import { wireOosModal, showOosModal } from './oos-modal.js?v=6';
 import { downloadAsExcel } from './export-utils.js';
 import { esc, fmtTotal } from './dt-stock.js?v=1';
-import { formatReportDate, decodeDistributorDoc } from './stock-upload.js?v=3';
+import { formatReportDate, loadDistributorStock, stockKeyOf, distCodeOf, distNameOf } from './stock-upload.js?v=4';
 
 const TODAY = new Date();
 const el = (id) => document.getElementById(id);
@@ -16,7 +16,7 @@ let skuListCache = {}; // `${versi}:${scopeSlug}` -> daftar SKU (semua versi, un
 let versionsMeta = null; // data/versions.json
 let versionData = {};    // id versi -> isi versi (stores, skus, sets)
 let currentWeeks = [];
-let distStockByArea = {};
+let distStockByArea = {}; // kunci: area atau area__kodeDistributor (lihat stockKeyOf)
 let distMetaByArea = {}; // area -> {reportDate}
 let rowsByStoreId = {};
 let entriesByStore = null; // hasil fetch minggu terpilih; null = belum dimuat
@@ -73,18 +73,19 @@ async function init() {
 // distributorStock cuma menyimpan snapshot TERBARU (bukan histori per minggu) --
 // dimuat sekali saja, bukan tergantung minggu yang dipilih.
 async function loadDistributorStockAll() {
-  const areas = [...new Set(stores.map(s => s.area))]; // semua area toko yang bisa dilihat akun ini
-  const results = await Promise.all(areas.map(async area => {
+  // Satu entri per kombinasi area + distributor (satu area bisa dilayani dua distributor).
+  const combos = new Map();
+  for (const s of stores) combos.set(stockKeyOf(s), s);
+  const results = await Promise.all([...combos].map(async ([key, s]) => {
     try {
-      const snap = await getDoc(doc(db, 'distributorStock', area));
-      return [area, snap.exists() ? decodeDistributorDoc(snap.data()) : null];
+      return [key, await loadDistributorStock(s.area, { code: distCodeOf(s), name: distNameOf(s) })];
     } catch (err) {
-      console.error('Gagal memuat stock distributor', area, err);
-      return [area, null];
+      console.error('Gagal memuat stock distributor', key, err);
+      return [key, null];
     }
   }));
-  distStockByArea = Object.fromEntries(results.map(([a, d]) => [a, (d && d.items) || {}]));
-  distMetaByArea = Object.fromEntries(results.map(([a, d]) => [a, { reportDate: d && d.reportDate }]));
+  distStockByArea = Object.fromEntries(results.map(([k, d]) => [k, (d && d.items) || {}]));
+  distMetaByArea = Object.fromEntries(results.map(([k, d]) => [k, { reportDate: d && d.reportDate }]));
 }
 
 function populateMonthSelect() {
@@ -156,7 +157,7 @@ function renderDashboard() {
       selectedBus.has(sku.bu || NO_BU) && selectedFlags.has(sku.flag || 'COTC'));
     if (!skuList.length) continue;
     const summary = summarizeEntry(entry ? entry.items : null, skuList);
-    const oosDetail = buildOosDetail(entry ? entry.items : null, skuList, distStockByArea[store.area] || {});
+    const oosDetail = buildOosDetail(entry ? entry.items : null, skuList, distStockByArea[stockKeyOf(store)] || {});
     let status = 'notstarted';
     if (entry && entry.submitted) status = 'submitted';
     else if (entry) status = 'progress';
@@ -664,7 +665,7 @@ async function exportAllStores() {
 function openOosModal(storeId, week) {
   const row = rowsByStoreId[storeId];
   if (!row) return;
-  showOosModal({ store: row.store, week, oosDetail: row.oosDetail, dtAsOf: formatReportDate((distMetaByArea[row.store.area] || {}).reportDate) });
+  showOosModal({ store: row.store, week, oosDetail: row.oosDetail, dtAsOf: formatReportDate((distMetaByArea[stockKeyOf(row.store)] || {}).reportDate) });
 }
 
 init();
