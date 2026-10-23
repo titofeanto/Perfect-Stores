@@ -274,6 +274,7 @@ function attachStaticHandlers() {
   el('stockConfirmNo').addEventListener('click', () => el('stockConfirmBackdrop').classList.remove('show'));
   el('stockFileInput').addEventListener('change', onStockFileSelected);
   el('stockSaveBtn').addEventListener('click', onStockSave);
+  el('masukBox').addEventListener('click', onMasukBoxClick);
   el('masukFileInput').addEventListener('change', onMasukFileSelected);
   el('masukSaveBtn').addEventListener('click', onMasukSave);
 
@@ -1660,36 +1661,115 @@ async function onStockConfirmYes() {
 // ---------- Upload Extract (data pembelian toko dari distributor -> Barang Masuk, oleh Supervisor) ----------
 
 let pendingMasukResult = null;
-let lastMasukFile = null; // File terakhir yang dipilih -- dipakai untuk baca ulang otomatis kalau Minggu diganti
+let lastMasukFile = null; // File terakhir yang dipilih -- dipakai untuk baca ulang otomatis kalau periode diganti
+let masukWeek = null;     // Periode extract (Senin-Minggu) yang akan diisi. TERPISAH dari Minggu di bagian atas halaman.
+let masukDetected = null; // {periodKey, share, weeks:[{periodKey,count}], total} -- minggu menurut tanggal (INVDate) di file
+let masukAck = false;     // SBA/supervisor menyatakan periode sengaja berbeda dari tanggal di file
 
-function refreshMasukTab() {
-  if (!currentWeek) return;
-  el('masukPeriodInfo').textContent = `Periode target: ${currentWeek.label} (${fmtShort(currentWeek.start)} - ${fmtShort(currentWeek.end)})`;
-  if (lastMasukFile) {
-    // File sudah pernah dipilih sebelumnya -- baca ulang otomatis utk periode yang baru
-    // dipilih, supaya ganti Minggu tidak perlu klik "Choose File" lagi dari nol.
-    processMasukFile(lastMasukFile);
-  } else {
-    el('masukParsePreview').textContent = '';
-    el('masukPreviewDetail').innerHTML = '';
-    el('masukSaveBtn').disabled = true;
-    pendingMasukResult = null;
-  }
+const mondayOf = (d) => { const r = new Date(d.getFullYear(), d.getMonth(), d.getDate()); r.setDate(r.getDate() - ((r.getDay() + 6) % 7)); return r; };
+function weekFrom(monday) {
+  const start = new Date(monday.getFullYear(), monday.getMonth(), monday.getDate());
+  return { start, end: addDays(start, 6), periodKey: isoDate(start) };
+}
+const weekText = (w) => `${fmtShort(w.start)} - ${fmtShort(w.end)} ${w.end.getFullYear()}`;
+// Pilihan periode: 5 minggu terakhir sampai minggu ini. Setiap Senin supervisor mengunggah data 7 hari sebelumnya,
+// jadi bawaannya MINGGU LALU, bukan minggu yang berjalan di bagian atas halaman.
+function masukWeekOptions() {
+  const thisMon = mondayOf(TODAY);
+  return [-4, -3, -2, -1, 0].map(n => {
+    const w = weekFrom(addDays(thisMon, n * 7));
+    w.rel = n === 0 ? 'Minggu ini' : n === -1 ? 'Minggu lalu' : `${-n} minggu lalu`;
+    return w;
+  });
+}
+function setMasukWeek(w, reprocess) {
+  masukWeek = w; masukAck = false;
+  renderMasukPeriod();
+  if (reprocess && lastMasukFile) processMasukFile(lastMasukFile);
 }
 
-// Cocokkan baris mentah hasil parsing ke toko (by Outlet=storeId) & SKU wajib toko itu
-// (by SKUCode -> BARCODE: semua SKU Code dengan barcode yang sama dihitung ke barcode itu),
-// sambil membuang baris yang tanggalnya di luar minggu yang sedang dipilih.
+function refreshMasukTab() {
+  if (!masukWeek) masukWeek = masukWeekOptions().find(w => w.rel === 'Minggu lalu');
+  renderMasukPeriod();
+}
+
+function renderMasukPeriod() {
+  const opts = masukWeekOptions();
+  const w = masukWeek;
+  const cur = opts.find(o => o.periodKey === w.periodKey);
+  const isMonday = TODAY.getDay() === 1;
+  const last = opts.find(o => o.rel === 'Minggu lalu');
+  el('masukPeriodTitle').textContent = weekText(w);
+  el('masukPeriodTag').textContent = cur ? cur.rel : 'Periode lain';
+  el('masukPeriodTag').className = 'pc-tag ' + (cur && cur.rel === 'Minggu lalu' ? 'ok' : 'warn');
+  // urutan: minggu lalu (bawaan) dulu, lalu minggu ini, lalu yang lebih lama
+  const chipOrder = [opts.find(o => o.rel === 'Minggu lalu'), opts.find(o => o.rel === 'Minggu ini'), ...opts.filter(o => o.rel !== 'Minggu lalu' && o.rel !== 'Minggu ini').reverse()];
+  el('masukWeekChips').innerHTML = chipOrder.map(o =>
+    `<button type="button" class="chip${o.periodKey === w.periodKey ? ' active' : ''}" data-mweek="${o.periodKey}">${esc(o.rel)}<small> ${fmtShort(o.start)}-${fmtShort(o.end)}</small></button>`).join('');
+  el('masukReminder').className = 'reminder' + (isMonday ? ' today' : '');
+  el('masukReminder').innerHTML = `<b>${isMonday ? 'Hari ini Senin:' : 'Ingat:'}</b> supervisor mengunggah data <b>7 hari sebelumnya</b>. Minggu lalu = <b>${weekText(last)}</b>. ` +
+    `Periode di sini <b>tidak ikut</b> pilihan Minggu di bagian atas halaman, jadi cek lagi sebelum menyimpan.`;
+}
+
+// Minggu (Senin-Minggu) menurut tanggal INVDate di file. Baris tanpa tanggal tidak dihitung.
+function detectMasukWeeks(rows) {
+  const count = {};
+  let total = 0;
+  for (const r of rows) {
+    if (!r.invDate) continue;
+    const k = isoDate(mondayOf(r.invDate));
+    count[k] = (count[k] || 0) + 1; total++;
+  }
+  const weeks = Object.entries(count).map(([periodKey, n]) => ({ periodKey, count: n })).sort((x, y) => y.count - x.count);
+  return { total, weeks, periodKey: weeks[0] ? weeks[0].periodKey : null, share: total && weeks[0] ? weeks[0].count / total : 0 };
+}
+const weekByKey = (key) => weekFrom(new Date(key + 'T00:00:00'));
+
+function renderMasukCheck(rows) {
+  const box = el('masukCheck');
+  if (!masukDetected || !masukDetected.total) { box.innerHTML = rows ? '<div class="match-box warn"><b>Tanggal tidak terbaca.</b> File tidak punya kolom INVDate yang valid, jadi periode tidak bisa dicek otomatis. Pastikan periode di atas sudah benar.</div>' : ''; return true; }
+  const d = masukDetected, sel = masukWeek.periodKey;
+  const inSel = (d.weeks.find(x => x.periodKey === sel) || { count: 0 }).count;
+  const fileWeek = weekByKey(d.periodKey);
+  let html = '', blocked = false;
+  if (d.periodKey === sel && d.share >= 0.9) {
+    html = `<div class="match-box ok"><b>Periode cocok.</b> Tanggal di file (${esc(weekText(fileWeek))}) sama dengan periode yang dipilih.</div>`;
+  } else if (d.periodKey === sel) {
+    html = `<div class="match-box warn"><b>File berisi lebih dari satu minggu.</b> ${inSel} dari ${d.total} baris jatuh di ${esc(weekText(masukWeek))}; sisanya di luar periode dan diabaikan.</div>`;
+  } else {
+    blocked = !masukAck;
+    html = `<div class="match-box bad"><b>Periode tidak cocok dengan tanggal di file.</b> Tanggal di file sebagian besar ada di <b>${esc(weekText(fileWeek))}</b> (${d.weeks[0].count} dari ${d.total} baris), tetapi periode yang dipilih <b>${esc(weekText(masukWeek))}</b> (${inSel} baris cocok).` +
+      `<button type="button" class="primary" data-mpick="${d.periodKey}">Pakai periode ${esc(weekText(fileWeek))}</button>` +
+      `<label class="ack"><input type="checkbox" data-mack${masukAck ? ' checked' : ''}><span>Saya yakin, tetap simpan ke ${esc(weekText(masukWeek))}</span></label></div>`;
+  }
+  box.innerHTML = html;
+  return !blocked;
+}
+function onMasukBoxClick(e) {
+  const chip = e.target.closest('[data-mweek]');
+  if (chip) { const w = masukWeekOptions().find(o => o.periodKey === chip.dataset.mweek); if (w) setMasukWeek(w, true); return; }
+  const pick = e.target.closest('[data-mpick]');
+  if (pick) { setMasukWeek(weekByKey(pick.dataset.mpick), true); showToast('Periode diganti sesuai tanggal di file', 'success'); return; }
+  if (e.target.matches('[data-mack]')) { masukAck = e.target.checked; updateMasukSave(); renderMasukCheck(true); }
+}
+function updateMasukSave() {
+  const ok = pendingMasukResult && pendingMasukResult.matchedStoreNames.length > 0 && (!masukDetected || !masukDetected.total || masukDetected.periodKey === masukWeek.periodKey || masukAck);
+  el('masukSaveBtn').disabled = !ok;
+}
+
 async function processPurchaseRows(rows) {
-  const weekStart = currentWeek.start;
-  const weekEnd = currentWeek.end;
+  const weekStart = masukWeek.start;
+  const weekEnd = new Date(masukWeek.end.getFullYear(), masukWeek.end.getMonth(), masukWeek.end.getDate(), 23, 59, 59);
   let outOfRange = 0;
   const unmatchedStoreSet = new Set();
   let nonWajibCount = 0;
   const perStoreQty = {}; // storeId -> { barcode: totalQty }
   const codeMapCache = {}; // storeId -> Map(skuCode -> barcode)
+  const distInFile = {};   // kode distributor di file -> {name, rows}
+  const distMismatch = new Set(); // toko yang distributor di file beda dari yang tercatat di daftar toko
 
   for (const row of rows) {
+    if (row.distId) { const d = distInFile[row.distId] = distInFile[row.distId] || { name: row.distName, rows: 0 }; d.rows++; }
     if (row.invDate && (row.invDate < weekStart || row.invDate > weekEnd)) {
       outOfRange++;
       continue;
@@ -1699,8 +1779,10 @@ async function processPurchaseRows(rows) {
       unmatchedStoreSet.add(row.outlet);
       continue;
     }
+    const known = distCodeOf(store);
+    if (row.distId && known && row.distId !== known) distMismatch.add(store.name);
     if (!codeMapCache[store.id]) {
-      const skuList = await skuListForStoreWeek(store, currentWeek.periodKey);
+      const skuList = await skuListForStoreWeek(store, masukWeek.periodKey);
       const map = new Map();
       for (const s of skuList) {
         for (const c of (s.codes || [])) map.set(c.code, s.barcode);
@@ -1719,13 +1801,14 @@ async function processPurchaseRows(rows) {
   }
 
   const matchedStoreNames = Object.keys(perStoreQty).map(id => (stores.find(s => s.id === id) || {}).name || id);
-  return { perStoreQty, outOfRange, unmatchedStores: [...unmatchedStoreSet], nonWajibCount, matchedStoreNames, totalRows: rows.length };
+  return { perStoreQty, outOfRange, unmatchedStores: [...unmatchedStoreSet], nonWajibCount, matchedStoreNames, totalRows: rows.length, distInFile, distMismatch: [...distMismatch] };
 }
 
 function onMasukFileSelected(e) {
   const file = e.target.files[0];
   if (!file) return;
   lastMasukFile = file;
+  masukAck = false;
   processMasukFile(file);
 }
 
@@ -1738,31 +1821,38 @@ function processMasukFile(file) {
       const { rows, headerMissing } = parsePurchaseWorkbook(ev.target.result);
       if (headerMissing) {
         el('masukParsePreview').textContent = 'Format file tidak dikenali. Pastikan ada kolom Outlet, SKUCode, TotalQuantity(PCS).';
+        el('masukCheck').innerHTML = '';
         showToast('Format file tidak dikenali. Cek kolomnya.', 'danger');
         return;
       }
+      masukDetected = detectMasukWeeks(rows);
       const result = await processPurchaseRows(rows);
       pendingMasukResult = result;
+      const label = weekText(masukWeek);
       const skuCombos = Object.values(result.perStoreQty).reduce((n, m) => n + Object.keys(m).length, 0);
       el('masukParsePreview').textContent = `${rows.length} baris dibaca. ${result.matchedStoreNames.length} toko terdeteksi, ${skuCombos} kombinasi toko+SKU siap disimpan.`;
       let detail = '';
-      if (result.outOfRange > 0) detail += `<p class="upload-status">${result.outOfRange} baris di luar rentang ${currentWeek.label} diabaikan.</p>`;
+      const dists = Object.entries(result.distInFile);
+      if (dists.length) detail += `<p class="upload-status">Distributor di file: ${dists.map(([k, v]) => `${esc(v.name || k)} (${k})`).join(', ')}. Distributor tidak perlu dipilih: toko dikenali dari kode Outlet di file.</p>`;
+      if (result.distMismatch.length) detail += `<p class="upload-status" style="color:var(--warning);font-weight:600;">${result.distMismatch.length} toko tercatat di distributor lain pada daftar toko: ${esc(result.distMismatch.slice(0, 5).join(', '))}${result.distMismatch.length > 5 ? ' dan lainnya' : ''}. Data tetap dihitung, tapi cek file distributornya benar.</p>`;
+      if (result.outOfRange > 0) detail += `<p class="upload-status">${result.outOfRange} baris di luar rentang ${label} diabaikan.</p>`;
       if (result.unmatchedStores.length) {
         const shown = result.unmatchedStores.slice(0, 8).join(', ');
-        const more = result.unmatchedStores.length > 8 ? ` &middot; dan ${result.unmatchedStores.length - 8} kode outlet lain (di luar 36 toko SBA COTC)` : '';
+        const more = result.unmatchedStores.length > 8 ? ` &middot; dan ${result.unmatchedStores.length - 8} kode outlet lain (di luar toko SBA COTC)` : '';
         detail += `<p class="upload-status">${result.unmatchedStores.length} kode outlet tidak dikenal diabaikan: ${shown}${more}</p>`;
       }
       if (result.nonWajibCount > 0) detail += `<p class="upload-status">${result.nonWajibCount} baris di luar SKU wajib toko terkait diabaikan.</p>`;
       if (result.matchedStoreNames.length) detail += `<p class="upload-status">Toko terdeteksi: ${result.matchedStoreNames.join(', ')}</p>`;
       el('masukPreviewDetail').innerHTML = detail;
-      el('masukSaveBtn').disabled = result.matchedStoreNames.length === 0;
+      renderMasukCheck(true);
+      updateMasukSave();
 
       // Pop-up notifikasi juga (bukan cuma teks di bawah, supaya tidak kelewat) --
       // warna beda tergantung ada data siap simpan atau tidak sama sekali.
       if (skuCombos > 0) {
-        showToast(`${rows.length} baris dibaca untuk ${currentWeek.label}: ${skuCombos} kombinasi toko+SKU siap disimpan.`, 'success');
+        showToast(`${rows.length} baris dibaca untuk ${label}: ${skuCombos} kombinasi toko+SKU siap disimpan.`, 'success');
       } else {
-        showToast(`${rows.length} baris dibaca, tapi 0 yang cocok dengan ${currentWeek.label}. Cek Minggu yang dipilih sudah benar?`, 'danger');
+        showToast(`${rows.length} baris dibaca, tapi 0 yang cocok dengan ${label}. Cek periode yang dipilih sudah benar?`, 'danger');
       }
     } catch (err) {
       console.error(err);
@@ -1779,7 +1869,8 @@ async function onMasukSave() {
   btn.disabled = true;
   btn.textContent = 'Menyimpan...';
   const result = pendingMasukResult;
-  const periodKey = currentWeek.periodKey;
+  const week = masukWeek;
+  const periodKey = week.periodKey;
   const storeIds = Object.keys(result.perStoreQty);
 
   // Langkah 1: simpan ke Firestore. INI SATU-SATUNYA yang menentukan toast sukses/gagal.
@@ -1798,8 +1889,8 @@ async function onMasukSave() {
         area: store ? store.area : null,
         scopeSlug: store ? store.scopeSlug : null,
         periodKey,
-        weekStart: currentWeek.start.toISOString(),
-        weekEnd: currentWeek.end.toISOString(),
+        weekStart: week.start.toISOString(),
+        weekEnd: week.end.toISOString(),
         items,
         ...(listVersion ? { listVersion } : {}),
         masukUpdatedAt: serverTimestamp()
@@ -1813,12 +1904,15 @@ async function onMasukSave() {
     return;
   }
 
-  showToast(`Barang masuk tersimpan untuk ${storeIds.length} toko, periode ${currentWeek.label}`, 'success');
+  showToast(`Barang masuk tersimpan untuk ${storeIds.length} toko, periode ${weekText(week)}`, 'success');
   pendingMasukResult = null;
+  masukDetected = null;
+  masukAck = false;
   lastMasukFile = null;
   el('masukFileInput').value = '';
   el('masukParsePreview').textContent = '';
   el('masukPreviewDetail').innerHTML = '';
+  el('masukCheck').innerHTML = '';
   btn.textContent = 'Simpan ke database';
   btn.disabled = true;
 
@@ -1826,13 +1920,13 @@ async function onMasukSave() {
   Promise.all(storeIds.map(async storeId => {
     const store = stores.find(s => s.id === storeId);
     if (!store) return;
-    const skuList = await skuListForStoreWeek(store, currentWeek.periodKey);
-    return computeAndSaveJualForStorePeriod(storeId, currentWeek.start, skuList);
+    const skuList = await skuListForStoreWeek(store, week.periodKey);
+    return computeAndSaveJualForStorePeriod(storeId, week.start, skuList);
   })).catch(err => console.error('Gagal hitung ulang Jual setelah upload Masuk:', err));
 
-  // Langkah 3: refresh tampilan toko yang sedang dibuka, kalau termasuk yang baru diupdate
+  // Langkah 3: refresh tampilan toko yang sedang dibuka, kalau termasuk yang baru diupdate dan minggunya yang sedang tampil
   // (best-effort juga -- data sudah AMAN tersimpan di langkah 1, ini cuma soal tampilan).
-  if (currentStore && result.perStoreQty[currentStore.id]) {
+  if (currentStore && currentWeek && currentWeek.periodKey === periodKey && result.perStoreQty[currentStore.id]) {
     try {
       await loadEntryForCurrentPeriod();
       renderAll();

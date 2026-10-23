@@ -35,7 +35,9 @@ export function parsePurchaseWorkbook(arrayBuffer) {
     outlet: header.indexOf('outlet'),
     skuCode: header.indexOf('skucode'),
     qty: header.indexOf('totalquantity(pcs)'),
-    invDate: header.indexOf('invdate')
+    invDate: header.indexOf('invdate'),
+    distId: header.indexOf('distid'),       // opsional: dipakai untuk memeriksa distributor di file
+    distName: header.indexOf('distname')
   };
   if (idx.outlet === -1 || idx.skuCode === -1 || idx.qty === -1) {
     return { rows: [], headerMissing: true };
@@ -50,7 +52,9 @@ export function parsePurchaseWorkbook(arrayBuffer) {
     const qty = row[idx.qty] != null ? Number(row[idx.qty]) : 0;
     const invDate = idx.invDate !== -1 ? parseInvDate(row[idx.invDate]) : null;
     if (!outlet || !skuCode) continue;
-    parsed.push({ outlet, skuCode, qty: isNaN(qty) ? 0 : qty, invDate });
+    const distId = idx.distId !== -1 && row[idx.distId] != null ? String(row[idx.distId]).trim() : '';
+    const distName = idx.distName !== -1 && row[idx.distName] != null ? String(row[idx.distName]).trim() : '';
+    parsed.push({ outlet, skuCode, qty: isNaN(qty) ? 0 : qty, invDate, distId, distName });
   }
   return { rows: parsed, headerMissing: false };
 }

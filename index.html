@@ -17,7 +17,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap">
-<link rel="stylesheet" href="css/style.css?v=24">
+<link rel="stylesheet" href="css/style.css?v=26">
 </head>
 <body>
 <div class="app">
@@ -155,21 +155,32 @@
   </div>
 
   <div id="viewMasuk" class="view hidden">
-    <div class="card">
-      <p class="section-title" style="margin:0 0 6px;">Upload Extract</p>
-      <p class="upload-status">Untuk Supervisor: upload extract pembelian toko dari distributor (kolom yang dipakai: Outlet, SKUCode, TotalQuantity(PCS), INVDate). File boleh berisi 1 toko, 1 area, atau semua toko sekaligus. Semua SKU Code dengan barcode yang sama dihitung masuk ke toko tersebut sebagai barcode itu.</p>
-      <p id="masukPeriodInfo" class="upload-status" style="font-weight:600; color:var(--text);"></p>
+    <div class="card" id="masukBox">
+      <p class="section-title" style="margin:0 0 10px;">Upload Extract <span class="muted-tag">Supervisor</span></p>
+
+      <div class="period-card">
+        <div class="pc-top"><small>1. Periode yang akan diunggah</small><span id="masukPeriodTag" class="pc-tag">-</span></div>
+        <b id="masukPeriodTitle">-</b>
+        <div class="chip-row period-chips" id="masukWeekChips"></div>
+        <p id="masukReminder" class="reminder"></p>
+      </div>
+
       <a href="assets/template_upload_pembelian_toko.xlsx" download class="template-link">
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
           <path d="M12 3v12m0 0l-4-4m4 4l4-4M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
         </svg>
         Download contoh template
       </a>
-      <label class="field-label" style="margin-top:10px;">Upload file extract</label>
+      <label class="field-label" style="margin-top:14px;">2. Upload file extract</label>
       <input id="masukFileInput" type="file" accept=".xlsx,.xls">
       <p id="masukParsePreview" class="upload-status"></p>
+      <div id="masukCheck"></div>
       <div id="masukPreviewDetail"></div>
-      <button id="masukSaveBtn" class="primary" style="margin-top:8px; width:100%;" disabled>Simpan ke database</button>
+      <button id="masukSaveBtn" class="primary" style="margin-top:10px; width:100%;" disabled>Simpan ke database</button>
+      <details class="how">
+        <summary>Cara kerja dan kolom yang dipakai</summary>
+        <p class="upload-status">Kolom yang dipakai: Outlet, SKUCode, TotalQuantity(PCS), INVDate. File boleh berisi 1 toko, 1 area, atau semua toko sekaligus. <b>Distributor tidak perlu dipilih</b>: toko dikenali dari kode Outlet di file, dan kolom DistID/DistName (kalau ada) hanya dipakai untuk memeriksa. Semua SKU Code dengan barcode yang sama dihitung masuk ke toko tersebut sebagai barcode itu. Tanggal INVDate dicek terhadap periode di atas.</p>
+      </details>
     </div>
   </div>
 
@@ -232,7 +243,7 @@
 
 </div>
 <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
-<script type="module" src="js/app.js?v=37"></script>
+<script type="module" src="js/app.js?v=39"></script>
 <script type="module" src="js/bottom-nav.js?v=3"></script>
 </body>
 </html>

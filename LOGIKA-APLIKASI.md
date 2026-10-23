@@ -178,3 +178,12 @@ Unggahan Excel untuk harga, promo dan pembelian memakai template di `assets/`.
 - Daftar toko di halaman Input memakai versi yang berlaku hari ini, jadi toko yang sudah dikeluarkan tidak muncul untuk input baru.
 - Area toko tidak ada di file SKU Audit. Diambil dari data lama atau diduga lewat distributor, perlu dicek untuk toko baru.
 - Belum ada pengujian otomatis. Logika pemilihan versi diuji dengan skrip sekali jalan, bukan test suite.
+
+## Upload Extract: periode dan distributor
+
+- Distributor TIDAK dipilih: toko dikenali dari kode Outlet di file. Kolom `DistID`/`DistName` (kalau ada) hanya dipakai untuk
+  memeriksa: toko yang tercatat di distributor lain pada daftar toko diberi catatan, datanya tetap dihitung.
+- Periode extract dipilih sendiri di tab ini, terpisah dari Minggu di bagian atas halaman. Bawaannya MINGGU LALU, karena setiap
+  Senin supervisor mengunggah data 7 hari sebelumnya. Pengingat selalu tampil (lebih menonjol di hari Senin).
+- Setelah file dibaca, tanggal `INVDate` dikelompokkan per minggu Senin-Minggu. Kalau minggu dominan di file berbeda dari periode
+  yang dipilih, Simpan dikunci sampai periode diganti lewat tombol "Pakai periode ..." atau SBA mencentang "Saya yakin".
