@@ -948,3 +948,7 @@ body[data-role="supervisor"] #productList { display: none; }
 body[data-role="supervisor"] .active-store:not([hidden]) { display: flex; }
 body[data-role="supervisor"] #tabInput, body[data-role="supervisor"] #tabRecap { display: none; }
 body[data-role="supervisor"] .tabs.tabs-4 { grid-template-columns: repeat(2, 1fr); }
+
+/* Tombol "Stok kosong" / "Tidak order": mencatat 0 dengan satu ketukan */
+.zero-btn { margin: 0 8px 0 auto; min-height: 32px; padding: 0 12px; border-radius: 999px; border: 1.5px solid var(--glass-edge); background: var(--surface); color: var(--text-secondary); font: 700 12px var(--font); white-space: nowrap; }
+.zero-btn.on { border-color: var(--danger); background: var(--danger-bg, rgb(239 68 68 / .12)); color: var(--danger); }

@@ -69,6 +69,8 @@ dengan lainnya. Filter akun (`user-mapping.json`) hanya merapikan tampilan, buka
 Dihitung per toko terhadap daftar SKU wajibnya (`summarizeEntry` di `js/entry-utils.js`):
 
 - **Lengkap**: SKU dengan `stock` dan `order` keduanya terisi.
+- Stock yang memang habis tidak perlu diketik: tombol **Stok kosong** di tiap SKU mengisi `stock` = 0 (terbaca terisi dan "Tidak ada", masuk daftar restock di Rekap). Tombol **Tidak order** melakukan hal sama untuk `order`. Ketuk lagi untuk membatalkan. Cukup satu dari tiga kolom (Krtn/Lsn/Pcs) yang terisi agar satu field dianggap terisi.
+- Kolom yang dibiarkan kosong sampai Kirim tetap tercatat 0 saat dikirim, tetapi sebelum dikirim terbaca "Belum diisi" di Rekap dan dashboard.
 - **Ada**: `stock` terisi dan > 0. **Tidak ada**: `stock` terisi dan = 0. **Belum diisi**: `stock` kosong.
 - **OSA (On Shelf Availability)** = SKU Ada dibagi total SKU wajib. Dashboard menjumlahkan lintas toko.
 - **Kelengkapan %** = SKU Lengkap dibagi total SKU wajib.

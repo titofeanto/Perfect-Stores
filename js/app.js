@@ -92,7 +92,11 @@ function badgeHtml(sku, item) {
   if (!fieldIsEmpty(item.stock) && fieldTotal(item.stock, sku.isi) === 0) {
     html += '<span class="badge stockzero">Tidak ada</span>';
   }
-  if (s !== 'lengkap') html += '<div class="sku-warning">Kolom kosong akan tercatat 0 saat dikirim</div>';
+  if (s !== 'lengkap') {
+    html += fieldIsEmpty(item.stock)
+      ? '<div class="sku-warning">Stock belum diisi. Kalau memang kosong, ketuk &ldquo;Stok kosong&rdquo; supaya tercatat Tidak ada.</div>'
+      : '<div class="sku-warning">Kolom kosong akan tercatat 0 saat dikirim</div>';
+  }
   return html;
 }
 
@@ -681,6 +685,15 @@ function populateSkuFilterDropdowns() {
   el('brandFilterSel').innerHTML = buildOptions(uniqueSorted('brand'), 'Semua Brand');
 }
 
+// Tombol sengaja-kosong: stock/order yang memang 0 dicatat 0 tanpa mengetik, jadi terbaca terisi di rekap
+// (stock 0 = "Tidak ada"). Ketuk lagi untuk membatalkan.
+const ZERO_LABEL = { stock: ['Stok kosong', 'Stok kosong \u2713'], order: ['Tidak order', 'Tidak order \u2713'] };
+const isZeroField = (fo, isi) => !fieldIsEmpty(fo) && fieldTotal(fo, isi) === 0;
+function zeroBtnHtml(sku, f, fo) {
+  const on = isZeroField(fo, sku.isi);
+  return `<button type="button" class="zero-btn${on ? ' on' : ''}" data-zero-barcode="${sku.barcode}" data-zero-field="${f}" aria-pressed="${on}">${ZERO_LABEL[f][on ? 1 : 0]}</button>`;
+}
+
 function skuCardHtml(sku, distStock) {
   const item = currentEntry[sku.barcode];
   // Stock DT = jumlah semua SKU Code dengan barcode yang sama; rincian per kode bisa dibuka.
@@ -712,6 +725,7 @@ function skuCardHtml(sku, distStock) {
             <div class="field-row">
               <div class="field-row-head">
                 <label class="field-label">${FIELD_LABELS[f]}</label>
+                ${zeroBtnHtml(sku, f, fo)}
                 <span class="field-total" data-total-for="${f}">= ${total} pcs</span>
               </div>
               <div class="field-subinputs">
@@ -891,24 +905,48 @@ function renderSkuList() {
     });
   });
 
+  const afterFieldChange = (container, barcode, field) => {
+    scheduleSaveField(barcode);
+    renderProgress();
+    renderReminder();
+    const sku = currentSkuList.find(s => s.barcode === barcode);
+    container.querySelector('.sku-badges').innerHTML = badgeHtml(sku, currentEntry[barcode]);
+    const totalEl = container.querySelector(`[data-total-for="${field}"]`);
+    if (totalEl) totalEl.textContent = `= ${fieldTotal(currentEntry[barcode][field], sku.isi)} pcs`;
+    const zb = container.querySelector(`[data-zero-field="${field}"]`);
+    if (zb) {
+      const on = isZeroField(currentEntry[barcode][field], sku.isi);
+      zb.classList.toggle('on', on);
+      zb.setAttribute('aria-pressed', on);
+      zb.textContent = ZERO_LABEL[field][on ? 1 : 0];
+    }
+    if (field === 'stock') {
+      const refEl = container.querySelector(`[data-order-ref-for="${barcode}"]`);
+      if (refEl) refEl.innerHTML = orderRefHtml(sku, currentEntry[barcode]);
+    }
+  };
+
   el('skuList').querySelectorAll('.field-subinputs input[type=number]').forEach(inp => {
     inp.addEventListener('input', () => {
-      const barcode = inp.dataset.barcode;
-      const field = inp.dataset.field;
-      const sub = inp.dataset.sub;
+      const { barcode, field, sub } = inp.dataset;
       currentEntry[barcode][field][sub] = inp.value;
-      scheduleSaveField(barcode);
-      renderProgress();
-      renderReminder();
-      const container = inp.closest('.sku-item');
+      afterFieldChange(inp.closest('.sku-item'), barcode, field);
+    });
+  });
+
+  el('skuList').querySelectorAll('.zero-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const { zeroBarcode: barcode, zeroField: field } = btn.dataset;
       const sku = currentSkuList.find(s => s.barcode === barcode);
-      container.querySelector('.sku-badges').innerHTML = badgeHtml(sku, currentEntry[barcode]);
-      const totalEl = container.querySelector(`[data-total-for="${field}"]`);
-      if (totalEl) totalEl.textContent = `= ${fieldTotal(currentEntry[barcode][field], sku.isi)} pcs`;
-      if (field === 'stock') {
-        const refEl = container.querySelector(`[data-order-ref-for="${barcode}"]`);
-        if (refEl) refEl.innerHTML = orderRefHtml(sku, currentEntry[barcode]);
+      const fo = currentEntry[barcode][field];
+      const clear = isZeroField(fo, sku.isi);
+      fo.karton = ''; fo.lusin = ''; fo.pcs = clear ? '' : '0';
+      const container = btn.closest('.sku-item');
+      for (const sub of ['karton', 'lusin', 'pcs']) {
+        const inp = container.querySelector(`input[data-field="${field}"][data-sub="${sub}"]`);
+        if (inp) inp.value = fo[sub];
       }
+      afterFieldChange(container, barcode, field);
     });
   });
 
@@ -1312,7 +1350,7 @@ function onSubmitClick() {
     return n + EDITABLE_FIELDS.filter(f => fieldIsEmpty(item[f])).length;
   }, 0);
   if (missing > 0) {
-    el('modalBody').textContent = `Toko: ${currentStore.name} (${currentStore.area}). ${missing} dari ${total} SKU wajib untuk ${currentWeek.label} belum lengkap, dengan total ${emptyFields} kolom kosong. Kolom kosong akan otomatis tercatat 0 jika Anda kirim sekarang.`;
+    el('modalBody').textContent = `Toko: ${currentStore.name} (${currentStore.area}). ${missing} dari ${total} SKU wajib untuk ${currentWeek.label} belum lengkap, dengan total ${emptyFields} kolom kosong. Kolom kosong akan otomatis tercatat 0 jika Anda kirim sekarang. Untuk stock yang memang habis, ketuk "Stok kosong" di SKU-nya supaya tercatat sengaja.`;
   } else {
     el('modalBody').textContent = `Toko: ${currentStore.name} (${currentStore.area}). Semua SKU wajib untuk ${currentWeek.label} sudah lengkap. Data siap dikirim.`;
   }
