@@ -1,5 +1,5 @@
 import { db, doc, getDoc, setDoc, serverTimestamp, authReady } from './firebase-init.js';
-import { setupStoreGate } from './store-gate.js?v=1';
+import { setupStoreGate } from './store-gate.js?v=2';
 import { pickAccount, storeIsAllowed, getCurrentMapping, switchAccount } from './store-filter.js?v=2';
 import { loadStores, loadSkuList, groupStoresByArea, loadVersionsMeta, loadVersion, resolveListVersion, skuListForStore } from './store-data.js?v=2';
 import { getWeeksForMonth, findWeekContaining, fmtShort, MONTHS_ID, addDays, isoDate } from './weeks.js';
@@ -20,6 +20,7 @@ const TODAY = new Date(); // tanggal perangkat SBA saat app dibuka
 let stores = [];
 let storesByArea = {};
 let storeGate = null;
+let supervisorMode = false; // masuk tanpa toko (tombol Supervisor di layar pilih toko)
 // Filter channel (LMT SPM / Local Minis / Haba DT) untuk daftar Area & Toko. 'all' = tanpa filter.
 const CHANNEL_ORDER = ['lmt-spm', 'local-minis', 'haba-dt'];
 const CHANNEL_LABELS = { 'lmt-spm': 'LMT SPM', 'local-minis': 'Local Minis', 'haba-dt': 'Haba DT' };
@@ -118,7 +119,10 @@ async function init() {
   populateMonthSelect();
   attachStaticHandlers();
 
-  storeGate = setupStoreGate({ pageKey: 'input', stores, channelLabel, onPick: s => pickStoreFromSearch(s.id) });
+  storeGate = setupStoreGate({ pageKey: 'input', stores, channelLabel, onPick: s => pickStoreFromSearch(s.id), onSupervisor: enterSupervisor });
+  el('supPickBtn').addEventListener('click', () => storeGate.open());
+  el('supMasukBtn').addEventListener('click', () => switchTab('masuk'));
+  el('supStockBtn').addEventListener('click', () => switchTab('stock'));
   await applyUrlParamsAndLoad();
 }
 
@@ -137,9 +141,7 @@ async function applyUrlParamsAndLoad() {
   } else {
     populateStoreSelect(el('areaSel').value);
     // Tanpa link dashboard: pakai toko yang sudah dikonfirmasi di sesi ini (refresh), atau minta SBA memilih dulu.
-    const resumed = storeGate.resume();
-    if (resumed) await storeGate.setActive(resumed);
-    else storeGate.open();
+    if (!(await storeGate.restore())) storeGate.open();
     return;
   }
 
@@ -324,10 +326,28 @@ async function onAreaChange() {
   await onStoreChange();
 }
 
+// Supervisor masuk tanpa toko: Input dan Rekap diganti kartu penjelasan, Stock dist. dan Upload Extract tetap jalan.
+function enterSupervisor() {
+  supervisorMode = true;
+  switchTab(currentTab === 'input' || currentTab === 'recap' ? 'masuk' : currentTab);
+}
+
+function applySupervisorView() {
+  const blocked = supervisorMode && (currentTab === 'input' || currentTab === 'recap');
+  el('supNote').hidden = !blocked;
+  if (!blocked) return;
+  el('viewInput').classList.add('hidden');
+  el('viewRecap').classList.add('hidden');
+  el('searchBox').style.display = 'none';
+  el('flagFilterRow').style.display = 'none';
+}
+
 async function onStoreChange(preferPeriodKey) {
   const storeId = el('storeSel').value;
   currentStore = stores.find(s => s.id === storeId);
   if (!currentStore) return;
+  const wasSupervisor = supervisorMode;
+  supervisorMode = false;
   el('scopeInfo').textContent = `Scope channel: ${currentStore.scopeChannel} (${currentStore.subChannel})`;
   currentSkuList = await loadSkuList(currentStore.scopeSlug);
   populateSkuFilterDropdowns();
@@ -354,8 +374,9 @@ async function onStoreChange(preferPeriodKey) {
     ensureDistributorStockLoaded(currentStore)
   ]);
   renderAll();
-  if (currentTab === 'stock') refreshStockTab();
-  if (currentTab === 'masuk') refreshMasukTab();
+  if (wasSupervisor) switchTab(currentTab);
+  else if (currentTab === 'stock') refreshStockTab();
+  else if (currentTab === 'masuk') refreshMasukTab();
 }
 
 // Data stock distributor dimuat sekali per area lalu di-cache di memori.
@@ -414,6 +435,7 @@ function switchTab(tab) {
   if (tab === 'recap') renderRecap();
   if (tab === 'stock') refreshStockTab();
   if (tab === 'masuk') refreshMasukTab();
+  applySupervisorView();
 }
 
 // ---------- Firestore load/save for entries ----------

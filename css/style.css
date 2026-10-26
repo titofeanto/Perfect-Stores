@@ -916,3 +916,31 @@ body[data-tab="stock"] .active-store, body[data-tab="masuk"] .active-store { dis
 .muted-tag { margin-left: 6px; padding: 2px 9px; border-radius: 99px; font-size: 11px; font-weight: 700; background: var(--accent-bg); color: var(--accent); }
 details.how { margin-top: 14px; border-top: 1px solid var(--border); }
 details.how summary { cursor: pointer; min-height: 44px; display: flex; align-items: center; font-size: 13px; font-weight: 700; color: var(--accent); }
+
+/* ---- Mode Supervisor: masuk tanpa memilih toko ---- */
+.gate-sup { position: relative; width: 100%; display: flex; align-items: center; gap: 12px; text-align: left; padding: 13px 52px 13px 14px; margin-bottom: 16px; min-height: 64px; border-radius: 22px; border: 1.5px dashed var(--glass-edge); background: var(--surface); color: var(--text); font-family: var(--font); }
+.gate-sup .gs-ico { flex: none; width: 40px; height: 40px; border-radius: 50%; display: grid; place-items: center; background: var(--accent-bg); color: var(--accent); }
+.gate-sup .gs-ico svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+.gate-sup .gs-txt { display: grid; gap: 2px; min-width: 0; }
+.gate-sup b { font-size: 15px; font-weight: 800; letter-spacing: -.01em; }
+.gate-sup small { font-size: 12px; line-height: 1.35; color: var(--text-secondary); }
+.gate-sup i { position: absolute; right: 14px; top: 50%; margin-top: -15px; width: 30px; height: 30px; border-radius: 50%; display: grid; place-items: center; background: var(--accent-bg); color: var(--accent); }
+.gate-sup i svg { width: 16px; height: 16px; fill: none; stroke: currentColor; stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; }
+.sup-note { display: grid; gap: 8px; justify-items: start; }
+.sup-note[hidden] { display: none; }
+.sup-note h2 { margin: 0; font-size: 17px; font-weight: 800; letter-spacing: -.01em; }
+.sup-note p { margin: 0; font-size: 13px; line-height: 1.5; color: var(--text-secondary); }
+.sn-ico { width: 44px; height: 44px; border-radius: 50%; display: grid; place-items: center; color: #fff; background: var(--accent-grad); box-shadow: 0 8px 18px -6px rgb(91 61 245 / .55); }
+.sn-ico svg { width: 22px; height: 22px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+.sn-actions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 4px; width: 100%; }
+.sn-actions button { flex: 1 1 140px; min-height: 44px; }
+/* Bagian yang butuh toko disembunyikan di mode Supervisor. */
+body[data-role="supervisor"] #reminderBanner,
+body[data-role="supervisor"] .card:has(#progBar),
+body[data-role="supervisor"] .card:has(#weekSel),
+body[data-role="supervisor"] .card:has(#priceFileInput),
+body[data-role="supervisor"] #exportStoreBtn,
+body[data-role="supervisor"] .search-row,
+body[data-role="supervisor"] #flagFilterRow,
+body[data-role="supervisor"] .sku-filter-row,
+body[data-role="supervisor"] #productList { display: none; }

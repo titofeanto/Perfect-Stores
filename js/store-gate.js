@@ -7,6 +7,9 @@
 //  - Refresh halaman di sesi yang sama: langsung masuk ke toko yang sudah dikonfirmasi tadi.
 //  - Dibuka dari link dashboard (?store=...): langsung ke toko itu, tanpa layar.
 //  - Di dalam halaman, bar "Toko aktif" menempel di atas dan tombol "Ganti" membuka layar yang sama.
+//  - Supervisor yang tidak mau masuk ke toko tertentu memilih "Masuk sebagai Supervisor" (hanya kalau halaman
+//    memberi onSupervisor). Mode ini tidak punya toko aktif; body[data-role="supervisor"] dipasang supaya
+//    halaman bisa menyembunyikan bagian yang butuh toko.
 
 const SS = k => { try { return sessionStorage.getItem(k); } catch (e) { return null; } };
 const SS_SET = (k, v) => { try { sessionStorage.setItem(k, v); } catch (e) { /* mode privat */ } };
@@ -22,13 +25,15 @@ const ICON = {
   check: '<path d="M5 12.5l4.5 4.5L19 7.5"/>',
   x: '<path d="M6 6l12 12M18 6L6 18"/>',
   swap: '<path d="M4 7h13l-3-3M20 17H7l3 3"/>',
+  eye: '<path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/>',
 };
 const svg = (k, cls) => `<svg viewBox="0 0 24 24" aria-hidden="true"${cls ? ` class="${cls}"` : ''}>${ICON[k]}</svg>`;
 
-export function setupStoreGate({ pageKey, stores, channelLabel, onPick }) {
+export function setupStoreGate({ pageKey, stores, channelLabel, onPick, onSupervisor }) {
   const KEY_LAST = 'sba_last_store';
   const KEY_OK = 'sba_gate_ok_' + pageKey;
   let active = null;
+  let supervisor = false; // masuk tanpa toko
   let step = 'area';     // 'area' | 'store'
   let area = '';
   let channel = 'all';
@@ -50,6 +55,13 @@ export function setupStoreGate({ pageKey, stores, channelLabel, onPick }) {
   bar.addEventListener('click', e => { if (e.target.closest('[data-change]')) open(); });
 
   function renderBar() {
+    if (supervisor) {
+      bar.hidden = false;
+      bar.innerHTML = `<span class="as-ico">${svg('eye')}</span>` +
+        `<div class="as-txt"><small>Masuk sebagai</small><b>Supervisor</b><span>Tanpa memilih toko</span></div>` +
+        `<button type="button" class="as-btn" data-change>${svg('pin')}Pilih toko</button>`;
+      return;
+    }
     if (!active) { bar.hidden = true; return; }
     bar.hidden = false;
     bar.innerHTML = `<span class="as-ico">${svg('pin')}</span>` +
@@ -84,9 +96,12 @@ export function setupStoreGate({ pageKey, stores, channelLabel, onPick }) {
     let html = '';
     if (step === 'area') {
       html += head('Pilih toko', 'Pastikan toko yang Anda isi sudah benar.');
-      if (canCancel && active) html += `<button type="button" class="gate-cancel" data-cancel>${svg('x')}Batal, tetap di ${esc(active.name)}</button>`;
+      if (canCancel && (active || supervisor)) html += `<button type="button" class="gate-cancel" data-cancel>${svg('x')}Batal, tetap di ${supervisor ? 'mode Supervisor' : esc(active.name)}</button>`;
       if (last && !(active && active.id === last.id && canCancel)) {
         html += `<button type="button" class="gate-last" data-pick="${esc(last.id)}"><small>Lanjutkan toko terakhir</small><b>${esc(last.name)}</b><span>${esc(last.area)} &middot; ${esc(chLabel(last))}</span><i>${svg('chev')}</i></button>`;
+      }
+      if (onSupervisor && !supervisor) {
+        html += `<button type="button" class="gate-sup" data-sup><span class="gs-ico">${svg('eye')}</span><span class="gs-txt"><b>Masuk sebagai Supervisor</b><small>Tanpa memilih toko. Untuk upload stock, upload extract, dan rekap.</small></span><i>${svg('chev')}</i></button>`;
       }
       html += `<label class="field-label" for="gateSearch">Cari nama toko (semua area)</label>` +
         `<label class="sbox">${svg('search')}<input id="gateSearch" type="search" placeholder="Ketik nama toko" autocomplete="off" value="${esc(query)}"></label>` +
@@ -160,6 +175,7 @@ export function setupStoreGate({ pageKey, stores, channelLabel, onPick }) {
     if (t.closest('[data-back]')) { step = 'area'; query = ''; render(); return; }
     const ch = t.closest('[data-ch]');
     if (ch) { channel = ch.dataset.ch; render(); return; }
+    if (t.closest('[data-sup]')) { enterSupervisor(); return; }
     if (t.closest('[data-cancel]')) { close(); return; }
     if (t.closest('[data-no]')) { pending = null; render(); return; }
     if (t.closest('[data-yes]')) { confirm(); return; }
@@ -179,14 +195,27 @@ export function setupStoreGate({ pageKey, stores, channelLabel, onPick }) {
 
   async function choose(s) {
     active = s;
+    supervisor = false;
+    document.body.dataset.role = 'sba';
     LS_SET(KEY_LAST, s.id);
     SS_SET(KEY_OK, s.id);
     renderBar();
     await onPick(s);
   }
 
+  async function enterSupervisor() {
+    pending = null;
+    supervisor = true;
+    active = null;
+    SS_SET(KEY_OK, 'supervisor');
+    document.body.dataset.role = 'supervisor';
+    renderBar();
+    close();
+    if (onSupervisor) await onSupervisor();
+  }
+
   function open() {
-    canCancel = !!active;
+    canCancel = !!active || supervisor;
     step = 'area'; area = ''; channel = 'all'; query = ''; pending = null;
     gate.hidden = false;
     document.body.classList.add('gate-open');
@@ -201,6 +230,15 @@ export function setupStoreGate({ pageKey, stores, channelLabel, onPick }) {
     open,
     /** Toko yang sudah dikonfirmasi di sesi tab ini (untuk refresh), atau null. */
     resume() { return byId(SS(KEY_OK)); },
+    /** Pulihkan pilihan sesi ini (toko atau mode Supervisor). true = berhasil, false = layar harus dibuka. */
+    async restore() {
+      const v = SS(KEY_OK);
+      if (v === 'supervisor' && onSupervisor) { await enterSupervisor(); return true; }
+      const s = byId(v);
+      if (!s) return false;
+      await choose(s);
+      return true;
+    },
     /** Tandai toko aktif tanpa layar (mis. dibuka dari link dashboard). */
     async setActive(s) { await choose(s); },
     /** Catat toko aktif tanpa memanggil onPick (halaman sudah memuatnya sendiri). */

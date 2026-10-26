@@ -187,3 +187,14 @@ Unggahan Excel untuk harga, promo dan pembelian memakai template di `assets/`.
   Senin supervisor mengunggah data 7 hari sebelumnya. Pengingat selalu tampil (lebih menonjol di hari Senin).
 - Setelah file dibaca, tanggal `INVDate` dikelompokkan per minggu Senin-Minggu. Kalau minggu dominan di file berbeda dari periode
   yang dipilih, Simpan dikunci sampai periode diganti lewat tombol "Pakai periode ..." atau SBA mencentang "Saya yakin".
+
+## Mode Supervisor (tanpa memilih toko)
+
+Layar pilih toko di halaman Input dan Survei Harga punya kartu "Masuk sebagai Supervisor" di atas. Supervisor memakainya kalau tidak mau atau tidak perlu masuk ke satu toko.
+
+- Mode ini tidak punya toko aktif. `js/store-gate.js` memasang `body[data-role="supervisor"]` (toko dipilih: `sba`) dan bar di atas berubah menjadi "Supervisor" dengan tombol "Pilih toko".
+- Pilihan diingat per tab browser lewat `sessionStorage` (`sba_gate_ok_<halaman>` bernilai `supervisor`). Refresh tetap di mode ini. Tab baru kembali ke layar pilih toko.
+- Halaman Input: tab Stock dist. dan Upload Extract jalan seperti biasa karena tidak memakai toko. Tab Input dan Rekap diganti kartu "Mode Supervisor" dengan tombol pintas. Masuk mode ini langsung membuka Upload Extract.
+- Halaman Survei Harga: Upload SKU Promo dan Export semua toko tetap tampil. Daftar produk, progres, Export toko ini, dan Upload Harga Manual disembunyikan. Ganti Bulan hanya mengubah periode SKU Promo dan Export.
+- Memilih toko dari mode ini, lewat "Pilih toko", memulihkan tampilan normal.
+- Tidak ada data yang disimpan atas nama toko selama mode Supervisor aktif.

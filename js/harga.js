@@ -6,7 +6,7 @@ import { loadCompetitors, addCompetitor, updateCompetitor, loadPriceEntry, saveP
 import { supportsNativeBarcodeDetector, startNativeScan, stopNativeScan, startFallbackScan, stopFallbackScan } from './barcode-scan.js';
 import { parsePromoWorkbook } from './promo-upload.js';
 import { parsePriceWorkbook } from './price-upload.js';
-import { setupStoreGate } from './store-gate.js?v=1';
+import { setupStoreGate } from './store-gate.js?v=2';
 import { downloadAsExcel } from './export-utils.js';
 
 const TODAY = new Date();
@@ -23,6 +23,7 @@ let allProducts = [];
 let competitors = {}; // pcode -> {competitorId: {...}}
 let currentEntry = {}; // pcode -> {unileverPrice, competitorPrices:{id:price}}
 let currentStore = null;
+let supervisorMode = false; // masuk tanpa toko: hanya Upload SKU Promo dan Export semua toko
 let currentPeriodKey = null;
 let searchText = '';
 let flagFilter = 'all';
@@ -106,9 +107,13 @@ async function init() {
   el('exportStoreBtn').addEventListener('click', exportOneStorePrice);
   el('exportAllPriceBtn').addEventListener('click', exportAllStoresPrice);
 
-  const gate = setupStoreGate({ pageKey: 'harga', stores, channelLabel: slug => CHANNEL_LABELS[slug] || slug, onPick: s => pickStoreFromSearch(s.id) });
-  const resumed = gate.resume();
-  if (resumed) await gate.setActive(resumed); else gate.open();
+  const gate = setupStoreGate({
+    pageKey: 'harga', stores, channelLabel: slug => CHANNEL_LABELS[slug] || slug,
+    onPick: s => { supervisorMode = false; el('supNote').hidden = true; return pickStoreFromSearch(s.id); },
+    onSupervisor: enterSupervisor,
+  });
+  el('supPickBtn').addEventListener('click', () => gate.open());
+  if (!(await gate.restore())) gate.open();
 }
 
 function populateChannelSelect() {
@@ -195,7 +200,20 @@ function mergeProducts(wajibList, promoDoc) {
   return Object.values(merged).sort((a, b) => a.name.localeCompare(b.name));
 }
 
+async function enterSupervisor() {
+  supervisorMode = true;
+  currentPeriodKey = el('monthSel').value;
+  el('supNote').hidden = false;
+  await refreshPromoUploadInfo();
+}
+
 async function onStoreOrMonthChange() {
+  if (supervisorMode) {
+    // Tanpa toko: ganti bulan hanya mengubah periode SKU Promo dan Export.
+    currentPeriodKey = el('monthSel').value;
+    await refreshPromoUploadInfo();
+    return;
+  }
   currentStore = stores.find(s => s.id === el('storeSel').value);
   currentPeriodKey = el('monthSel').value; // format YYYY-MM
   if (!currentStore) return;
@@ -300,7 +318,7 @@ async function onPromoSave() {
     el('promoFileInput').value = '';
     el('promoParsePreview').textContent = '';
     await refreshPromoUploadInfo();
-    if (currentStore.scopeSlug === scopeSlug) {
+    if (currentStore && currentStore.scopeSlug === scopeSlug) {
       await onStoreOrMonthChange();
     }
   } catch (err) {
