@@ -1,5 +1,5 @@
 import { db, doc, getDoc, setDoc, serverTimestamp, authReady } from './firebase-init.js';
-import { setupStoreGate } from './store-gate.js?v=2';
+import { setupStoreGate } from './store-gate.js?v=3';
 import { pickAccount, storeIsAllowed, getCurrentMapping, switchAccount } from './store-filter.js?v=2';
 import { loadStores, loadSkuList, groupStoresByArea, loadVersionsMeta, loadVersion, resolveListVersion, skuListForStore } from './store-data.js?v=2';
 import { getWeeksForMonth, findWeekContaining, fmtShort, MONTHS_ID, addDays, isoDate } from './weeks.js';
@@ -20,6 +20,7 @@ const TODAY = new Date(); // tanggal perangkat SBA saat app dibuka
 let stores = [];
 let storesByArea = {};
 let storeGate = null;
+let supArea = ''; // area supervisor (mode Supervisor)
 let supervisorMode = false; // masuk tanpa toko (tombol Supervisor di layar pilih toko)
 // Filter channel (LMT SPM / Local Minis / Haba DT) untuk daftar Area & Toko. 'all' = tanpa filter.
 const CHANNEL_ORDER = ['lmt-spm', 'local-minis', 'haba-dt'];
@@ -327,8 +328,14 @@ async function onAreaChange() {
 }
 
 // Supervisor masuk tanpa toko: Input dan Rekap diganti kartu penjelasan, Stock dist. dan Upload Extract tetap jalan.
-function enterSupervisor() {
+function enterSupervisor(area) {
   supervisorMode = true;
+  supArea = area;
+  stockTarget = null;
+  const opt = stockOptions().find(a => a.area === area);
+  if (opt && opt.dists.length === 1) setStockDist(opt, opt.dists[0]);
+  else if (opt) stockTarget = { area, dist: null, key: '', count: 0 };
+  resetStockFile();
   switchTab(currentTab === 'input' || currentTab === 'recap' ? 'masuk' : currentTab);
 }
 
@@ -348,6 +355,7 @@ async function onStoreChange(preferPeriodKey) {
   if (!currentStore) return;
   const wasSupervisor = supervisorMode;
   supervisorMode = false;
+  if (wasSupervisor) stockTarget = null; // tujuan stock tidak dibawa dari mode Supervisor
   el('scopeInfo').textContent = `Scope channel: ${currentStore.scopeChannel} (${currentStore.subChannel})`;
   currentSkuList = await loadSkuList(currentStore.scopeSlug);
   populateSkuFilterDropdowns();
@@ -374,7 +382,7 @@ async function onStoreChange(preferPeriodKey) {
     ensureDistributorStockLoaded(currentStore)
   ]);
   renderAll();
-  if (wasSupervisor) switchTab(currentTab);
+  if (wasSupervisor) switchTab('input'); // keluar dari mode Supervisor: buka Input toko yang dipilih
   else if (currentTab === 'stock') refreshStockTab();
   else if (currentTab === 'masuk') refreshMasukTab();
 }
@@ -1505,7 +1513,7 @@ function stockOptions() {
 }
 
 function renderStockTarget() {
-  const opts = stockOptions();
+  const opts = stockOptions().filter(a => !supervisorMode || a.area === supArea);
   const cur = stockTarget;
   el('stockAreaGrid').innerHTML = opts.map(a =>
     `<button type="button" class="area-card${cur && cur.area === a.area ? ' selected' : ''}" data-s-area="${esc(a.area)}"><b>${esc(a.area)}</b><span>${a.count} toko${a.dists.length > 1 ? ` &middot; ${a.dists.length} distributor` : ''}</span></button>`).join('');

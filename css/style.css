@@ -944,3 +944,7 @@ body[data-role="supervisor"] .search-row,
 body[data-role="supervisor"] #flagFilterRow,
 body[data-role="supervisor"] .sku-filter-row,
 body[data-role="supervisor"] #productList { display: none; }
+/* Supervisor hanya memakai Stock dist. dan Upload Extract; bar tetap tampil di semua tab supaya tombol Ganti selalu ada. */
+body[data-role="supervisor"] .active-store:not([hidden]) { display: flex; }
+body[data-role="supervisor"] #tabInput, body[data-role="supervisor"] #tabRecap { display: none; }
+body[data-role="supervisor"] .tabs.tabs-4 { grid-template-columns: repeat(2, 1fr); }

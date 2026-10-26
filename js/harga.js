@@ -6,7 +6,7 @@ import { loadCompetitors, addCompetitor, updateCompetitor, loadPriceEntry, saveP
 import { supportsNativeBarcodeDetector, startNativeScan, stopNativeScan, startFallbackScan, stopFallbackScan } from './barcode-scan.js';
 import { parsePromoWorkbook } from './promo-upload.js';
 import { parsePriceWorkbook } from './price-upload.js';
-import { setupStoreGate } from './store-gate.js?v=2';
+import { setupStoreGate } from './store-gate.js?v=3';
 import { downloadAsExcel } from './export-utils.js';
 
 const TODAY = new Date();

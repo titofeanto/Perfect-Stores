@@ -192,6 +192,8 @@ Unggahan Excel untuk harga, promo dan pembelian memakai template di `assets/`.
 
 Layar pilih toko di halaman Input dan Survei Harga punya kartu "Masuk sebagai Supervisor" di atas. Supervisor memakainya kalau tidak mau atau tidak perlu masuk ke satu toko.
 
+- Supervisor memilih areanya dulu (satu ketukan setelah kartu Supervisor). Di halaman Input, Stock dist. hanya menampilkan area itu dan langsung terpilih; kalau areanya punya satu distributor, distributor ikut terpilih. Tab Input dan Rekap disembunyikan, sehingga tersisa Stock dist. dan Upload Extract. Upload Extract tetap mencocokkan toko dari kode Outlet di file, tidak dibatasi area.
+- Bar "Supervisor · <area>" selalu tampil di semua tab dan punya tombol Ganti. Dari sana supervisor bisa pindah ke toko atau ganti area. Memilih toko membuka tab Input toko itu.
 - Mode ini tidak punya toko aktif. `js/store-gate.js` memasang `body[data-role="supervisor"]` (toko dipilih: `sba`) dan bar di atas berubah menjadi "Supervisor" dengan tombol "Pilih toko".
 - Pilihan diingat per tab browser lewat `sessionStorage` (`sba_gate_ok_<halaman>` bernilai `supervisor`). Refresh tetap di mode ini. Tab baru kembali ke layar pilih toko.
 - Halaman Input: tab Stock dist. dan Upload Extract jalan seperti biasa karena tidak memakai toko. Tab Input dan Rekap diganti kartu "Mode Supervisor" dengan tombol pintas. Masuk mode ini langsung membuka Upload Extract.

@@ -9,7 +9,7 @@
 //  - Di dalam halaman, bar "Toko aktif" menempel di atas dan tombol "Ganti" membuka layar yang sama.
 //  - Supervisor yang tidak mau masuk ke toko tertentu memilih "Masuk sebagai Supervisor" (hanya kalau halaman
 //    memberi onSupervisor). Mode ini tidak punya toko aktif; body[data-role="supervisor"] dipasang supaya
-//    halaman bisa menyembunyikan bagian yang butuh toko.
+//    halaman bisa menyembunyikan bagian yang butuh toko. Supervisor memilih areanya dulu; area itu diteruskan ke onSupervisor(area).
 
 const SS = k => { try { return sessionStorage.getItem(k); } catch (e) { return null; } };
 const SS_SET = (k, v) => { try { sessionStorage.setItem(k, v); } catch (e) { /* mode privat */ } };
@@ -32,9 +32,11 @@ const svg = (k, cls) => `<svg viewBox="0 0 24 24" aria-hidden="true"${cls ? ` cl
 export function setupStoreGate({ pageKey, stores, channelLabel, onPick, onSupervisor }) {
   const KEY_LAST = 'sba_last_store';
   const KEY_OK = 'sba_gate_ok_' + pageKey;
+  const KEY_SUP = 'sba_sup_area';
   let active = null;
   let supervisor = false; // masuk tanpa toko
-  let step = 'area';     // 'area' | 'store'
+  let supArea = '';       // area supervisor
+  let step = 'area';     // 'area' | 'store' | 'suparea'
   let area = '';
   let channel = 'all';
   let query = '';
@@ -58,8 +60,8 @@ export function setupStoreGate({ pageKey, stores, channelLabel, onPick, onSuperv
     if (supervisor) {
       bar.hidden = false;
       bar.innerHTML = `<span class="as-ico">${svg('eye')}</span>` +
-        `<div class="as-txt"><small>Masuk sebagai</small><b>Supervisor</b><span>Tanpa memilih toko</span></div>` +
-        `<button type="button" class="as-btn" data-change>${svg('pin')}Pilih toko</button>`;
+        `<div class="as-txt"><small>Masuk sebagai</small><b>Supervisor &middot; ${esc(supArea)}</b><span>Tanpa memilih toko</span></div>` +
+        `<button type="button" class="as-btn" data-change>${svg('swap')}Ganti</button>`;
       return;
     }
     if (!active) { bar.hidden = true; return; }
@@ -94,14 +96,21 @@ export function setupStoreGate({ pageKey, stores, channelLabel, onPick, onSuperv
   function render() {
     const last = byId(LS(KEY_LAST));
     let html = '';
-    if (step === 'area') {
+    if (step === 'suparea') {
+      html += `<div class="gate-nav"><button type="button" class="gate-back" data-back>${svg('back')}Kembali</button><span>Supervisor</span></div>`;
+      html += head('Pilih area Anda', 'Stock dist. dan Upload Extract dibuka untuk area ini.');
+      html += `<div class="area-grid">${areas().map(a => {
+        const n = stores.filter(s => s.area === a).length;
+        return `<button type="button" class="area-card${a === (supArea || LS(KEY_SUP)) ? ' selected' : ''}" data-suparea="${esc(a)}"><b>${esc(a)}</b><span>${n} toko</span></button>`;
+      }).join('')}</div>`;
+    } else if (step === 'area') {
       html += head('Pilih toko', 'Pastikan toko yang Anda isi sudah benar.');
       if (canCancel && (active || supervisor)) html += `<button type="button" class="gate-cancel" data-cancel>${svg('x')}Batal, tetap di ${supervisor ? 'mode Supervisor' : esc(active.name)}</button>`;
       if (last && !(active && active.id === last.id && canCancel)) {
         html += `<button type="button" class="gate-last" data-pick="${esc(last.id)}"><small>Lanjutkan toko terakhir</small><b>${esc(last.name)}</b><span>${esc(last.area)} &middot; ${esc(chLabel(last))}</span><i>${svg('chev')}</i></button>`;
       }
-      if (onSupervisor && !supervisor) {
-        html += `<button type="button" class="gate-sup" data-sup><span class="gs-ico">${svg('eye')}</span><span class="gs-txt"><b>Masuk sebagai Supervisor</b><small>Tanpa memilih toko. Untuk upload stock, upload extract, dan rekap.</small></span><i>${svg('chev')}</i></button>`;
+      if (onSupervisor) {
+        html += `<button type="button" class="gate-sup" data-sup><span class="gs-ico">${svg('eye')}</span><span class="gs-txt"><b>${supervisor ? 'Ganti area Supervisor' : 'Masuk sebagai Supervisor'}</b><small>Tanpa memilih toko. Untuk upload stock, upload extract, dan rekap.</small></span><i>${svg('chev')}</i></button>`;
       }
       html += `<label class="field-label" for="gateSearch">Cari nama toko (semua area)</label>` +
         `<label class="sbox">${svg('search')}<input id="gateSearch" type="search" placeholder="Ketik nama toko" autocomplete="off" value="${esc(query)}"></label>` +
@@ -175,7 +184,9 @@ export function setupStoreGate({ pageKey, stores, channelLabel, onPick, onSuperv
     if (t.closest('[data-back]')) { step = 'area'; query = ''; render(); return; }
     const ch = t.closest('[data-ch]');
     if (ch) { channel = ch.dataset.ch; render(); return; }
-    if (t.closest('[data-sup]')) { enterSupervisor(); return; }
+    if (t.closest('[data-sup]')) { step = 'suparea'; render(); gate.querySelector('.gate-scroll').scrollTop = 0; return; }
+    const sa = t.closest('[data-suparea]');
+    if (sa) { enterSupervisor(sa.dataset.suparea); return; }
     if (t.closest('[data-cancel]')) { close(); return; }
     if (t.closest('[data-no]')) { pending = null; render(); return; }
     if (t.closest('[data-yes]')) { confirm(); return; }
@@ -203,15 +214,17 @@ export function setupStoreGate({ pageKey, stores, channelLabel, onPick, onSuperv
     await onPick(s);
   }
 
-  async function enterSupervisor() {
+  async function enterSupervisor(areaName) {
     pending = null;
     supervisor = true;
+    supArea = areaName;
     active = null;
-    SS_SET(KEY_OK, 'supervisor');
+    LS_SET(KEY_SUP, areaName);
+    SS_SET(KEY_OK, 'supervisor:' + areaName);
     document.body.dataset.role = 'supervisor';
     renderBar();
     close();
-    if (onSupervisor) await onSupervisor();
+    if (onSupervisor) await onSupervisor(areaName);
   }
 
   function open() {
@@ -233,7 +246,7 @@ export function setupStoreGate({ pageKey, stores, channelLabel, onPick, onSuperv
     /** Pulihkan pilihan sesi ini (toko atau mode Supervisor). true = berhasil, false = layar harus dibuka. */
     async restore() {
       const v = SS(KEY_OK);
-      if (v === 'supervisor' && onSupervisor) { await enterSupervisor(); return true; }
+      if (v && v.startsWith('supervisor:') && onSupervisor && areas().includes(v.slice(11))) { await enterSupervisor(v.slice(11)); return true; }
       const s = byId(v);
       if (!s) return false;
       await choose(s);
