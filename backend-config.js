@@ -20,3 +20,11 @@ export const BACKEND = {
   masterTimeoutMs: 8000,
   masterFreshMs: 90000   // salinan master di HP dipakai langsung bila umurnya kurang dari ini
 };
+
+// Monitoring Daily: stock distributor yang diunggah di sini ikut dikirim ke sana (lihat js/monitoring-sync.js).
+// Kosongkan endpoint untuk mematikan. Tanpa token (repo ini publik): Apps Script Monitoring hanya menerima DT yang
+// terdaftar dan menolak laporan lebih lama atau jauh lebih kecil dari yang tersimpan.
+export const MONITORING = {
+  endpoint: 'https://script.google.com/macros/s/AKfycbzu8lO0vIulHD3ihJv4k7jAPT1WiCblCx7Su3eV93ymMd_awmDXUu3sa32aDXT3mssdiA/exec',
+  timeoutMs: 25000
+};

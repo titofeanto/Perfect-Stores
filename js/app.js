@@ -4,6 +4,7 @@ import { pickAccount, storeIsAllowed, getCurrentMapping, switchAccount } from '.
 import { loadStores, loadSkuList, groupStoresByArea, loadVersionsMeta, loadVersion, resolveListVersion, skuListForStore } from './store-data.js?v=2';
 import { getWeeksForMonth, findWeekContaining, fmtShort, MONTHS_ID, addDays, isoDate } from './weeks.js';
 import { loadDistributorStock, parseDistributorWorkbook, saveDistributorStock, formatReportDate, stockKeyOf, stockKey, distCodeOf, distNameOf, sameDistributor } from './stock-upload.js?v=4';
+import { pushStockToMonitoring } from './monitoring-sync.js?v=1';
 import { supportsNativeBarcodeDetector, startNativeScan, stopNativeScan, startFallbackScan, stopFallbackScan } from './barcode-scan.js';
 import { parsePurchaseWorkbook } from './purchase-upload.js';
 import { computeDtStock, dtCodesHtml, fmtTotal, hasDistributorData, esc } from './dt-stock.js?v=1';
@@ -1714,6 +1715,12 @@ async function onStockConfirmYes() {
     await saveDistributorStock(t.area, t.dist, pendingStockParse.items, pendingStockParse.fileName, meta);
     distributorCache[t.key] = { items: pendingStockParse.items, sourceFileName: pendingStockParse.fileName, ...meta, uploadedAt: { toDate: () => new Date() } };
     showToast(`Stock ${t.area}${t.dist ? ' - ' + t.dist.name : ''} berhasil disimpan (${Object.keys(pendingStockParse.items).length} produk)`, 'success');
+    // Kirim juga ke Monitoring Daily. Tidak menunggu hasil untuk menutup layar, dan gagal kirim tidak membatalkan simpan.
+    pushStockToMonitoring(pendingStockParse.distributorCode || (t.dist && t.dist.code), pendingStockParse.reportDate, pendingStockParse.items).then((r) => {
+      if (r.status === 'ok') showToast(`Stock juga terkirim ke Monitoring Daily (${r.dt || 'DT'}, ${r.rows} produk)`, 'success');
+      else if (r.status === 'skipped') showToast(`Tidak dikirim ke Monitoring Daily: ${r.reason}`, 'info');
+      else if (r.status === 'error') showToast(`Stock tersimpan di sini, tapi GAGAL dikirim ke Monitoring Daily (${r.reason}). Upload ulang atau upload manual di tool Monitoring.`, 'danger');
+    });
     resetStockFile();
     await refreshStockTab();
     renderSkuList();
