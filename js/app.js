@@ -852,6 +852,7 @@ function skuGroupRecap(list) {
 }
 
 function renderSkuList() {
+  if (!currentStore) return;   // mode supervisor tanpa toko: belum ada daftar SKU
   const q = searchText.toLowerCase();
   const distStock = distributorCache[stockKeyOf(currentStore)];
   let filtered = currentSkuList.filter(sku => {
