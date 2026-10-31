@@ -1,4 +1,4 @@
-import { MONITORING } from './backend-config.js';
+import { MONITORING } from '../backend-config.js';
 
 // Setiap stock distributor yang disimpan di sini juga dikirim ke Monitoring Daily (tab STOK_GUDANG),
 // supaya tim tidak upload dua kali. Hanya DT yang terdaftar di Monitoring yang diterima; DT lain diabaikan.

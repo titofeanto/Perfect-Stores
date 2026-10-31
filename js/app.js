@@ -4,7 +4,7 @@ import { pickAccount, storeIsAllowed, getCurrentMapping, switchAccount } from '.
 import { loadStores, loadSkuList, groupStoresByArea, loadVersionsMeta, loadVersion, resolveListVersion, skuListForStore } from './store-data.js?v=2';
 import { getWeeksForMonth, findWeekContaining, fmtShort, MONTHS_ID, addDays, isoDate } from './weeks.js';
 import { loadDistributorStock, parseDistributorWorkbook, saveDistributorStock, formatReportDate, stockKeyOf, stockKey, distCodeOf, distNameOf, sameDistributor } from './stock-upload.js?v=4';
-import { pushStockToMonitoring } from './monitoring-sync.js?v=1';
+import { pushStockToMonitoring } from './monitoring-sync.js?v=2';
 import { supportsNativeBarcodeDetector, startNativeScan, stopNativeScan, startFallbackScan, stopFallbackScan } from './barcode-scan.js';
 import { parsePurchaseWorkbook } from './purchase-upload.js';
 import { computeDtStock, dtCodesHtml, fmtTotal, hasDistributorData, esc } from './dt-stock.js?v=1';
@@ -2012,3 +2012,4 @@ async function onMasukSave() {
 }
 
 init();
+window.__appReady = true;
