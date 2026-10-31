@@ -17,7 +17,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap">
-<link rel="stylesheet" href="css/style.css?v=26">
+<link rel="stylesheet" href="css/style.css?v=27">
 </head>
 <body>
 <div class="app">
@@ -37,17 +37,22 @@
     </nav>
   </header>
 
-  <div id="adminGate" class="card" style="margin-top:12px;">
-    <p class="section-title" style="margin:0 0 8px;">Akses admin</p>
-    <p class="upload-status">Halaman Akun hanya untuk admin. Masukkan kode akses.</p>
-    <form id="gateForm" autocomplete="off">
-      <label class="field-label" for="gateKode">Kode akses</label>
-      <input id="gateKode" type="password" autocomplete="off" required>
-      <button type="submit" class="primary" style="margin-top:10px; width:100%;">Masuk</button>
-      <button type="button" id="gateClaim" class="pill" style="margin-top:8px;" hidden>Atur kode pertama</button>
-      <p id="gateErr" class="upload-status" role="alert"></p>
-    </form>
-  </div>
+  <section id="adminGate" class="gate" aria-labelledby="gateTitle">
+    <div class="gate-card">
+      <span class="gate-ico" aria-hidden="true"><svg viewBox="0 0 24 24"><rect x="5" y="11" width="14" height="9" rx="2.5"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/><circle cx="12" cy="15.5" r="1.2"/></svg></span>
+      <h2 id="gateTitle">Akses admin</h2>
+      <p>Halaman Akun hanya untuk admin. Masukkan kode akses untuk melanjutkan.</p>
+      <form id="gateForm" autocomplete="off">
+        <div class="gate-field">
+          <input id="gateKode" type="password" autocomplete="off" placeholder="Kode akses" aria-label="Kode akses" required>
+          <button type="button" id="gateEye" aria-label="Tampilkan kode" aria-pressed="false"><svg viewBox="0 0 24 24"><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg></button>
+        </div>
+        <button type="submit" id="gateGo" class="gate-go">Masuk</button>
+        <button type="button" id="gateClaim" class="gate-alt" hidden>Atur kode pertama</button>
+        <p id="gateErr" class="gate-err" role="alert"></p>
+      </form>
+    </div>
+  </section>
 
   <div id="adminBody" hidden>
   <div class="card">
@@ -104,7 +109,7 @@
 <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
 <script src="js/status-banner.js?v=2" data-endpoint="https://script.google.com/macros/s/AKfycbzu8lO0vIulHD3ihJv4k7jAPT1WiCblCx7Su3eV93ymMd_awmDXUu3sa32aDXT3mssdiA/exec" data-fallback="status.json"></script>
 <script type="module" src="js/mapping.js?v=6" onerror="window.__appFail&&window.__appFail()"></script>
-<script type="module" src="js/admin-gate.js?v=1"></script>
+<script type="module" src="js/admin-gate.js?v=2"></script>
 <script type="module" src="js/bottom-nav.js?v=3"></script>
 </body>
 </html>

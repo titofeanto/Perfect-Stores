@@ -41,16 +41,30 @@ function open_() {
   showNow();
 }
 
+function gateFail(msg) {
+  $('gateErr').textContent = msg;
+  const card = document.querySelector('.gate-card');
+  card.classList.remove('shake'); void card.offsetWidth; card.classList.add('shake');
+}
+
 async function tryCode(k) {
   $('gateErr').textContent = 'Memeriksa…';
+  $('gateGo').disabled = true;
   const j = await post({ action: 'cekKodeAdmin', kode: k });
+  $('gateGo').disabled = false;
   if (j.ok) { kode = k; try { sessionStorage.setItem(KEY, k); } catch (e) { /* abaikan */ } open_(); return true; }
-  $('gateErr').textContent = j.error === 'belum_diatur' ? 'Kode admin belum diatur di server. Isi kode lalu tekan "Atur kode pertama".' : (j.message || 'Kode salah.');
+  gateFail(j.error === 'belum_diatur' ? 'Kode admin belum diatur. Isi kode lalu tekan "Atur kode pertama".'
+    : j.error === 'unknown_action' ? 'Server belum diperbarui. Deploy ulang Apps Script Monitoring Harian.' : (j.message || 'Kode salah.'));
   $('gateClaim').hidden = j.error !== 'belum_diatur';
   return false;
 }
 
 function init() {
+  $('gateEye').addEventListener('click', () => {
+    const show = $('gateKode').type === 'password';
+    $('gateKode').type = show ? 'text' : 'password';
+    $('gateEye').setAttribute('aria-pressed', String(show));
+  });
   $('gateForm').addEventListener('submit', (e) => { e.preventDefault(); tryCode($('gateKode').value); });
   $('gateClaim').addEventListener('click', async () => {
     const k = $('gateKode').value;
