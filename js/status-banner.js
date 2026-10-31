@@ -1,7 +1,10 @@
-/* Pemberitahuan perbaikan/maintenance. Dibaca dari status.json (ubah file itu di GitHub, tidak perlu ubah kode).
+/* Pemberitahuan perbaikan/maintenance. Dibaca dari Apps Script (?view=status), diubah lewat admin-status.html di Monitoring Daily. Cadangan: status.json.
    aktif=true: spanduk di atas layar. blokir=true: layar penuh, aplikasi tidak bisa dipakai.
    Skrip ini sengaja bukan module dan berdiri sendiri, supaya tetap jalan walaupun app.js gagal dimuat. */
 (function () {
+  var me = document.currentScript;
+  var ep = (me && me.getAttribute('data-endpoint')) || (window.APP_CONFIG && window.APP_CONFIG.APPS_SCRIPT_URL) || '';
+  var fb = me && me.getAttribute('data-fallback');
   var shown = null;
   function css() {
     if (document.getElementById('sb-css')) return;
@@ -26,14 +29,23 @@
   window.__appFail = function () {
     show('full', 'Aplikasi belum bisa dibuka', 'Aplikasi gagal dimuat, kemungkinan sedang diperbaiki. Data Anda aman. Coba muat ulang beberapa menit lagi. Kalau tetap sama, hubungi admin.', true);
   };
+  /* Sumber utama: Apps Script (?view=status, diubah lewat admin-status.html). Cadangan: file status.json kalau diisi di data-fallback. */
+  function ambil() {
+    var viaGas = ep ? fetch(ep + (ep.indexOf('?') < 0 ? '?' : '&') + 'view=status&t=' + Date.now(), { cache: 'no-store' })
+      .then(function (r) { return r.json(); }).then(function (j) { if (j && j.mode === 'status') return j; throw new Error('bukan status'); }) : Promise.reject(new Error('tanpa endpoint'));
+    return viaGas.catch(function () {
+      if (!fb) throw new Error('tidak ada sumber');
+      return fetch(fb + '?t=' + Date.now(), { cache: 'no-store' }).then(function (r) { if (!r.ok) throw new Error('http'); return r.json(); });
+    });
+  }
   function cek() {
-    fetch('status.json?t=' + Date.now(), { cache: 'no-store' }).then(function (r) { return r.ok ? r.json() : null; }).then(function (j) {
+    ambil().then(function (j) {
       if (!j || !j.aktif) { shown = null; ['sb-bar', 'sb-full'].forEach(function (id) { var e = document.getElementById(id); if (e) e.remove(); }); return; }
       show(j.blokir ? 'full' : 'bar', j.judul || 'Pemberitahuan', j.pesan || (j.blokir ? 'Aplikasi sedang diperbaiki.' : ''), !!j.blokir);
-    }).catch(function () { /* offline: abaikan */ });
+    }).catch(function () { /* offline: biarkan keadaan terakhir */ });
   }
   cek();
-  setInterval(cek, 120000);
+  setInterval(cek, 300000);
   document.addEventListener('visibilitychange', function () { if (!document.hidden) cek(); });
   if (document.documentElement.hasAttribute('data-watch')) {
     setTimeout(function () { if (!window.__appReady && navigator.onLine !== false) window.__appFail(); }, 15000);
