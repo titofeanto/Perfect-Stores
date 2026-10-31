@@ -24,7 +24,7 @@ function setMode(m) {
   mode = m;
   $('adminText').hidden = m === 'mati';
   $('adminModeHint').textContent = HINT[m];
-  document.querySelectorAll('#adminModes [data-m]').forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.m === m)));
+  document.querySelectorAll('#adminModes [data-m]').forEach((b) => b.classList.toggle('active', b.dataset.m === m));
 }
 
 function showNow() {
@@ -77,7 +77,7 @@ function init() {
     if (mode === 'blokir' && !confirm('Aplikasi akan ditutup untuk semua pengguna. Lanjut?')) return;
     $('adminErr').textContent = 'Menyimpan…';
     const j = await post({ action: 'setStatus', kode, mode, judul: $('adminJudul').value, pesan: $('adminPesan').value });
-    $('adminErr').textContent = j.error ? (j.message || j.error) : 'Tersimpan. Pengguna melihatnya dalam ±5 menit.';
+    $('adminErr').textContent = j.error ? (j.message || j.error) : 'Tersimpan. Pengguna melihatnya dalam ±1 menit.';
     if (!j.error) showNow();
   });
   $('adminLock').addEventListener('click', () => { try { sessionStorage.removeItem(KEY); } catch (e) { /* abaikan */ } location.reload(); });

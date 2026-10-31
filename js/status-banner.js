@@ -45,7 +45,7 @@
     }).catch(function () { /* offline: biarkan keadaan terakhir */ });
   }
   cek();
-  setInterval(cek, 300000);
+  setInterval(cek, 60000);
   document.addEventListener('visibilitychange', function () { if (!document.hidden) cek(); });
   if (document.documentElement.hasAttribute('data-watch')) {
     setTimeout(function () { if (!window.__appReady && navigator.onLine !== false) window.__appFail(); }, 15000);
