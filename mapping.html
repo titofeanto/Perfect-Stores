@@ -37,6 +37,44 @@
     </nav>
   </header>
 
+  <div id="adminGate" class="card" style="margin-top:12px;">
+    <p class="section-title" style="margin:0 0 8px;">Akses admin</p>
+    <p class="upload-status">Halaman Akun hanya untuk admin. Masukkan kode akses.</p>
+    <form id="gateForm" autocomplete="off">
+      <label class="field-label" for="gateKode">Kode akses</label>
+      <input id="gateKode" type="password" autocomplete="off" required>
+      <button type="submit" class="primary" style="margin-top:10px; width:100%;">Masuk</button>
+      <button type="button" id="gateClaim" class="pill" style="margin-top:8px;" hidden>Atur kode pertama</button>
+      <p id="gateErr" class="upload-status" role="alert"></p>
+    </form>
+  </div>
+
+  <div id="adminBody" hidden>
+  <div class="card">
+    <p class="section-title" style="margin:0 0 8px;">Banner maintenance</p>
+    <p id="adminNow" class="upload-status">Memuat…</p>
+    <div id="adminModes" class="appbar-pills" role="group" aria-label="Tampilan">
+      <button type="button" class="pill" data-m="mati" aria-pressed="true">Normal</button>
+      <button type="button" class="pill" data-m="banner" aria-pressed="false">Banner</button>
+      <button type="button" class="pill" data-m="blokir" aria-pressed="false">Tutup aplikasi</button>
+    </div>
+    <p id="adminModeHint" class="upload-status"></p>
+    <div id="adminText" hidden>
+      <div class="appbar-pills" id="adminTpl">
+        <button type="button" class="pill" data-t="1">Perbaikan singkat</button>
+        <button type="button" class="pill" data-t="2">Maintenance terjadwal</button>
+        <button type="button" class="pill" data-t="3">Gangguan data</button>
+      </div>
+      <label class="field-label" for="adminJudul">Judul</label>
+      <input id="adminJudul" type="text" maxlength="60">
+      <label class="field-label" for="adminPesan">Pesan</label>
+      <textarea id="adminPesan" rows="4" maxlength="300" style="width:100%;font:inherit;"></textarea>
+    </div>
+    <button id="adminSave" type="button" class="primary" style="margin-top:10px; width:100%;">Simpan</button>
+    <p id="adminErr" class="upload-status" role="alert"></p>
+    <button id="adminLock" type="button" class="pill">Kunci kembali</button>
+  </div>
+
   <div class="card">
     <p class="section-title" style="margin:0 0 8px;">Catatan penting</p>
     <p class="upload-status">Ini BUKAN login/akses yang sungguhan -- cuma penyaring tampilan (siapa pun yang paham teknis tetap bisa lihat data toko lain kalau mau). Hasil dari halaman ini adalah 1 file <strong>user-mapping.json</strong> yang Anda upload MANUAL ke folder <code>data/</code> di GitHub (timpa yang lama). Tidak ada akun/password yang benar-benar dibuat di server mana pun.</p>
@@ -58,12 +96,15 @@
     <button id="mappingDownloadBtn" class="primary" style="margin-top:8px; width:100%;" disabled>Download user-mapping.json</button>
   </div>
 
+  </div>
+
   <div id="toast" class="toast"></div>
 
 </div>
 <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
 <script src="js/status-banner.js?v=2" data-endpoint="https://script.google.com/macros/s/AKfycbzu8lO0vIulHD3ihJv4k7jAPT1WiCblCx7Su3eV93ymMd_awmDXUu3sa32aDXT3mssdiA/exec" data-fallback="status.json"></script>
 <script type="module" src="js/mapping.js?v=6" onerror="window.__appFail&&window.__appFail()"></script>
+<script type="module" src="js/admin-gate.js?v=1"></script>
 <script type="module" src="js/bottom-nav.js?v=3"></script>
 </body>
 </html>
