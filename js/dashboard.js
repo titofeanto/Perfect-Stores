@@ -114,9 +114,12 @@ function populateWeekSelect() {
   el('weekSel').value = idx;
 }
 
+// Skeleton kartu ringkasan dari dashboard.html, dipakai ulang tiap ganti minggu (dashboard.html #loadingNote).
+const LOADING_SKELETON = el('loadingNote').innerHTML;
+
 async function loadAndRender() {
   el('loadingNote').style.display = 'block';
-  el('loadingNote').textContent = 'Memuat data toko...';
+  el('loadingNote').innerHTML = LOADING_SKELETON;
   el('dashboardContent').style.display = 'none';
 
   const week = currentWeeks[+el('weekSel').value];

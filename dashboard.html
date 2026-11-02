@@ -17,7 +17,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap">
-<link rel="stylesheet" href="css/style.css?v=26">
+<link rel="stylesheet" href="css/style.css?v=30">
 <style>
   table.recap-table { width: 100%; border-collapse: collapse; font-size: 12.5px; }
   table.recap-table th, table.recap-table td { text-align: left; padding: 8px 6px; border-bottom: 1px solid var(--border); white-space: nowrap; }
@@ -138,7 +138,7 @@
     </div>
   </div>
 
-  <div id="loadingNote" class="upload-status">Memuat data...</div>
+  <div id="loadingNote" class="upload-status"><span class="sr-only">Memuat data toko...</span><div class="metric-grid" aria-hidden="true"><div class="metric-card"><div class="label">Total toko</div><i class="skel" style="width:56%;height:26px"></i></div><div class="metric-card"><div class="label">Sudah kirim</div><i class="skel" style="width:56%;height:26px"></i></div><div class="metric-card"><div class="label">Belum kirim</div><i class="skel" style="width:56%;height:26px"></i></div><div class="metric-card"><div class="label">Rata-rata kelengkapan</div><i class="skel" style="width:56%;height:26px"></i></div></div><div class="card skel-card" aria-hidden="true"><i class="skel" style="width:46%;height:14px"></i><i class="skel" style="width:30%;height:28px"></i><i class="skel" style="width:88%;height:12px"></i><i class="skel" style="width:64%;height:12px"></i></div><div class="card skel-card" aria-hidden="true"><i class="skel" style="width:40%;height:14px"></i><i class="skel" style="width:92%;height:12px"></i><i class="skel" style="width:76%;height:12px"></i><i class="skel" style="width:84%;height:12px"></i><i class="skel" style="width:58%;height:12px"></i></div></div>
 
   <div id="dashboardContent" style="display:none;">
     <p class="upload-status" id="listVersionInfo" style="margin:0 0 10px;"></p>
@@ -226,7 +226,7 @@
 </div>
 <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
 <script src="js/status-banner.js?v=3" data-endpoint="https://script.google.com/macros/s/AKfycbzu8lO0vIulHD3ihJv4k7jAPT1WiCblCx7Su3eV93ymMd_awmDXUu3sa32aDXT3mssdiA/exec" data-fallback="status.json"></script>
-<script type="module" src="js/dashboard.js?v=22" onerror="window.__appFail&&window.__appFail()"></script>
+<script type="module" src="js/dashboard.js?v=23" onerror="window.__appFail&&window.__appFail()"></script>
 <script type="module" src="js/bottom-nav.js?v=3"></script>
 </body>
 </html>

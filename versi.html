@@ -17,7 +17,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap">
-<link rel="stylesheet" href="css/style.css?v=26">
+<link rel="stylesheet" href="css/style.css?v=30">
 <style>
   .ver-meta { display: flex; flex-wrap: wrap; gap: 6px 14px; margin: 6px 0 0; font-size: 12px; color: var(--text-secondary); }
   .ver-stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(110px, 1fr)); gap: 8px; margin-top: 10px; }
@@ -53,7 +53,7 @@
     </nav>
   </header>
 
-  <div id="verLoading" class="upload-status">Memuat riwayat versi...</div>
+  <div id="verLoading" class="upload-status"><span class="sr-only">Memuat riwayat versi...</span><div class="card skel-card" aria-hidden="true"><i class="skel" style="width:38%;height:14px"></i><i class="skel" style="width:86%;height:12px"></i><i class="skel" style="width:52%;height:12px"></i></div><div class="card skel-card" aria-hidden="true"><i class="skel" style="width:38%;height:14px"></i><i class="skel" style="width:72%;height:12px"></i><i class="skel" style="width:52%;height:12px"></i></div><div class="card skel-card" aria-hidden="true"><i class="skel" style="width:38%;height:14px"></i><i class="skel" style="width:80%;height:12px"></i><i class="skel" style="width:52%;height:12px"></i></div></div>
   <div id="verContent" style="display:none;">
 
     <div class="card" id="nowCard"></div>

@@ -989,3 +989,12 @@ body[data-role="supervisor"] .tabs.tabs-4 { grid-template-columns: repeat(2, 1fr
 #adminBody textarea { width: 100%; min-height: 96px; font: 500 14px var(--font); padding: 11px 13px; border: 1.5px solid var(--border); border-radius: var(--radius); background: var(--field); color: var(--text); resize: vertical; }
 #adminBody textarea:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0 4px var(--accent-bg); }
 #adminBody .field-label { margin-top: 4px; }
+
+/* Skeleton: blok berkilau seukuran konten yang sedang dimuat. */
+.skel { display: block; height: 12px; border-radius: 8px; margin-top: 8px;
+  background: linear-gradient(90deg, var(--border) 30%, var(--border-hover) 50%, var(--border) 70%); background-size: 300% 100%; }
+.skel-card { display: grid; gap: 4px; }
+.skel-card .skel:first-child { margin-top: 0; }
+@media (prefers-reduced-motion: no-preference) { .skel { animation: skel 1.3s ease-in-out infinite; } }
+@keyframes skel { from { background-position: 100% 0; } to { background-position: 0 0; } }
+.sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
