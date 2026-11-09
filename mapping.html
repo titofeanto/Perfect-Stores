@@ -7,8 +7,8 @@
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" type="image/png" sizes="192x192" href="assets/icons/icon-192.png">
 <link rel="apple-touch-icon" href="assets/icons/apple-touch-icon.png">
-<meta name="theme-color" content="#F4F2FF" media="(prefers-color-scheme: light)">
-<meta name="theme-color" content="#060813" media="(prefers-color-scheme: dark)">
+<meta name="theme-color" content="#EEF4FF" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#050B1F" media="(prefers-color-scheme: dark)">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="SBA COTC">
@@ -37,53 +37,42 @@
     </nav>
   </header>
 
-  <section id="adminGate" class="gate" aria-labelledby="gateTitle">
-    <div class="gate-card">
-      <span class="gate-ico" aria-hidden="true"><svg viewBox="0 0 24 24"><rect x="5" y="11" width="14" height="9" rx="2.5"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/><circle cx="12" cy="15.5" r="1.2"/></svg></span>
-      <h2 id="gateTitle">Akses admin</h2>
-      <p>Halaman Akun hanya untuk admin. Masukkan kode akses untuk melanjutkan.</p>
-      <form id="gateForm" autocomplete="off">
-        <div class="gate-field">
-          <input id="gateKode" type="password" autocomplete="off" placeholder="Kode akses" aria-label="Kode akses" required>
-          <button type="button" id="gateEye" aria-label="Tampilkan kode" aria-pressed="false"><svg viewBox="0 0 24 24"><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg></button>
-        </div>
-        <button type="submit" id="gateGo" class="gate-go">Masuk</button>
-        <button type="button" id="gateClaim" class="gate-alt" hidden>Atur kode pertama</button>
-        <p id="gateErr" class="gate-err" role="alert"></p>
-      </form>
-    </div>
-  </section>
+  <div id="adminGate" class="card" style="margin-top:12px;">
+    <p class="section-title" style="margin:0 0 8px;">Akses admin</p>
+    <p class="upload-status">Halaman Akun hanya untuk admin. Masukkan kode akses.</p>
+    <form id="gateForm" autocomplete="off">
+      <label class="field-label" for="gateKode">Kode akses</label>
+      <input id="gateKode" type="password" autocomplete="off" required>
+      <button type="submit" class="primary" style="margin-top:10px; width:100%;">Masuk</button>
+      <button type="button" id="gateClaim" class="pill" style="margin-top:8px;" hidden>Atur kode pertama</button>
+      <p id="gateErr" class="upload-status" role="alert"></p>
+    </form>
+  </div>
 
   <div id="adminBody" hidden>
-  <div class="card admin-card">
-    <div class="admin-head">
-      <p class="section-title" style="margin:0;">Banner maintenance</p>
-      <button id="adminLock" type="button" class="pill">Kunci</button>
+  <div class="card">
+    <p class="section-title" style="margin:0 0 8px;">Banner maintenance</p>
+    <p id="adminNow" class="upload-status">Memuat…</p>
+    <div id="adminModes" class="appbar-pills" role="group" aria-label="Tampilan">
+      <button type="button" class="pill" data-m="mati" aria-pressed="true">Normal</button>
+      <button type="button" class="pill" data-m="banner" aria-pressed="false">Banner</button>
+      <button type="button" class="pill" data-m="blokir" aria-pressed="false">Tutup aplikasi</button>
     </div>
-    <p id="adminNow" class="admin-now">Memuat…</p>
-
-    <span class="field-label">Tampilan</span>
-    <div id="adminModes" class="chip-row" role="group" aria-label="Tampilan">
-      <button type="button" class="chip active" data-m="mati">Normal</button>
-      <button type="button" class="chip" data-m="banner">Banner</button>
-      <button type="button" class="chip" data-m="blokir">Tutup aplikasi</button>
-    </div>
-    <p id="adminModeHint" class="upload-status" style="margin-top:0"></p>
-
+    <p id="adminModeHint" class="upload-status"></p>
     <div id="adminText" hidden>
-      <span class="field-label">Template cepat</span>
-      <div id="adminTpl" class="chip-row">
-        <button type="button" class="chip" data-t="1">Perbaikan singkat</button>
-        <button type="button" class="chip" data-t="2">Maintenance terjadwal</button>
-        <button type="button" class="chip" data-t="3">Gangguan data</button>
+      <div class="appbar-pills" id="adminTpl">
+        <button type="button" class="pill" data-t="1">Perbaikan singkat</button>
+        <button type="button" class="pill" data-t="2">Maintenance terjadwal</button>
+        <button type="button" class="pill" data-t="3">Gangguan data</button>
       </div>
       <label class="field-label" for="adminJudul">Judul</label>
-      <input id="adminJudul" type="text" maxlength="60" placeholder="mis. Maintenance">
-      <label class="field-label" for="adminPesan" style="margin-top:12px;">Pesan</label>
-      <textarea id="adminPesan" rows="4" maxlength="300" placeholder="Pesan yang tampil di atas layar pengguna"></textarea>
+      <input id="adminJudul" type="text" maxlength="60">
+      <label class="field-label" for="adminPesan">Pesan</label>
+      <textarea id="adminPesan" rows="4" maxlength="300" style="width:100%;font:inherit;"></textarea>
     </div>
-    <button id="adminSave" type="button" class="primary" style="margin-top:14px; width:100%;">Simpan</button>
+    <button id="adminSave" type="button" class="primary" style="margin-top:10px; width:100%;">Simpan</button>
     <p id="adminErr" class="upload-status" role="alert"></p>
+    <button id="adminLock" type="button" class="pill">Kunci kembali</button>
   </div>
 
   <div class="card">
@@ -113,10 +102,9 @@
 
 </div>
 <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
-<script src="js/status-banner.js?v=3" data-endpoint="https://script.google.com/macros/s/AKfycbzu8lO0vIulHD3ihJv4k7jAPT1WiCblCx7Su3eV93ymMd_awmDXUu3sa32aDXT3mssdiA/exec" data-fallback="status.json"></script>
-<script type="module" src="js/mapping.js?v=6" onerror="window.__appFail&&window.__appFail()"></script>
-<script type="module" src="js/admin-gate.js?v=3"></script>
+<script type="module" src="js/mapping.js?v=6"></script>
+<script type="module" src="js/admin-gate.js?v=1"></script>
 <script type="module" src="js/bottom-nav.js?v=3"></script>
-<script src="js/dl.js?v=2"></script>
+<script src="assets/status-banner.js?v=1" data-endpoint="https://script.google.com/macros/s/AKfycbzu8lO0vIulHD3ihJv4k7jAPT1WiCblCx7Su3eV93ymMd_awmDXUu3sa32aDXT3mssdiA/exec" data-fallback="status.json"></script>
 </body>
 </html>

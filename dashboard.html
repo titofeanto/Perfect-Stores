@@ -7,8 +7,8 @@
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" type="image/png" sizes="192x192" href="assets/icons/icon-192.png">
 <link rel="apple-touch-icon" href="assets/icons/apple-touch-icon.png">
-<meta name="theme-color" content="#F4F2FF" media="(prefers-color-scheme: light)">
-<meta name="theme-color" content="#060813" media="(prefers-color-scheme: dark)">
+<meta name="theme-color" content="#EEF4FF" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#050B1F" media="(prefers-color-scheme: dark)">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="SBA COTC">
@@ -138,7 +138,7 @@
     </div>
   </div>
 
-  <div id="loadingNote" class="upload-status"><span class="sr-only">Memuat data toko...</span><div class="metric-grid" aria-hidden="true"><div class="metric-card"><div class="label">Total toko</div><i class="skel" style="width:56%;height:26px"></i></div><div class="metric-card"><div class="label">Sudah kirim</div><i class="skel" style="width:56%;height:26px"></i></div><div class="metric-card"><div class="label">Belum kirim</div><i class="skel" style="width:56%;height:26px"></i></div><div class="metric-card"><div class="label">Rata-rata kelengkapan</div><i class="skel" style="width:56%;height:26px"></i></div></div><div class="card skel-card" aria-hidden="true"><i class="skel" style="width:46%;height:14px"></i><i class="skel" style="width:30%;height:28px"></i><i class="skel" style="width:88%;height:12px"></i><i class="skel" style="width:64%;height:12px"></i></div><div class="card skel-card" aria-hidden="true"><i class="skel" style="width:40%;height:14px"></i><i class="skel" style="width:92%;height:12px"></i><i class="skel" style="width:76%;height:12px"></i><i class="skel" style="width:84%;height:12px"></i><i class="skel" style="width:58%;height:12px"></i></div></div>
+  <div id="loadingNote" class="upload-status">Memuat data...</div>
 
   <div id="dashboardContent" style="display:none;">
     <p class="upload-status" id="listVersionInfo" style="margin:0 0 10px;"></p>
@@ -225,8 +225,8 @@
 
 </div>
 <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
-<script src="js/status-banner.js?v=3" data-endpoint="https://script.google.com/macros/s/AKfycbzu8lO0vIulHD3ihJv4k7jAPT1WiCblCx7Su3eV93ymMd_awmDXUu3sa32aDXT3mssdiA/exec" data-fallback="status.json"></script>
-<script type="module" src="js/dashboard.js?v=23" onerror="window.__appFail&&window.__appFail()"></script>
+<script type="module" src="js/dashboard.js?v=22"></script>
 <script type="module" src="js/bottom-nav.js?v=3"></script>
+<script src="assets/status-banner.js?v=1" data-endpoint="https://script.google.com/macros/s/AKfycbzu8lO0vIulHD3ihJv4k7jAPT1WiCblCx7Su3eV93ymMd_awmDXUu3sa32aDXT3mssdiA/exec" data-fallback="status.json"></script>
 </body>
 </html>

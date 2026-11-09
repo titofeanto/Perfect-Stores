@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="id" data-watch>
+<html lang="id">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
@@ -7,8 +7,8 @@
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" type="image/png" sizes="192x192" href="assets/icons/icon-192.png">
 <link rel="apple-touch-icon" href="assets/icons/apple-touch-icon.png">
-<meta name="theme-color" content="#F4F2FF" media="(prefers-color-scheme: light)">
-<meta name="theme-color" content="#060813" media="(prefers-color-scheme: dark)">
+<meta name="theme-color" content="#EEF4FF" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#050B1F" media="(prefers-color-scheme: dark)">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="SBA COTC">
@@ -155,9 +155,9 @@
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
           <path d="M12 3v12m0 0l-4-4m4 4l4-4M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
         </svg>
-        Download contoh file (format asli sistem DNS)
+        Download contoh template
       </a>
-      <label class="field-label" style="margin-top:12px;">File asli UID Distributor Stock Report (upload tanpa diubah)</label>
+      <label class="field-label" style="margin-top:12px;">File (format UID Distributor Stock Report)</label>
       <input id="stockFileInput" type="file" accept=".xlsx,.xls" disabled>
       <p id="stockParsePreview" class="upload-status"></p>
       <div id="stockMatch"></div>
@@ -254,9 +254,8 @@
 
 </div>
 <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
-<script src="js/status-banner.js?v=3" data-endpoint="https://script.google.com/macros/s/AKfycbzu8lO0vIulHD3ihJv4k7jAPT1WiCblCx7Su3eV93ymMd_awmDXUu3sa32aDXT3mssdiA/exec" data-fallback="status.json"></script>
-<script type="module" src="js/app.js?v=44" onerror="window.__appFail&&window.__appFail()"></script>
+<script type="module" src="js/app.js?v=42"></script>
 <script type="module" src="js/bottom-nav.js?v=3"></script>
-<script src="js/dl.js?v=2"></script>
+<script src="assets/status-banner.js?v=1" data-endpoint="https://script.google.com/macros/s/AKfycbzu8lO0vIulHD3ihJv4k7jAPT1WiCblCx7Su3eV93ymMd_awmDXUu3sa32aDXT3mssdiA/exec" data-fallback="status.json"></script>
 </body>
 </html>

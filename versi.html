@@ -7,8 +7,8 @@
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" type="image/png" sizes="192x192" href="assets/icons/icon-192.png">
 <link rel="apple-touch-icon" href="assets/icons/apple-touch-icon.png">
-<meta name="theme-color" content="#F4F2FF" media="(prefers-color-scheme: light)">
-<meta name="theme-color" content="#060813" media="(prefers-color-scheme: dark)">
+<meta name="theme-color" content="#EEF4FF" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#050B1F" media="(prefers-color-scheme: dark)">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="SBA COTC">
@@ -53,7 +53,7 @@
     </nav>
   </header>
 
-  <div id="verLoading" class="upload-status"><span class="sr-only">Memuat riwayat versi...</span><div class="card skel-card" aria-hidden="true"><i class="skel" style="width:38%;height:14px"></i><i class="skel" style="width:86%;height:12px"></i><i class="skel" style="width:52%;height:12px"></i></div><div class="card skel-card" aria-hidden="true"><i class="skel" style="width:38%;height:14px"></i><i class="skel" style="width:72%;height:12px"></i><i class="skel" style="width:52%;height:12px"></i></div><div class="card skel-card" aria-hidden="true"><i class="skel" style="width:38%;height:14px"></i><i class="skel" style="width:80%;height:12px"></i><i class="skel" style="width:52%;height:12px"></i></div></div>
+  <div id="verLoading" class="upload-status">Memuat riwayat versi...</div>
   <div id="verContent" style="display:none;">
 
     <div class="card" id="nowCard"></div>
@@ -196,5 +196,6 @@ fetch('data/versions.json')
   });
 </script>
 <script type="module" src="js/bottom-nav.js?v=3"></script>
+<script src="assets/status-banner.js?v=1" data-endpoint="https://script.google.com/macros/s/AKfycbzu8lO0vIulHD3ihJv4k7jAPT1WiCblCx7Su3eV93ymMd_awmDXUu3sa32aDXT3mssdiA/exec" data-fallback="status.json"></script>
 </body>
 </html>
